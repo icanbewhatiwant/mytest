@@ -1,0 +1,900 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="e02b6c45-507c-4bdf-bbe0-8f965dedfd2e" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FUSProjectUsageTrigger">
+    <session id="1168451239">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="26" />
+          <entry key="project.open.time.1" value="1" />
+          <entry key="project.open.time.3" value="27" />
+          <entry key="project.open.time.4" value="4" />
+          <entry key="project.opened" value="32" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="cfg" value="2" />
+          <entry key="ipynb" value="3" />
+          <entry key="log" value="1" />
+          <entry key="mytest" value="1" />
+          <entry key="pkl" value="2" />
+          <entry key="py" value="237" />
+          <entry key="testenv" value="2" />
+          <entry key="txt" value="14" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="IPNB" value="3" />
+          <entry key="PLAIN_TEXT" value="22" />
+          <entry key="Python" value="237" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="Python Console" value="15" />
+          <entry key="dummy" value="28" />
+          <entry key="py" value="18242" />
+          <entry key="testenv" value="6" />
+          <entry key="txt" value="4" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="PLAIN_TEXT" value="38" />
+          <entry key="Python" value="18257" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>get_move_distance</find>
+      <find>self.driver</find>
+      <find>tianyancha</find>
+      <find>TyanSelMiddleware</find>
+      <find>label_list</find>
+      <find>tianYanCha crawling start...</find>
+      <find>crawling ty page</find>
+      <find>https://www.tianyancha.com/search/ocQ-s1?key=医院</find>
+      <find>GovBidSpiderCloseHandle: enter</find>
+      <find>address</find>
+      <find>face_recognition.load_image_file</find>
+      <find>save_image</find>
+      <find>path</find>
+      <find>cv2.imwrite</find>
+      <find>appendix</find>
+      <find>known</find>
+      <find>pickle.dump</find>
+      <find>is not None</find>
+      <find>url_xj3</find>
+      <find>预算金额</find>
+      <find>url_xj_today</find>
+      <find>url_gk3</find>
+      <find>GovmentBid</find>
+      <find>ThrMonxjBid</find>
+      <find>ThrMonSpider</find>
+      <find>GovBidXjPipeline</find>
+      <find>SeleniumSpider</find>
+      <find>govBidxj</find>
+      <find>GovBidPipeline</find>
+      <find>threeMonthGk</find>
+    </findStrings>
+    <replaceStrings>
+      <replace />
+      <replace>item[</replace>
+    </replaceStrings>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/testenv" />
+        <option value="C:/产品文档/合理用药/合理用药的用法用量拆解/drug_use/data1/at1.txt" />
+        <option value="C:/产品文档/合理用药/合理用药的用法用量拆解/drug_use/data1/qt1.txt" />
+        <option value="C:/产品文档/合理用药/合理用药的用法用量拆解/drug_use/data1/at.txt" />
+        <option value="C:/产品文档/合理用药/合理用药的用法用量拆解/drug_use/data1/qt.txt" />
+        <option value="C:/产品文档/合理用药/合理用药的用法用量拆解/drug_use/getAll1.py" />
+        <option value="C:/产品文档/合理用药/合理用药的用法用量拆解/drug_use/trainData.ipynb" />
+        <option value="$PROJECT_DIR$/util/ExcelUtil.py" />
+        <option value="C:/产品文档/合理用药/合理用药的用法用量拆解/drug_use/mytest.py" />
+        <option value="C:/产品文档/spider/scrapy/quotesbot-master/begin.py" />
+        <option value="C:/产品文档/spider/scrapy/quotesbot-master/quotesbot/spiders/toscrape-css.py" />
+        <option value="C:/产品文档/爬虫资料/lesson_03_code/17huo.py" />
+        <option value="$PROJECT_DIR$/util/Text.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/random_delay_middleware.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/logger.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/toscrape-css.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/toscrape-xpath.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/utils.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/utils/SeleniumRequest.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/selenium_download_middleWare.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/SeleniumMiddleware.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/MySpider.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/TianYanSpider.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/captchaUtil.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/tianYanSpider.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/middlewares.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/tySpider.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/settings.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/euser.py" />
+        <option value="$PROJECT_DIR$/util/XpathTest.py" />
+        <option value="$PROJECT_DIR$/util/sqltest.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/testSpider.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/pipelines.py" />
+        <option value="$PROJECT_DIR$/util/dataProcess.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/test.py" />
+        <option value="$PROJECT_DIR$/util/wordUtil.py" />
+        <option value="$PROJECT_DIR$/util/baseSql.py" />
+        <option value="$PROJECT_DIR$/util/face_reg.py" />
+        <option value="$PROJECT_DIR$/util/govsql.py" />
+        <option value="$PROJECT_DIR$/util/test.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/items.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/begin.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/govGKDetail.py" />
+        <option value="$PROJECT_DIR$/util/govSqlZd.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/govmentBid.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/seleniumSpider.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/govGkThreeMonth.py" />
+        <option value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/govXjThreeMonth.py" />
+        <option value="$USER_HOME$/Documents/WeChat Files/wxid_7uan0dofqt5t22/FileStorage/File/2020-09/face_reg.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="375" />
+    <option name="y" value="28" />
+    <option name="width" value="1400" />
+    <option name="height" value="1002" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="test" type="b2602c69:ProjectViewProjectNode" />
+              <item name="quotesbot-master" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="test" type="b2602c69:ProjectViewProjectNode" />
+              <item name="quotesbot-master" type="462c0819:PsiDirectoryNode" />
+              <item name="quotesbot" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="test" type="b2602c69:ProjectViewProjectNode" />
+              <item name="quotesbot-master" type="462c0819:PsiDirectoryNode" />
+              <item name="quotesbot" type="462c0819:PsiDirectoryNode" />
+              <item name="spiders" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="test" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="C:/产品文档/天眼查/code/data_process_tanyancha.ipynb" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\admin\PycharmProjects\test\util" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.govSqlZd">
+    <configuration name="drug_use" type="JupiterNotebook" factoryName="Jupyter Notebook">
+      <module name="drug_use" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="additionalOptions" value="" />
+      <option name="ipnbHost" value="127.0.0.1" />
+      <option name="ipnbPort" value="8888" />
+      <method v="2" />
+    </configuration>
+    <configuration name="baseSql" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="test" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/util" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/util/baseSql.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="begin" type="PythonConfigurationType" factoryName="Python">
+      <module name="quotesbot-master" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/begin.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="govGkThreeMonth" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="quotesbot-master" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/govGkThreeMonth.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="govSqlZd" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="test" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/util" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/util/govSqlZd.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="govsql" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="test" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/util" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/util/govsql.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="spider" type="PythonConfigurationType" factoryName="Python">
+      <module name="test" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\admin\ven-py36\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="C:/产品文档/spider/scrapy/quotesbot-master" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="C:/产品文档/spider/scrapy/quotesbot-master/begin.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python">
+      <module name="test" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/util" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/util/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="wordUtil" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="test" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/util" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/util/wordUtil.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.test" />
+      <item itemvalue="Jupyter Notebook.drug_use" />
+      <item itemvalue="Python.spider" />
+      <item itemvalue="Python.begin" />
+      <item itemvalue="Python.govsql" />
+      <item itemvalue="Python.wordUtil" />
+      <item itemvalue="Python.baseSql" />
+      <item itemvalue="Python.govSqlZd" />
+      <item itemvalue="Python.govGkThreeMonth" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.govSqlZd" />
+        <item itemvalue="Python.govGkThreeMonth" />
+        <item itemvalue="Python.govsql" />
+        <item itemvalue="Python.baseSql" />
+        <item itemvalue="Python.wordUtil" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e02b6c45-507c-4bdf-bbe0-8f965dedfd2e" name="Default Changelist" comment="" />
+      <created>1595904618006</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1595904618006</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14488935" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.2340195" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49894625" weight="0.3618635" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.78187567" weight="0.1744312" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32936078" />
+      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.49947312" weight="0.40628386" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.21812434" side_tool="true" weight="0.17118093" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.7992624" weight="0.26218852" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13277134" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.2340195" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49894625" weight="0.3618635" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.78187567" visible="true" weight="0.17118093" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32936078" />
+      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.49947312" weight="0.40628386" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.21812434" side_tool="true" visible="true" weight="0.17118093" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.7992624" weight="0.22318527" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/tianYanSpider.py</url>
+          <line>94</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/util/XpathTest.py</url>
+          <line>12</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/util/wordUtil.py</url>
+          <line>20</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+      </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/-756103818/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="203">
+          <caret line="4885" column="8" selection-start-line="4885" selection-start-column="8" selection-end-line="4885" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/captchaUtil.py" />
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/tianYanSpider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="532">
+          <caret line="19" selection-start-line="19" selection-end-line="19" selection-end-column="42" />
+          <folding>
+            <marker date="1598516426041" expanded="true" signature="3550:6229" ph="..." />
+            <marker date="1598516426041" expanded="true" signature="6213:6214" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/ven-py36/Lib/site-packages/scrapy/spidermiddlewares/urllength.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="36" selection-start-line="36" selection-end-line="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/ven-py36/Lib/site-packages/scrapy/spidermiddlewares/referer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="339" selection-start-line="339" selection-end-line="339" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/ven-py36/Lib/site-packages/scrapy/spidermiddlewares/offsite.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="28" selection-start-line="28" selection-end-line="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/ven-py36/Lib/site-packages/scrapy/utils/python.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="345" selection-start-line="345" selection-end-line="345" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/ven-py36/Lib/site-packages/scrapy/utils/defer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="259">
+          <caret line="121" selection-start-line="121" selection-end-line="121" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$USER_HOME$/ven-py36/Lib/site-packages/twisted/internet/task.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18788">
+          <caret line="671" selection-start-line="671" selection-end-line="671" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/ven-py36/Lib/site-packages/twisted/internet/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="35280">
+          <caret line="1291" selection-start-line="1291" selection-end-line="1291" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/random.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="218">
+          <caret line="749" selection-start-line="749" selection-end-line="749" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/ven-py36/Lib/site-packages/scrapy/spidermiddlewares/depth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="293">
+          <caret line="57" selection-start-line="57" selection-end-line="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/ven-py36/Lib/site-packages/selenium/webdriver/support/wait.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="61" column="8" selection-start-line="61" selection-start-column="8" selection-end-line="61" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/middlewares.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="840">
+          <caret line="34" column="12" selection-start-line="34" selection-start-column="12" selection-end-line="34" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/天眼查/code/auto_process.ipynb" />
+    <entry file="file://C:/产品文档/天眼查/code/data_process_tanyancha.ipynb" />
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/tySpider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2015">
+          <caret line="133" column="42" lean-forward="true" selection-start-line="129" selection-start-column="7" selection-end-line="133" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/logger.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="572">
+          <caret line="31" column="19" selection-start-line="31" selection-start-column="8" selection-end-line="31" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/random_delay_middleware.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/ven-py36/Lib/site-packages/selenium/webdriver/support/expected_conditions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="728">
+          <caret line="129" column="24" selection-start-line="129" selection-start-column="19" selection-end-line="129" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3164">
+          <caret line="113" selection-start-line="113" selection-end-line="113" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/captchaUtil.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="10" column="22" lean-forward="true" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/XpathTest.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="10" column="48" selection-start-line="10" selection-start-column="44" selection-end-line="10" selection-end-column="48" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/yixinbagSql.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="8" column="21" lean-forward="true" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/docx/api.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="158">
+          <caret line="16" column="4" selection-start-line="16" selection-start-column="4" selection-end-line="16" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/ExcelUtil.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="9" column="34" selection-start-line="9" selection-start-column="34" selection-end-line="9" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/wordUtil.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="227">
+          <caret line="25" selection-start-line="25" selection-end-line="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/codecs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="307">
+          <caret line="308" selection-start-line="308" selection-end-line="308" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/json/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="293" lean-forward="true" selection-start-line="293" selection-end-line="293" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/scrapy_2020_9_3.log">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="28">
+          <caret line="8" column="72" selection-start-line="8" selection-start-column="72" selection-end-line="8" selection-end-column="72" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/-735439043/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3853">
+          <caret line="339" column="4" selection-start-line="339" selection-start-column="4" selection-end-line="339" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/euser.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="246">
+          <caret line="69" column="33" selection-start-line="69" selection-start-column="22" selection-end-line="69" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/baseSql.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="952">
+          <caret line="39" column="13" selection-start-line="39" selection-start-column="13" selection-end-line="39" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/dataProcess.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="19" column="23" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/ven-py36/Lib/site-packages/twisted/internet/defer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="305">
+          <caret line="657" column="21" lean-forward="true" selection-start-line="657" selection-start-column="21" selection-end-line="657" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="56">
+          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/testSpider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="548">
+          <caret line="45" selection-start-line="45" selection-end-line="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/govsql.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="393">
+          <caret line="82" column="43" lean-forward="true" selection-start-line="82" selection-start-column="43" selection-end-line="82" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/items.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="700">
+          <caret line="25" column="7" selection-start-line="25" selection-start-column="7" selection-end-line="25" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/face_reg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="155" column="13" selection-start-line="155" selection-start-column="13" selection-end-line="155" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/govGKDetail.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="79" column="32" lean-forward="true" selection-start-line="79" selection-start-column="32" selection-end-line="79" selection-end-column="59" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/govXjThreeMonth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="115" column="47" selection-start-line="115" selection-start-column="47" selection-end-line="115" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/govGkThreeMonth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="117" column="47" selection-start-line="117" selection-start-column="47" selection-end-line="117" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/seleniumSpider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="343">
+          <caret line="137" column="47" lean-forward="true" selection-start-line="134" selection-start-column="20" selection-end-line="137" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/spiders/govmentBid.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="269">
+          <caret line="111" column="41" lean-forward="true" selection-start-line="111" selection-start-column="41" selection-end-line="111" selection-end-column="41" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+            <marker date="1599460545007" expanded="true" signature="3199:3200" ph="..." />
+            <marker date="1599460545007" expanded="true" signature="3200:3208" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/govSqlZd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="429">
+          <caret line="74" column="18" lean-forward="true" selection-start-line="74" selection-start-column="18" selection-end-line="74" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Documents/WeChat Files/wxid_7uan0dofqt5t22/FileStorage/File/2020-09/face_reg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="12" column="13" lean-forward="true" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="569">
+          <caret line="121" column="15" lean-forward="true" selection-start-line="121" selection-start-column="15" selection-end-line="121" selection-end-column="15" />
+          <folding>
+            <element signature="e#42#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/quotesbot/pipelines.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="69" column="20" selection-start-line="69" selection-start-column="6" selection-end-line="69" selection-end-column="20" />
+          <folding>
+            <element signature="e#608#670#0" expanded="true" />
+            <marker date="1599009337425" expanded="true" signature="4815:4816" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/begin.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="13" column="52" lean-forward="true" selection-start-line="13" selection-start-column="52" selection-end-line="13" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
