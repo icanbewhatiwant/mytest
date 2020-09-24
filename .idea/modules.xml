@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/.idea/quotesbot-master.iml" filepath="C:/产品文档/爬虫-杜江南/scrapy/quotesbot-master/.idea/quotesbot-master.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/test.iml" filepath="$PROJECT_DIR$/.idea/test.iml" />
     </modules>
   </component>

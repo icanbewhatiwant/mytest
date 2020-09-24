@@ -116,15 +116,33 @@ import re
 
 #出现“第几节”的时候，药品数据是横跨页面两栏的，这个识别有没有问题
 #整个文本是纯数据吗 后面好像还有索引、等等其他数据，1429页有部分药品给药方式,这些数据可能要人工处理,如看下是否可以去掉1423页后的数据
-useType =["滴入","注射","口服","静脉滴注","口服给药","直肠给药","	肌内或皮下注射","静脉给药"]
-#数据分析：用法用量，一日几次前面一般是给药途径
-before_useType = ["周","日","次"]
-yfyl_dict={}
-grugStr=""
-pattern = re.compile(u'[^\u4e00-\u9fa5]') #匹配药物名称，只有中文，其他段落有标点符号，基本可以区分
-enpattern = re.compile(u'^[a-zA-Z\s]+$') #匹配药物英文名称，只有英文，没有标点符号
-yfyl_patr = re.compile(r".*用法用量.*")
-str = u"【用法与用量】 滴入结膜囊 ①轻、中度感染：一 次1〜2滴，每4小时1次。②重度感染：一次2滴，一小 时1次。"
+# useType =["滴入","注射","口服","静脉滴注","口服给药","直肠给药","	肌内或皮下注射","静脉给药"]
+# #数据分析：用法用量，一日几次前面一般是给药途径
+# before_useType = ["周","日","次"]
+# yfyl_dict={}
+# grugStr=""
+# pattern = re.compile(u'[^\u4e00-\u9fa5]') #匹配药物名称，只有中文，其他段落有标点符号，基本可以区分
+# enpattern = re.compile(u'^[a-zA-Z\s]+$') #匹配药物英文名称，只有英文，没有标点符号
+# yfyl_patr = re.compile(r".*用法用量.*")
+str = u"Moroxydine Hydrochloride/test"
+
+# label_patr = re.compile("^(【|\[|\[:|［:|［|)[\u4e00-\u9fa5]+(】|\]|］)")
+label_patr = re.compile("^(【|\[|\[:|［:|［|.【)[^】|\]|］]+(】|\]|］)")
+label_con = re.compile("[\u4e00-\u9fa5]+")
+chapter_patr = re.compile('第.+章|第.+节')
+#非中文
+non_chi = re.compile("[^\u4e00-\u9fa5]+$")
+
+match = non_chi.search(str)
+
+if match:
+    label_str = match.group()
+    print("label_str",label_str)
+    # label_cmatch = label_con.findall(label_str)
+    # if label_cmatch:
+    #     label = ''.join(label_cmatch)
+    #     print(label)
 
 
-print(str)
+
+

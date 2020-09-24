@@ -6,8 +6,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="drug_use" />
     <orderEntry type="module" module-name="IP爬虫脚本" />
-    <orderEntry type="module" module-name="quotesbot-master" />
-    <orderEntry type="module" module-name="quotesbot-master" />
   </component>
   <component name="TestRunnerService">
     <option name="projectConfiguration" value="pytest" />
