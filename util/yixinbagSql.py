@@ -5,16 +5,23 @@ import json
 
 
 # values 后面直接%s
+#test
 hostname = '172.18.11.26'
 username = 'postgres'
 password = 'postgres_cnhis@#$'
 database = 'ai'
+# local
+# hostname = '127.0.0.1'
+# username = 'postgres'
+# password = 'qj123456'
+# database = 'myai'
+
 conn =pg.connect(database=database, user=username, password=password, host=hostname, port="5432")
 cursor = conn.cursor()
 
 tmp = []
 values_list = []
-for line in open('C:/Users/admin/Desktop/数据/yixinbang.json','r', encoding='UTF-8'):
+for line in open('C:/产品文档/爬虫-我的/euser_2020_10_9.json','r', encoding='UTF-8'):
     tmp.append(json.loads(line))
 for jdata in  tmp:
     tap = (jdata.get(u"companyName",""), jdata.get(u'introduction',""), jdata.get(u'label',""), jdata.get(u'scale',""), jdata.get(u'comLabel',""), jdata.get(u'registerTime',""),

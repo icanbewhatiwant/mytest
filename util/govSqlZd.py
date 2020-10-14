@@ -2,6 +2,7 @@ from psycopg2 import extras as ex
 import psycopg2 as pg
 import json
 from functools import reduce
+import os
 
 #数据去重
 def list_dict_duplicate_removal(data_list):
@@ -59,18 +60,33 @@ def toDb(filepath,flag ,conn ,cursor):
 
 #指定文档导入数据
 def prosql():
+    file_path = "C:/产品文档/爬虫-我的/gvzd_file/"
+    file_list= os.listdir(file_path)
+
     # values 后面直接%s
     hostname = '172.18.11.26'
     username = 'postgres'
     password = 'postgres_cnhis@#$'
     database = 'ai'
+    #本地测试环境
+    # hostname = '127.0.0.1'
+    # username = 'postgres'
+    # password = 'qj123456'
+    # database = 'myai'
     conn = pg.connect(database=database, user=username, password=password, host=hostname, port="5432")
     cursor = conn.cursor()
 
     flag1 = "1"
     flag2 = "2"
 
-    toDb("C:/产品文档/爬虫-我的/govBidgk_2020_9_8.json", "1", conn, cursor)
+    for file_name in file_list:
+        if "gk" in file_name:
+            file_path1 = file_path + file_name
+            toDb(file_path1, flag1, conn, cursor)
+        elif "xj" in file_name:
+            file_path2 = file_path + file_name
+            toDb(file_path2, flag2, conn, cursor)
+
     conn.close()
     cursor.close()
 

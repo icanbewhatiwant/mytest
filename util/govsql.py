@@ -15,9 +15,12 @@ def proFj(fjs):
     result = []
     dicobj = json.loads(fjs) #json字符串转换为对象
     # print(dicobj)
+    extr_str = "http://www.ccgp.gov.cnhttp"
     for k, v in dicobj.items():
         dict_tmp = {}
         dict_tmp["file_name"] = k
+        if extr_str in v:
+            v = v.replace(extr_str,"http")
         dict_tmp["urls"] = v
         result.append(dict_tmp)
     fjs = json.dumps(result,ensure_ascii=False)#对象转换为字符串 参数免乱码
