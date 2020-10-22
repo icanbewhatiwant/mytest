@@ -124,14 +124,9 @@ import re
 # pattern = re.compile(u'[^\u4e00-\u9fa5]') #匹配药物名称，只有中文，其他段落有标点符号，基本可以区分
 # enpattern = re.compile(u'^[a-zA-Z\s]+$') #匹配药物英文名称，只有英文，没有标点符号
 # yfyl_patr = re.compile(r".*用法用量.*")
-str = u"Moroxydine Hydrochloride/test"
+str = u"（1）口服成人①抗焦虑"
 
-# label_patr = re.compile("^(【|\[|\[:|［:|［|)[\u4e00-\u9fa5]+(】|\]|］)")
-label_patr = re.compile("^(【|\[|\[:|［:|［|.【)[^】|\]|］]+(】|\]|］)")
-label_con = re.compile("[\u4e00-\u9fa5]+")
-chapter_patr = re.compile('第.+章|第.+节')
-#非中文
-non_chi = re.compile("[^\u4e00-\u9fa5]+$")
+non_chi = re.compile("(（\d）)*(口服)")
 
 match = non_chi.search(str)
 
