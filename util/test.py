@@ -114,29 +114,45 @@ filter_list = ["信息", "医疗", "系统", "软件", "绩效", "数字", "电�
 
 import re
 
-#出现“第几节”的时候，药品数据是横跨页面两栏的，这个识别有没有问题
-#整个文本是纯数据吗 后面好像还有索引、等等其他数据，1429页有部分药品给药方式,这些数据可能要人工处理,如看下是否可以去掉1423页后的数据
-# useType =["滴入","注射","口服","静脉滴注","口服给药","直肠给药","	肌内或皮下注射","静脉给药"]
-# #数据分析：用法用量，一日几次前面一般是给药途径
-# before_useType = ["周","日","次"]
-# yfyl_dict={}
-# grugStr=""
-# pattern = re.compile(u'[^\u4e00-\u9fa5]') #匹配药物名称，只有中文，其他段落有标点符号，基本可以区分
-# enpattern = re.compile(u'^[a-zA-Z\s]+$') #匹配药物英文名称，只有英文，没有标点符号
-# yfyl_patr = re.compile(r".*用法用量.*")
-str = u"（1）口服成人①抗焦虑"
+sub_str = "口服 成人 一日3-18 mg,分次服。按反应和病情调整剂量。老年体弱者由一日3 mg 开始,按需调整剂量。"
+semicolon_str = "[;|；]"
+semiconlon_patr = re.compile(semicolon_str)
+age_str = "[，。,.]+?(<1岁|幼儿|小儿|成人|老年.?体弱.?者|年老.?体弱.?者|老年人|儿童)+"
+age_patr = re.compile(age_str)
+#按分号切分句子
+def get_semi_cut(str):
+    semi_result = []
+    if ";" in str or "；" in str:
+        str.replace(";","；")
+        if semiconlon_patr.search(str):
+            semi_result = str.split("；")
+    return semi_result
 
-non_chi = re.compile("(（\d）)*(口服)")
+#按年龄切分句子
+def get_age_cut(str):
+    age_result= []
+    age_match = age_patr.search(str)
+    if age_match:
+        age_list = age_patr.findall(str)
+        print(age_list)
+    f = re.finditer(age_patr,str)
+    indexes = [i.start() for i in f]
+    start = 0
+    for i, indx in enumerate(indexes):
+        # if i == 0:
+        #     continue
+        sbstr = str[start:indx+1]
+        sbstr = sbstr.replace("&nsp", "").replace("\t", "").replace(" ", "")  # 去除文本中的空格、指标符、特殊符号
+        age_result.append(sbstr)
+        if i == len(indexes) - 1:
+            sbstr1 = str[indx+1:]
+            sbstr1 = sbstr1.replace("&nsp", "").replace("\t", "").replace(" ", "")
+            age_result.append(sbstr1)
+        start = indx+1
+    return age_result
 
-match = non_chi.search(str)
-
-if match:
-    label_str = match.group()
-    print("label_str",label_str)
-    # label_cmatch = label_con.findall(label_str)
-    # if label_cmatch:
-    #     label = ''.join(label_cmatch)
-    #     print(label)
+result = get_semi_cut(sub_str)
+print(result)
 
 
 
