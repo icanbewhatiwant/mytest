@@ -6,7 +6,7 @@ admin_route_str = "(餐?后?口服成?人?|含服|涂敷患?处?|喷于患处|�
                   "|肌内注射或缓?慢?静脉缓?慢?推注|静脉注射|静脉滴注|深?部?肌内注射|皮下或肌内注射|肌内或皮下注射|冲服|嚼服|浸润局麻|浸润麻醉|外周神经\(丛\)阻滞|外用" \
                   "|滴眼|滴鼻|冲洗|阴道给药|肛门内?给药|舌下含服|阴道用药|瘤体注射|皮下注射|静脉推注|吸入|阴道冲洗|漱口|关节腔注射|处方|灌肠|直肠灌注|贴患处|口服.灌肠" \
                   "|保留灌肠|注入脐静脉|神经阻滞麻醉|硬膜外麻醉|腰麻|臂丛神经阻滞麻醉|黏膜表面局麻|表面麻醉|涂抹|表面麻醉.神经阻滞麻醉及硬膜外麻醉|局部浸润麻?醉?" \
-                  "|神经阻滞或浸润麻醉|硬膜外腔阻滞麻醉|神经阻滞或硬膜外麻醉|外周神经阻滞麻醉|镇静.镇痛|气管插管)"
+                  "|神经阻滞或浸润麻醉|硬膜外腔阻滞麻醉|神经阻滞或硬膜外麻醉|外周神经阻滞麻醉|镇静.镇痛|气管插管|缓释制剂|靶控输注系统给药)"
 
 admin_route_str1 = "(餐?后?口服成?人?)"
 
@@ -15,7 +15,7 @@ function_str = "(镇静|催眠|镇静.催眠|抗恐惧|抗?癫痫|抗?失眠|一
                "|早产与治疗妊娠高血压|帕金森病|不宁腿综合征|抽动秽语综合征|肝豆状核变性|用于急性严?重?疼痛|中枢性呼吸及循环功能不全|术?后?催醒|中枢抑制催醒|急性脑血栓和脑栓塞|治疗深静脉血栓|治疗急性血栓栓塞|预防手术后深静脉血栓|深静脉血栓或肺栓塞" \
                "|缺血性脑卒中或短暂性脑缺血发作（TIA）|左房室瓣病或心房颤动伴栓塞|蛛网膜下隙出血|急性脑血管病恢复期|脑动脉硬化，脑梗死恢复期|中枢性和外周性眩晕|椎动脉供血不足|特发性耳鸣|间歇性跛行|缺血性脑血管病急性期及其他缺血性血管疾病" \
                "|脑梗死急性期|脑外伤及脑手术后的意识障碍|良性记忆障碍|阿尔茨海默病.血管性痴呆|阿尔茨海默病和?.{0,3}血管性痴呆|阿尔茨海默病|重症肌无力、肌营养不良症、多发性周围神经病|帕金森病、多发性硬化症及痉挛状态" \
-               "|获得性振动性眼球震颤|神经性膀胱功能障碍|假性近视|确?诊?重症肌无力的?确?证?|治疗重症肌无力|重症肌无力|术后腹胀气或尿潴|对抗非去极化型肌松药的肌松作用|麻醉诱导|全麻.?诱导|全身麻醉|全麻诱导|平衡麻醉|全凭静脉麻醉|全麻维持量|局部麻醉或椎管内麻醉辅助用药" \
+               "|获得性振动性眼球震颤|神经性膀胱功能障碍|假性近视|确?诊?重症肌无力的?确?证?|治疗重症肌无力|重症肌无力|术后腹胀气或尿潴|对抗非去极化型肌松药的肌松作用|麻醉诱导|全麻.?诱导|全身麻醉|全麻诱导|平衡麻醉|全凭静脉麻醉|全麻维持量|全麻维持|局部麻醉或椎管内麻醉辅助用药" \
                "|眼科用|耳鼻喉科用|硬膜外麻醉用|髄管阻滞|硬膜外阻滞?|区域阻滞|神经传导阻滞|黏膜表面麻醉|蛛网膜下隙阻滞|外周神经阻滞|交感神经节阻滞|神经干（丛）阻滞|胃镜检査|尿道扩张术或膀胱镜检査|臂丛神经阻滞|紙管阻滞|硬脊膜外阻滞|局部浸润" \
                "|硬膜外腔阻滞|神经阻滞|手术后镇痛|分娩镇痛|手?术中维持肌松|维持肌松|电休克|气管插管|维持肌肉松弛|半去极化肌松药的拮抗|青光眼|呕吐|精神分裂症|肾功能不全|肝功能不全|遗尿症|抗高胆红素血症|缓释制剂|治疗心律失常|外科硬膜外腔阻滞麻醉|拮抗东芨着碱中毒|用于青光眼|静脉全麻)"
 
@@ -71,7 +71,7 @@ semicolon_str = "([；;]用于|[；;]或|[；;]用作|[；;]硬膜外麻醉|[；
 semicolon_12_zd = "([；;]用于|[；;]或|[；;]用作|[；;]硬膜外麻醉|[；;]臂丛神经阻滞麻醉|[；;]各种神经阻滞或硬膜外麻醉|[；;]镇静|[；;]催眠|[；;]抗惊厥|[；;]皮下或肌内注射|[;；]快速气管插管|[;；]癫痫持续状态|[;；]麻醉前用药|[;；]术后应用|[;；]拮抗东芨着碱中毒|[;；]癫痫持续状态|[;；]牙科|[;；]肋间神经|[;；]宫颈旁浸润|[;；]椎旁脊神经阻滞" \
                   "|[;；]阴部神经|药物诱发的锥体外系反应|药物诿发的锥体外系反应|注入蛛网膜下隙|硬膜外PCA|，背景输注量|重度疼痛|如不能控制|用作胶原酶合成抑制剂时|一过性失眠" \
                   "|或按体表面积|用量视患者的耐受情况|全麻维持，成人可釆用连续静脉滴注|辅助椎管内麻醉|使用靶控输注系统给药|尿道扩张术|治疗心律失常|；0.5%溶液|；0.75%溶液|外科硬膜外腔阻滞麻醉|用于神经阻滞麻醉" \
-                  "|用于硬膜外腔阻滞麻醉|用于硬膜外阻滞|,吸入麻醉|用作静脉全麻|肛门给药栓剂|缓释片用法|对精神分裂患者|高龄患者|部分患者|也有患者)+"
+                  "|用于硬膜外腔阻滞麻醉|用于硬膜外阻滞|,吸入麻醉|用作静脉全麻|肛门给药栓剂|缓释片用法|对精神分裂患者|高龄患者|部分患者|也有患者|正在使用西咪替丁治疗)+"
 semiconlon_patr = re.compile(semicolon_12_zd)
 take_patr = re.compile(admin_route_str)
 function_patr = re.compile(function_str)
@@ -176,64 +176,121 @@ test_zd="可口服、皮下注射、肌内注射、静脉注 射及肛门内给�
 
 # print("semi_cut:",get_semi_cut(semi_str2))
 
-#按年龄+单次服用剂量判断切分
-age_str = "(成人|肝、肾功能损害者|老年人|老年和体弱或肝功能不全患者|老年人?[或及、]?体弱患者|老年体弱者|年老体弱者|年老或体弱患者|特殊人群：严重肝损患者|老年或虚弱的患者|老年人?或虚弱患?者|老年、重病和肝功能受损患者" \
-          "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能 损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童|儿童青?少年" \
+#按年龄、作用、给药方式+判断是否有单次服用剂量来切分句子
+age_str = "(成人|肝、肾功能损害者|老年人|老年和体弱或肝功能不全患者|老年人?[或及、和]?体弱患者|老年体弱者|年老体弱者|年老或体弱患者|特殊人群：严重肝损患者|老年或虚弱的患者|老年人?或虚弱患?者|老年、重病和肝功能受损患者" \
+          "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童|儿童青?少年" \
           "|<?\d*岁|\d*[-|〜|~|~]?\d*岁小儿|\d岁以上患儿|\d*[-|〜|~|~]\d*岁|\d*岁以上|\d*岁以下|>\d*岁||d*岁或以上者|小儿)+"
-age_patr = re.compile(age_str)
+
 age_zd="……的患者"
 
 dose_str = ""
 # 一次……，一日……
-dose_patr1 = "(一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d*[-|〜|~|~]?\d*\.?\d*(mg\/kg|mg|ml|g).+?(一日|—日|每晚)\d*\.?\d*[-|〜|~|~]?\d*\.?\d*(次|ml)?"
+dose_str1 = "(一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d*[-|〜|~|~]?\d*\.?\d*(mg\/kg|IU\/kg|IU|mg|ml|g).+?(一日|—日|每晚)\d*\.?\d*[-|〜|~|~]?\d*\.?\d*(次|ml)?"
 # 一次……mg
-dose_patr2 = "(一次)[^,.;，。；(不超过)]*\d*\.?\d*[-|〜|~|~]?\d*\.?\d*(mg\/kg|mg|ml|g)"
+dose_str2 = "(一次)[^,.;，。；(不超过)]*\d*\.?\d*[-|〜|~|~]?\d*\.?\d*(mg\/kg|IU\/kg|IU|mg|ml|g)"
 #一日，分N次
-dose_patr3 = "(一日|—日|按体重)[^,.;，。；]*\d*\.?\d*[-|〜|~]?\d*\.?\d*(mg\/kg|mg|ml|g).?(分成|分)\d*\.?\d*[-|〜|~]?\d*\.?\d*(次)?"
+dose_str3 = "(一日|—日|按体重)[^,.;，。；]*\d*\.?\d*[-|〜|~]?\d*\.?\d*(mg\/kg|IU\/kg|IU|mg|ml|g).?(分成|分)\d*\.?\d*[-|〜|~]?\d*\.?\d*(次)?"
 # 一日……一日……
-dose_patr4 = "(一日|—日)[^,.;，。；]*\d*\.?\d*[-|〜|~]?\d*\.?\d*(mg\/kg|mg|ml|g).?(一日|—日)\d*\.?\d*[-|〜|~]?\d*\.?\d*(次)?"
-
-dose_patr5 = "\d*\.?\d*[-|〜|~]?\d*\.?\d*(mg\/kg|mg|ml|g)"
-circle_sub_patr = re.compile("([①②③④⑤⑥⑦⑧⑨⑩]+)[^，。,]+[，。,]+?")#匹配序列标号后第一个句子
-def get_age_cut(str):
+dose_str4 = "(一日|—日)[^,.;，。；]*\d*\.?\d*[-|〜|~]?\d*\.?\d*(mg\/kg|IU\/kg|IU|mg|ml|g).?(一日|—日)\d*\.?\d*[-|〜|~]?\d*\.?\d*(次)?"
+#0. 4〜0.8mg
+dose_str5 = "\d*\.?\d*[-|〜|~]?\d*\.?\d*(mg\/kg|IU\/kg|IU|mg|ml|g)"
+# 每1kg体重0.15〜0.2mg。
+dose_str6 = "每\d*kg体重\d*\.?\d*[-|〜|~]?\d*\.?\d*[mg|ml|g]"
+# 排除语句
+age_patr = re.compile("[，。,;；][^，。,;；]*(<1岁|5〜10岁小儿)")
+dose_patr = re.compile(dose_str5)
+def get_age_fun_take(str):
+    result = []
     str = str.replace("&nsp", "").replace("\t", "").replace(" ", "")
     age_result= []
-    f = re.finditer(age_patr,str)#获取匹配年龄字段的indx
-    if f:
-        indexes = [i.start() for i in f]
-        start = 0
-        for i, indx in enumerate(indexes):
-            sbstr = str[start:indx+1]
-            age_result.append(sbstr)
-            if i == len(indexes) - 1:
-                sbstr1 = str[indx+1:]
-                age_result.append(sbstr1)
-            start = indx+1
-    #拼接
-    #（1）……①…… 拼 本句有服用方式：（1）……①  本句没有服用方式：（1）或①中离的最近的服用方式 （1）……①服用方式（or not）
-    #（1）…… 本句有服用方式：（1）  本句没有服用方式：（1）服用方式
-    #……①…… 同一
-    #①…… 同2
-    #…… 本句没有服用方式： 前一句的服用方式  本句有服用方式：不拼
-    if age_result:
-        b_str = ""
-        circle_match = circle_sub_patr.search(age_result[0])
-        if circle_match:
-            b_str = circle_match.group()
-        if b_str !="":
-            rlen = len(age_result)
-            for i in range(1,rlen):
-                age_result[i] = b_str+age_result[i]
+    #按照年龄进行切分，包含年龄所在的句子，前面和后面都有用药剂量时切分
+    age_match = age_patr.search(str)
+    if age_match:
+        age_list = age_patr.findall(str)
+        age_num = len(age_list)
+        if age_num == 1:
+            cut_idx = age_match.start()
+            begin_str = str[:cut_idx+1]
+            rest_str = str[cut_idx+1:]
+            if dose_patr.search(begin_str) and dose_patr.search(rest_str):
+                age_result.append(begin_str)
+                age_result.append(rest_str)
+            else:
+                age_result.append(str)
+        elif age_num >=2:
+            f = re.finditer(age_patr, str)
+            if f:
+                indexes = [i.start() for i in f]
+                #只要当前分段前的任意一个分段有用药剂量，当前分段也有用药剂量，则当前分段是可以切分的
+                dose_flag = 0
+                for i in range(len(indexes)):
+                    if i ==0:
+                        age_cut_begin = str[:indexes[i] + 1]
+                        age_cut_str = str[indexes[i] + 1:indexes[i + 1]]
+                        if dose_patr.search(age_cut_begin):
+                            dose_flag=1
+                        if dose_flag ==1:
+                            if dose_patr.search(age_cut_str):
+                                age_result.append(age_cut_begin)
+                                age_result.append(age_cut_str)
+                        else:
+                            if dose_patr.search(age_cut_str):
+                                dose_flag = 1
+                                # age_result.append(str[:indexes[i+1]])
+
+                    elif i == len(indexes)-1:
+                        age_cut_str = str[indexes[i] + 1:]
+                        if dose_patr.search(age_cut_str) and dose_flag == 1:
+                            age_result.append(age_cut_str)
+                    elif 1 <=i and i <len(indexes) - 1:
+                        age_cut_str = str[indexes[i] + 1:indexes[i+1]]
+                        if dose_flag==1:
+                            if dose_patr.search(age_cut_str) :
+                                age_result.append(age_cut_str)
+                        else:
+                            age_result.append(str[:indexes[i+1]])
+                        if dose_patr.search(age_cut_str):
+                            dose_flag =1
     else:
         age_result.append(str)
-
     return age_result
 
+agenum1_str ="③癫痫持续状态和严重复发 性癫痫，开始静脉注射10 mg,每间隔10〜15分钟可按 需增加甚至达最大限用量。破伤风时可能需要较大药量。老年和体弱患者,肌内注射或静脉注射的用量减半。静脉注射宜缓慢，每分钟2〜5 mg。"
+agenum3_str = "（1） 口服 <1岁，一日1- 2.5 mg；幼儿一日不超过5 mg；5〜10岁小儿一日不超 过 10 mg。"
+# ['（1）口服<1岁，一日1-2.5mg；', '幼儿一日不超过5mg', '5〜10岁小儿一日不超过10mg。']
+agenum2_str = "（1） 口服 <1岁，一日1- 2.5 mg；一日不超过5 mg；5〜10岁小儿一日不超 过 10 mg。"
+# ['（1）口服<1岁，一日1-2.5mg；幼儿一日不超过5mg；', '5〜10岁小儿一日不超过10mg。']
+age_nobefore_dose = "（1） 口服 <1岁，测试无数据；5〜10岁小儿一日不超 过 10 mg。"
+# ['（1）口服<1岁，测试无数据；5〜10岁小儿一日不超过10mg。']
+print(get_age_fun_take(age_nobefore_dose))
 
 
-#按单次服用剂量判断出来次数>2的进行断句，+功能判断是否断句
-def get_taketimes_function():
-    pass
+    #
+    # f = re.finditer(age_patr,str)#获取匹配年龄字段的indx
+    # if f:
+    #     indexes = [i.start() for i in f]
+    #     start = 0
+    #     for i, indx in enumerate(indexes):
+    #         sbstr = str[start:indx+1]
+    #         age_result.append(sbstr)
+    #         if i == len(indexes) - 1:
+    #             sbstr1 = str[indx+1:]
+    #             age_result.append(sbstr1)
+    #         start = indx+1
+    # if age_result:
+    #     b_str = ""
+    #     circle_match = circle_sub_patr.search(age_result[0])
+    #     if circle_match:
+    #         b_str = circle_match.group()
+    #     if b_str !="":
+    #         rlen = len(age_result)
+    #         for i in range(1,rlen):
+    #             age_result[i] = b_str+age_result[i]
+    # else:
+    #     age_result.append(str)
+    #
+    # return age_result
+
 
 
 
