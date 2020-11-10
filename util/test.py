@@ -197,7 +197,7 @@ dose_str5 = "\d*\.?\d*[-|〜|~]?\d*\.?\d*(mg\/kg|IU\/kg|IU|mg|ml|g)"
 # 每1kg体重0.15〜0.2mg。
 dose_str6 = "每\d*kg体重\d*\.?\d*[-|〜|~]?\d*\.?\d*[mg|ml|g]"
 # 排除语句
-age_patr = re.compile("[，。,;；][^，。,;；]*(<1岁|5〜10岁小儿)")
+age_patr = re.compile("[，。,;；][^，。,;；]*(<1岁|幼儿|5〜10岁小儿)")
 dose_patr = re.compile(dose_str5)
 def get_age_fun_take(str):
     result = []
@@ -218,39 +218,61 @@ def get_age_fun_take(str):
             else:
                 age_result.append(str)
         elif age_num >=2:
+            idxes_list = []
             f = re.finditer(age_patr, str)
             if f:
                 indexes = [i.start() for i in f]
-                #只要当前分段前的任意一个分段有用药剂量，当前分段也有用药剂量，则当前分段是可以切分的
-                dose_flag = 0
-                for i in range(len(indexes)):
-                    if i ==0:
-                        age_cut_begin = str[:indexes[i] + 1]
-                        age_cut_str = str[indexes[i] + 1:indexes[i + 1]]
-                        if dose_patr.search(age_cut_begin):
-                            dose_flag=1
-                        if dose_flag ==1:
-                            if dose_patr.search(age_cut_str):
-                                age_result.append(age_cut_begin)
-                                age_result.append(age_cut_str)
-                        else:
-                            if dose_patr.search(age_cut_str):
-                                dose_flag = 1
-                                # age_result.append(str[:indexes[i+1]])
+                for i,idx in enumerate(indexes):
+                    age_begin = str[:idx + 1]
+                    if i == len(indexes)-1:
+                        age_next = str[idx+1:]
+                    else:
+                        age_next = str[idx+1:indexes[i+1]]
+                    if dose_patr.search(age_begin) and dose_patr.search(age_next):
+                        idxes_list.append(idx)
+            if idxes_list:
+                for j,idxx in enumerate(idxes_list):
+                    if j ==0:
+                        cut_string = str[:idxx]
+                        age_result.append(cut_string)
+                    elif j ==len(idxes_list)-1:
+                        cut_string=str[idxx:]
+                        age_result.append(cut_string)
+                    else:
+                        cut_string = str[idxx: idxes_list[i+1]]
+                        age_result.append(cut_string)
 
-                    elif i == len(indexes)-1:
-                        age_cut_str = str[indexes[i] + 1:]
-                        if dose_patr.search(age_cut_str) and dose_flag == 1:
-                            age_result.append(age_cut_str)
-                    elif 1 <=i and i <len(indexes) - 1:
-                        age_cut_str = str[indexes[i] + 1:indexes[i+1]]
-                        if dose_flag==1:
-                            if dose_patr.search(age_cut_str) :
-                                age_result.append(age_cut_str)
-                        else:
-                            age_result.append(str[:indexes[i+1]])
-                        if dose_patr.search(age_cut_str):
-                            dose_flag =1
+
+                #只要当前分段前的任意一个分段有用药剂量，当前分段也有用药剂量，则当前分段是可以切分的
+                # dose_flag = 0
+                # for i in range(len(indexes)):
+                #     if i ==0:
+                #         age_cut_begin = str[:indexes[i] + 1]
+                #         age_cut_str = str[indexes[i] + 1:indexes[i + 1]]
+                #         if dose_patr.search(age_cut_begin):
+                #             dose_flag=1
+                #         if dose_flag ==1:
+                #             if dose_patr.search(age_cut_str):
+                #                 age_result.append(age_cut_begin)
+                #                 age_result.append(age_cut_str)
+                #         else:
+                #             if dose_patr.search(age_cut_str):
+                #                 dose_flag = 1
+                #                 # age_result.append(str[:indexes[i+1]])
+                #
+                #     elif i == len(indexes)-1:
+                #         age_cut_str = str[indexes[i] + 1:]
+                #         if dose_patr.search(age_cut_str) and dose_flag == 1:
+                #             age_result.append(age_cut_str)
+                #     elif 1 <=i and i <len(indexes) - 1:
+                #         age_cut_str = str[indexes[i] + 1:indexes[i+1]]
+                #         if dose_flag==1:
+                #             if dose_patr.search(age_cut_str) :
+                #                 age_result.append(age_cut_str)
+                #         else:
+                #             age_result.append(str[:indexes[i+1]])
+                #         if dose_patr.search(age_cut_str):
+                #             dose_flag =1
     else:
         age_result.append(str)
     return age_result
@@ -262,38 +284,7 @@ agenum2_str = "（1） 口服 <1岁，一日1- 2.5 mg；一日不超过5 mg；5�
 # ['（1）口服<1岁，一日1-2.5mg；幼儿一日不超过5mg；', '5〜10岁小儿一日不超过10mg。']
 age_nobefore_dose = "（1） 口服 <1岁，测试无数据；5〜10岁小儿一日不超 过 10 mg。"
 # ['（1）口服<1岁，测试无数据；5〜10岁小儿一日不超过10mg。']
-print(get_age_fun_take(age_nobefore_dose))
-
-
-    #
-    # f = re.finditer(age_patr,str)#获取匹配年龄字段的indx
-    # if f:
-    #     indexes = [i.start() for i in f]
-    #     start = 0
-    #     for i, indx in enumerate(indexes):
-    #         sbstr = str[start:indx+1]
-    #         age_result.append(sbstr)
-    #         if i == len(indexes) - 1:
-    #             sbstr1 = str[indx+1:]
-    #             age_result.append(sbstr1)
-    #         start = indx+1
-    # if age_result:
-    #     b_str = ""
-    #     circle_match = circle_sub_patr.search(age_result[0])
-    #     if circle_match:
-    #         b_str = circle_match.group()
-    #     if b_str !="":
-    #         rlen = len(age_result)
-    #         for i in range(1,rlen):
-    #             age_result[i] = b_str+age_result[i]
-    # else:
-    #     age_result.append(str)
-    #
-    # return age_result
-
-
-
-
+print(get_age_fun_take(agenum3_str))
 
 #从头开始完整处理一个句子
 bracket_patr = re.compile("([（(]\d[）)]){1}")
