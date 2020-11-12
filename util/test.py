@@ -279,13 +279,33 @@ test_zhe = "口服(1)肝豆状核变性成人开 始一日用量为250 mg，逐�
 # print(get_age_func(age_huanzhe))
 
 #按年龄和功能切分①后句子，并拼接
-def get_age_func_cut(str_age,str_fun,str):
-    str = str.replace("&nsp", "").replace("\t", "").replace(" ", "")
+def get_age_func_cut(str_age,str_fun,ori_str):
+    ori_str = ori_str.replace("&nsp", "").replace("\t", "").replace(" ", "")
+    take_patr_b = re.compile("([（(]\d[）)])+")
+    take_patr_cir = re.compile("([①②③④⑤⑥⑦⑧⑨⑩])+")
+    b_match = take_patr_b.search(ori_str)
+    cir_match = take_patr_cir.search(ori_str)
+    str = ""
+    # 只有……（1）……①  -->  ①……
+    if b_match:
+        if cir_match:
+            str = ori_str[cir_match.start():]
+            str0 = ori_str[:cir_match.start()]
+        # ……（1）……  -->  （1）……
+        else:
+            str = ori_str[b_match.start():]
+    else:# ……①……  -->  ①……
+        if cir_match:
+            str = ori_str[cir_match.start():]
+           #…… --> ……
+        else:
+            str = ori_str
+
+    #按指定年龄或者功能切分
     age_fun_result = []
     tmp_result =[]
     fun_result = []
     age_result = []
-    # 按指定年龄或者功能切分
     fun_patrr = re.compile(str_fun)
     age_patrr = re.compile(str_age)
     #按作用切分
@@ -296,81 +316,71 @@ def get_age_func_cut(str_age,str_fun,str):
     #按年龄切分
     for fun_con in fun_result:
         if age_patrr.search(fun_con):
-            age_result = re.split(str_age)
+            age_result = re.split(str_age,str)
             tmp_result.append(age_result)
         else:
             tmp_result.append(fun_con)
+    #
+    # len_semi = len(tmp_result)
+    # if len_semi > 1:
+    #     age_fun_result.append(tmp_result[0])
+    #     result12last = [''.join(i) for i in zip(tmp_result[1::2],tmp_result[2::2])]
+    #     age_fun_result.extend(result12last)
 
-    len_semi = len(tmp_result)
-    if len_semi > 1:
-        age_fun_result.append(tmp_result[0])
-        result12last = [''.join(i) for i in zip(result[1::2],result[2::2])]
-        age_fun_result.extend(result12last)
-
-    take_patr_b = re.compile("([（(]\d[）)])+")
-    take_patr_cir = re.compile("([①②③④⑤⑥⑦⑧⑨⑩])+")
-    b_match = take_patr_b.search(str)
-    cir_match = take_patr_cir.search(str)
 
     #拼接给药方式和前面内容
-    if age_fun_result:
-        if len_semi >1:
-            concat_str = age_fun_result[0]
-            for i,con in enumerate(age_fun_result):
-                concat_string = ""
-                if i == 0:
-                    continue
-                #判断断句是否有服药方式，有则不需拼接需要方式，没有要拼接
-                take_search = take_patr.search(con)
-                # 有（1）标号
-                if b_match:
-                    # 有（1）标号，有①标号，直接拼接(1)和①标号之间的内容，①标号后开始断句处判断是否有服药方式，没有则拼接
-                    if cir_match:
-                        concat_strb = str[:cir_match.start()]  # ……(1)……
-                        concat_strcir = str[cir_match.start():]  # ①……
-                        param_str = [concat_strb, cir_match.group()]# ……(1)……①
-                        if param_str:
-                            begin_str = ''.join(param_str)
-                            concat_string += begin_str
-                        if not take_search:
-                            concat_string += get_concat_str(concat_strcir)
-                    # 有（1）标号，没有①标号，判断断句是否有服用方式，没有则拼接包含标号（1）的首句中的服用方式
-                    else:
-                        param_str = [str[:b_match.start()],b_match.group()]#……（1）
-                        if param_str:
-                            begin_str = ''.join(param_str)
-                            concat_string += begin_str
-                        if not take_search:
-                            concat_string += get_concat_str(concat_str[b_match.start():])#(1)……  断句前内容
-                    # 无（1）标号
-                else:
-                    # 没有(1)标号，有①标号，前面有文字的直接拼接，①标号后断句判断是否有服用方式，没有拼接句首中服用方式
-                    if cir_match:
-                        before_cir_str = concat_str[:cir_match.start()]
-                        param_str = [before_cir_str, cir_match.group()]#……①
-                        after_cir_str = concat_str[cir_match.start():]#①……
-                        if param_str:
-                            begin_str = ''.join(param_str)
-                            concat_string += begin_str
-                        if not take_search:
-                            concat_string += get_concat_str(after_cir_str)
-                    # 没有(1)标号，没有①标号，判断本句有没有服用方式，没有的话判断前面第一句（下标0）是否有服用方式，本句有则不拼接，没有拼接
-                    else:
-                        param_str = []
-                        if not take_search:
-                            concat_string = get_concat_str(concat_str)
-                # 这一段决定不用了，因为拼接作用有出错的可能性，而作用并不需要体现在断句正确性中，所以这里不拼接作用了
-                #本句没有作用，则拼接第一句的作用
-                # function_search = function_patr.search(con)
-                # if not function_search:
-                #     begin_function_search = function_patr.search(concat_str)
-                #     if begin_function_search:
-                #         function_list = begin_function_search.groups()
-                #         concat_string += ','.join(function_list)
-                age_fun_result[i] = concat_string + con
+    # if age_fun_result:
+    #     if len_semi >1:
+    #         concat_str = age_fun_result[0]
+    #         for i,con in enumerate(age_fun_result):
+    #             concat_string = ""
+    #             if i == 0:
+    #                 continue
+    #             #判断断句是否有服药方式，有则不需拼接需要方式，没有要拼接
+    #             take_search = take_patr.search(con)
+    #             # 有（1）标号
+    #             if b_match:
+    #                 # 有（1）标号，有①标号，直接拼接(1)和①标号之间的内容，①标号后开始断句处判断是否有服药方式，没有则拼接
+    #                 if cir_match:
+    #                     concat_strb = str[:cir_match.start()]  # ……(1)……
+    #                     concat_strcir = str[cir_match.start():]  # ①……
+    #                     param_str = [concat_strb, cir_match.group()]# ……(1)……①
+    #                     if param_str:
+    #                         begin_str = ''.join(param_str)
+    #                         concat_string += begin_str
+    #                     if not take_search:
+    #                         concat_string += get_concat_str(concat_strcir)
+    #                 # 有（1）标号，没有①标号，判断断句是否有服用方式，没有则拼接包含标号（1）的首句中的服用方式
+    #                 else:
+    #                     param_str = [str[:b_match.start()],b_match.group()]#……（1）
+    #                     if param_str:
+    #                         begin_str = ''.join(param_str)
+    #                         concat_string += begin_str
+    #                     if not take_search:
+    #                         concat_string += get_concat_str(concat_str[b_match.start():])#(1)……  断句前内容
+    #                 # 无（1）标号
+    #             else:
+    #                 # 没有(1)标号，有①标号，前面有文字的直接拼接，①标号后断句判断是否有服用方式，没有拼接句首中服用方式
+    #                 if cir_match:
+    #                     before_cir_str = concat_str[:cir_match.start()]
+    #                     param_str = [before_cir_str, cir_match.group()]#……①
+    #                     after_cir_str = concat_str[cir_match.start():]#①……
+    #                     if param_str:
+    #                         begin_str = ''.join(param_str)
+    #                         concat_string += begin_str
+    #                     if not take_search:
+    #                         concat_string += get_concat_str(after_cir_str)
+    #                 # 没有(1)标号，没有①标号，判断本句有没有服用方式，没有的话判断前面第一句（下标0）是否有服用方式，本句有则不拼接，没有拼接
+    #                 else:
+    #                     param_str = []
+    #                     if not take_search:
+    #                         concat_string = get_concat_str(concat_str)
+    #             age_fun_result[i] = concat_string + con
     # 断句部分还要补充
-    return age_fun_result
-
+    # return age_fun_result
+    return tmp_result
+test_str="（1） 口服 催眠，30〜100 mg,晚上 一次顿服；镇静，一次15〜30 mg,一日2〜3次；抗惊厥， 一日90~180 mg,可在晚上一次顿服，或30〜60 mg, 一 日3次。极量一次250 mg,—日500 mg。老年人或虚弱 患者应减量，常用量即可产生兴奋、精神错乱或抑郁。 抗高胆红素血症，一次30〜60 mg,一日3次。"
+print(get_age_func_cut(age_str,function_str,test_str))
 
 
 #从头开始完整处理一个句子
@@ -399,7 +409,7 @@ def get_sentence_cut(str):
             else:
                 circle_list.append(ci)
 
-    if circle_list:
+    # if circle_list:
 
 
 
