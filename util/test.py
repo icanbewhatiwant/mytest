@@ -160,9 +160,7 @@ semi_str1 = "测试（2）肌内或静脉注射成人①催眠，口服，一次
 # semi_cut: ['（2）肌内或静脉注射成人①催眠，一次100〜200mg', '（2）肌内或静脉注射成人①；镇静，一次30〜50mg,一日2〜3次；']
 semi_str2="（1） 口服 成人 抗癫痫一般一次 0.03g，一日3次；或0. 09 g睡前顿服。极量一次0. 25 g。一日 0. 5g。"
 # semi_cut: ['（1）口服成人抗癫痫一般一次0.03g，一日3次', '（1）口服成人。或0.09g睡前顿服。极量一次0.25g。一日0.5g。']
-
 # print("semi_cut:",get_semi_cut(semi_str1))
-
 
 dose_str = ""
 # 一次……，一日……
@@ -279,6 +277,101 @@ age_huanzhe = "（2）	当用卡比多巴：左旋多巴（1 ： 10）片剂疗�
 age_zhe = "口服 一次50〜100mg，一日2〜3 次，一般不超过一日300 mg，最大量为400 mg。肾功能 障碍者应减量5mg。儿童不用。"
 test_zhe = "口服(1)肝豆状核变性成人开 始一日用量为250 mg，逐渐增量；轻症一日1000 mg,分 2〜4次口服；重症一日2000〜2500 mg,分4次。维持量，成人一日750〜1000 mg。可根据24小时尿铜指标 对青霉胺用量进行调整。可行间歇疗法。青霉胺排铜 的方案有两种：①持续疗法：适用于病程较长、症状较重 的患者，持续给予青霉胺治疗。0.5〜1年，根据临床表现 的变化和实验室检查各项指标分析，决定是否改为间歇 疗法或逐渐减量。②间歇疗法：用于稳定期或症状前期 的治疗，以及部分症状较轻的患者。方法有服用2周停 2周、服用10天停10天、服用1周停1周等方法。成人 多釆用服用2周停2周法。"
 # print(get_age_func(age_huanzhe))
+
+#按年龄和功能切分①后句子，并拼接
+def get_age_func_cut(str_age,str_fun,str):
+    str = str.replace("&nsp", "").replace("\t", "").replace(" ", "")
+    age_fun_result = []
+    tmp_result =[]
+    fun_result = []
+    age_result = []
+    # 按指定年龄或者功能切分
+    fun_patrr = re.compile(str_fun)
+    age_patrr = re.compile(str_age)
+    #按作用切分
+    if fun_patrr.search(str):
+        fun_result = re.split(str_fun, str)
+    else:
+        fun_result.append(str)
+    #按年龄切分
+    for fun_con in fun_result:
+        if age_patrr.search(fun_con):
+            age_result = re.split(str_age)
+            tmp_result.append(age_result)
+        else:
+            tmp_result.append(fun_con)
+
+    len_semi = len(tmp_result)
+    if len_semi > 1:
+        age_fun_result.append(tmp_result[0])
+        result12last = [''.join(i) for i in zip(result[1::2],result[2::2])]
+        age_fun_result.extend(result12last)
+
+    take_patr_b = re.compile("([（(]\d[）)])+")
+    take_patr_cir = re.compile("([①②③④⑤⑥⑦⑧⑨⑩])+")
+    b_match = take_patr_b.search(str)
+    cir_match = take_patr_cir.search(str)
+
+    #拼接给药方式和前面内容
+    if age_fun_result:
+        if len_semi >1:
+            concat_str = age_fun_result[0]
+            for i,con in enumerate(age_fun_result):
+                concat_string = ""
+                if i == 0:
+                    continue
+                #判断断句是否有服药方式，有则不需拼接需要方式，没有要拼接
+                take_search = take_patr.search(con)
+                # 有（1）标号
+                if b_match:
+                    # 有（1）标号，有①标号，直接拼接(1)和①标号之间的内容，①标号后开始断句处判断是否有服药方式，没有则拼接
+                    if cir_match:
+                        concat_strb = str[:cir_match.start()]  # ……(1)……
+                        concat_strcir = str[cir_match.start():]  # ①……
+                        param_str = [concat_strb, cir_match.group()]# ……(1)……①
+                        if param_str:
+                            begin_str = ''.join(param_str)
+                            concat_string += begin_str
+                        if not take_search:
+                            concat_string += get_concat_str(concat_strcir)
+                    # 有（1）标号，没有①标号，判断断句是否有服用方式，没有则拼接包含标号（1）的首句中的服用方式
+                    else:
+                        param_str = [str[:b_match.start()],b_match.group()]#……（1）
+                        if param_str:
+                            begin_str = ''.join(param_str)
+                            concat_string += begin_str
+                        if not take_search:
+                            concat_string += get_concat_str(concat_str[b_match.start():])#(1)……  断句前内容
+                    # 无（1）标号
+                else:
+                    # 没有(1)标号，有①标号，前面有文字的直接拼接，①标号后断句判断是否有服用方式，没有拼接句首中服用方式
+                    if cir_match:
+                        before_cir_str = concat_str[:cir_match.start()]
+                        param_str = [before_cir_str, cir_match.group()]#……①
+                        after_cir_str = concat_str[cir_match.start():]#①……
+                        if param_str:
+                            begin_str = ''.join(param_str)
+                            concat_string += begin_str
+                        if not take_search:
+                            concat_string += get_concat_str(after_cir_str)
+                    # 没有(1)标号，没有①标号，判断本句有没有服用方式，没有的话判断前面第一句（下标0）是否有服用方式，本句有则不拼接，没有拼接
+                    else:
+                        param_str = []
+                        if not take_search:
+                            concat_string = get_concat_str(concat_str)
+                # 这一段决定不用了，因为拼接作用有出错的可能性，而作用并不需要体现在断句正确性中，所以这里不拼接作用了
+                #本句没有作用，则拼接第一句的作用
+                # function_search = function_patr.search(con)
+                # if not function_search:
+                #     begin_function_search = function_patr.search(concat_str)
+                #     if begin_function_search:
+                #         function_list = begin_function_search.groups()
+                #         concat_string += ','.join(function_list)
+                age_fun_result[i] = concat_string + con
+    # 断句部分还要补充
+    return age_fun_result
+
+
 
 #从头开始完整处理一个句子
 
