@@ -71,12 +71,15 @@ function_patr = re.compile(function_str)
 
 #将句首中的给药方式作为拼接字符串返回
 def get_concat_str(search_string):
-    concat_string = ""
+    # concat_string = ""
+    admin_route_str = ""
     admin_search = take_patr.search(search_string)
     if admin_search:
-        admin_route = take_patr.findall(search_string)#以列表形式返回全部能匹配的子串
-        concat_string +=  ','.join(admin_route)
-    return concat_string
+        admin_route = take_patr.finditer(search_string)#以列表形式返回全部能匹配的子串
+        admin_route_list = [f.group() for f in admin_route]
+        admin_route_str = admin_route_list[-1]
+        # concat_string +=  ','.join(admin_route)
+    return admin_route_str
 #拼接给药方式
 def get_semi_cut(str):
     str = str.replace("&nsp", "").replace("\t", "").replace(" ", "")
@@ -287,34 +290,23 @@ def get_age_func_cut(str_age,str_fun,ori_str):
     cir_match = take_patr_cir.search(ori_str)
     str = ""
     concat_string = ""
+    take_string = ""
     # 只有……（1）……①  -->  ①……
     if b_match:
         # 有（1）标号，有①标号，直接拼接(1)和①标号之间的内容，①标号后开始断句处判断是否有服药方式，没有则拼接
         if cir_match:
-            str = ori_str[cir_match.start():]
-            str0 = ori_str[:cir_match.start()]# ……(1)……
-            param_str = [str0, cir_match.group()]  # ……(1)……①
-            if param_str:
-                begin_str = ''.join(param_str)
-                concat_string += begin_str
+            str = ori_str[cir_match.end():] #①后内容（不包含①）
+            concat_string = ori_str[:cir_match.end()]# ……(1)……①
         # ……（1）……  -->  （1）……
         # 有（1）标号，没有①标号，判断断句是否有服用方式，没有则拼接包含标号（1）的首句中的服用方式
         else:
-            str = ori_str[b_match.start():]
-            str0 = ori_str[:b_match.start()]
-            param_str = [str0, b_match.group()]  # ……（1）
-            if param_str:
-                begin_str = ''.join(param_str)
-                concat_string += begin_str
+            str = ori_str[b_match.end():]
+            concat_string = ori_str[:b_match.end()]
     else:# ……①……  -->  ①……
         # 没有(1)标号，有①标号，前面有文字的直接拼接，①标号后断句判断是否有服用方式，没有拼接句首中服用方式
         if cir_match:
-            str = ori_str[cir_match.start():]# ①……
-            str0 = ori_str[:cir_match.start()] #……
-            param_str = [str0, cir_match.group()]  # ……①
-            if param_str:
-                begin_str = ''.join(param_str)
-                concat_string += begin_str
+            str = ori_str[cir_match.end():]# ……①标号后内容(不包含①标号)
+            concat_string = ori_str[:cir_match.end()] #……①
         # 没有(1)标号，没有①标号，判断本句有没有服用方式，没有的话判断前面第一句（下标0）是否有服用方式，本句有则不拼接，没有拼接
         #…… --> ……
         else:
@@ -345,6 +337,8 @@ def get_age_func_cut(str_age,str_fun,ori_str):
     #         fun_12_last = [''.join(i) for i in zip(fun_result[1::2],fun_result[2::2])]
     #         cat_fun_result.extend(fun_12_last)
         cat_fun_result = get_function_cut(str)
+    else:
+        cat_fun_result.append(str)
 
     #按年龄切分
     for fun_con in cat_fun_result:
@@ -364,26 +358,29 @@ def get_age_func_cut(str_age,str_fun,ori_str):
 
     # 拼接给药方式和前面内容
     if tmp_result:
-        len_age_fun = len(tmp_result)
+        len_age_fun = len(tmp_result[0])
+        #长度大于2的时候，是一句话中通过年龄进行的切分，搜索给药方式的字符串需要拼接这个切分句子的首句，如果它包含服药方式，就选择它（选择最近的）
+        take_string = concat_string+tmp_result[0][0]
+        admin_route_string = ""
         if len_age_fun >1:
             for i,con in enumerate(tmp_result):
-                #判断断句是否有服药方式，有则不需拼接需要方式，没有要拼接
-                if isinstance(con, list):
-                    for k in con:
-                        take_search = take_patr.search(k)
-                        if not take_search:
-                            concat_string += get_concat_str(k)
-                        age_fun_result[i] = concat_string + k
+                #判断断句是否有服药方式，有则不需拼接服药方式，没有要拼接
+                len_con = len(con)
+                if len_con>1:
+                    take_string += con[0]
+                for k in con:
+                    take_search = take_patr.search(k)
+                    if not take_search:
+                        admin_route_string = get_concat_str(take_string)
+                    age_fun_result.append(concat_string +admin_route_string+ k)
+                    admin_route_string = ""
 
-                take_search = take_patr.search(con)
-                if not take_search:
-                    concat_string += get_concat_str(con)
-                age_fun_result[i] = concat_string + con
-                return age_fun_result
+            return age_fun_result
         else:
+            tmp_result[0][0] =concat_string +tmp_result[0][0]
             return tmp_result
-test_str="（1） 口服 催眠，30〜100 mg,晚上 一次顿服；镇静，一次15〜30 mg,一日2〜3次；抗惊厥， 一日90~180 mg,可在晚上一次顿服，或30〜60 mg, 一 日3次。极量一次250 mg,—日500 mg。老年人或虚弱 患者应减量，常用量即可产生兴奋、精神错乱或抑郁5mg。 抗高胆红素血症，一次30〜60 mg,一日3次。"
-print(get_age_func_cut(age_str,function_str,test_str))
+test_str="（1） 口服 催眠，30〜100 mg,晚上 一次顿服；镇静，一次15〜30 mg,一日2〜3次；抗惊厥， 一日90~180 mg,可在晚上一次顿服，或30〜60 mg, 一 日3次。极量一次250 mg,—日500 mg。老年人或虚弱 患者应减量，常用量即可产生兴奋、精神错乱或抑郁。 抗高胆红素血症，一次30〜60 mg,一日3次。"
+# print(get_age_func_cut(age_str,function_str,test_str))
 
 
 #从头开始完整处理一个句子
@@ -394,6 +391,7 @@ def get_sentence_cut(str):
     circle_patr = re.compile(r'([①②③④⑤⑥⑦⑧⑨⑩]+)')
     bracket_list=[]
     circle_list=[]
+    function_age_result = []
     #str有括号（），切分（）
     # 效果：[……(1)……,……(2)……，……]
     if bracket_patr.search(str):
@@ -412,19 +410,16 @@ def get_sentence_cut(str):
             else:
                 circle_list.append(ci)
 
-    # if circle_list:
-
-
-
-
-
-
-
-
+    if circle_list:
+        for cir in circle_list:
+            function_age_reslut1=get_age_func_cut(age_str, function_str, cir)
+            function_age_result.append(function_age_reslut1)
+    return function_age_result
 
 if __name__=="__main__":
     tt_str = "（1） 口服 成人 ①抗焦虑，一次 2.5〜10 mg,一日2〜4次。②镇静、催眠、急性乙醇戒 断,第一日，一次10 mg。一日3〜4次,以后按需要减少到一次5mg,一日3〜4次。老年或体弱患者应减量。（2）肌内或静脉注射  成人①基础麻醉或静脉全麻。10-30 mg。②镇静、催眠或急性乙醇戒断，开始 10 mg,以后按需每隔3〜4小时加5〜10 mg。24小时 总量以40〜50 mg为限。③癫痫持续状态和严重复发 性癫痫，开始静脉注射10 mg,每间隔10〜15分钟可按 需增加甚至达最大限用量。破伤风时可能需要较大药量。老年和体弱患者,肌内注射或静脉注射的用量减半。静脉注射宜缓慢，每分钟2〜5 mg。"
-    result =  get_sentence_cut(tt_str)
+    tt_str1 = "口服 成人临睡前服7. 5 mg,老年 和体弱或肝功能不全患者3. 75 mg。"
+    result =  get_sentence_cut(tt_str1)
     print(result)
 
 
