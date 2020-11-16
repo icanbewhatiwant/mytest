@@ -130,8 +130,13 @@ def data2Excel(drug_dict,drug_list,pra_len):
         # else:
         #     break
     if drug_list:
-        with open("C:/产品文档/转换器测试数据/已整理1-200.json","w",encoding='utf-8') as fp:
-            fp.write(json.dumps(drug_list, indent=4,ensure_ascii=False))#unicode串转中文传入
+        with open("C:/产品文档/转换器测试数据/已整理1-200_20201116.json", "w", encoding='utf-8') as fp:
+            for drug in drug_list:
+                fp.write(json.dumps(drug, indent=4,ensure_ascii=False))
+                fp.write('\n')
+
+        # with open("C:/产品文档/转换器测试数据/已整理1-200.json","w",encoding='utf-8') as fp:
+        #     fp.write(json.dumps(drug_list, indent=4,ensure_ascii=False))#unicode串转中文传入
 
 #遍历文件得到label名称，去重作为列名
 # 得到：['【药理】', '【不良反应】', '【禁忌证】', '【注意事项】', '【用法与用量】', '【儿科用法与用量】', '【制剂与规格】', '【适应证】', '【儿科注意事项】', '【药物相互作用】', '【给药说明】']

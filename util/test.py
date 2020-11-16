@@ -358,33 +358,26 @@ def get_age_func_cut(str_age,str_fun,ori_str):
 
     # 拼接给药方式和前面内容
     if tmp_result:
-        len_age_fun = len(tmp_result[0])
-        #长度大于2的时候，是一句话中通过年龄进行的切分，搜索给药方式的字符串需要拼接这个切分句子的首句，如果它包含服药方式，就选择它（选择最近的）
+        #搜索给药方式的字符串需要拼接切分句子的首句，以及拼接按年龄切分句子的句首，最后选择拼接字符串中离后面断句最近的给药方式，拼接到后面的断句
         take_string = concat_string+tmp_result[0][0]
         admin_route_string = ""
-        if len_age_fun >1:
-            for i,con in enumerate(tmp_result):
-                #判断断句是否有服药方式，有则不需拼接服药方式，没有要拼接
-                len_con = len(con)
-                if len_con>1:
-                    take_string += con[0]
-                for k in con:
-                    take_search = take_patr.search(k)
-                    if not take_search:
-                        admin_route_string = get_concat_str(take_string)
-                    age_fun_result.append(concat_string +admin_route_string+ k)
-                    admin_route_string = ""
-
-            return age_fun_result
-        else:
-            tmp_result[0][0] =concat_string +tmp_result[0][0]
-            return tmp_result
+        for i,con in enumerate(tmp_result):
+            #判断断句是否有服药方式，有则不需拼接服药方式，没有要拼接
+            len_con = len(con)
+            if len_con>1:
+                take_string += con[0]
+            for k in con:
+                take_search = take_patr.search(k)
+                if not take_search:
+                    admin_route_string = get_concat_str(take_string)
+                age_fun_result.append(concat_string +admin_route_string+ k)
+                admin_route_string = ""
+        return age_fun_result
 test_str="（1） 口服 催眠，30〜100 mg,晚上 一次顿服；镇静，一次15〜30 mg,一日2〜3次；抗惊厥， 一日90~180 mg,可在晚上一次顿服，或30〜60 mg, 一 日3次。极量一次250 mg,—日500 mg。老年人或虚弱 患者应减量，常用量即可产生兴奋、精神错乱或抑郁。 抗高胆红素血症，一次30〜60 mg,一日3次。"
 # print(get_age_func_cut(age_str,function_str,test_str))
 
 
 #从头开始完整处理一个句子
-
 def get_sentence_cut(str):
     str = str.replace("&nsp", "").replace("\t", "").replace(" ", "")
     bracket_patr = re.compile("([（(]\d[）)]){1}")
