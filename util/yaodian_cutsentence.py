@@ -66,6 +66,9 @@ zd_12 = "([；;]或|牙科|肋间神经|宫颈旁浸润|椎旁脊神经阻滞" \
                   "|阴部神经|药物诱发的锥体外系反应|药物诿发的锥体外系反应|注入蛛网膜下隙|注入硬膜外间隙|硬膜外PCA|重度疼痛|如不能控制|用作胶原酶合成抑制剂时|一过性失眠" \
                   "|用量视患者的耐受情况|辅助椎管内麻醉|尿道扩张术|用于神经阻滞麻醉)+"
 zd_patr = re.compile(zd_12)
+exclude_patr = re.compile("[^，。,;；]+[，。,;；]?")#获取功能、年龄后的第一个句子
+dose_forbid=["维持量","极量","限量","最大量","总量","维持","继以","患者的耐受情况","耐受的用量"]
+
 #按作用切分句子
 def get_zd_cut(str):
     zd_result = []
@@ -78,10 +81,22 @@ def get_zd_cut(str):
         if f:
             indexes = [i.start() for i in f]
             for i, idx in enumerate(indexes):
+                forbi_flag = False
                 zd_begin = str[:idx]
                 zd_next = str[idx:] if i == len(indexes) - 1 else str[idx:indexes[i + 1]]
-                if dose_patr.search(zd_begin) and dose_patr.search(zd_next):
-                    idxes_list.append(idx)
+
+
+                # 含部分关键字的不切分
+                zd_next_first_match = exclude_patr.search(zd_next)
+                zd_next_first = zd_next_first_match.group()
+                for forbi in dose_forbid:
+                    if forbi in zd_next_first:
+                        forbi_flag = True
+                        break
+                if not forbi_flag:
+
+                    if dose_patr.search(zd_begin) and dose_patr.search(zd_next):
+                        idxes_list.append(idx)
         # 用于断句的index_list,存放满足条件的年龄的index，切分即可
         if idxes_list:
             for j, idxx in enumerate(idxes_list):
@@ -112,8 +127,11 @@ dose_str5 = "\d*\.?\d*%?[-|〜|~]?\d*\.?\d*(mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g
 # 每1kg体重0.15〜0.2mg。
 dose_str6 = "每\d*kg体重\d*\.?\d*[-|〜|~]?\d*\.?\d*[μg|mg|ml|g]"
 
-fuction_patr = re.compile("[，。,;；][^，。,;；]*"+function_str)
+fuction_patr = re.compile("[，。,;；][^，。,;；]*"+function_str+"[^，。,;；]*[，。,;；]")
 dose_patr = re.compile(dose_str5)
+rongye_end_patr = re.compile("(\d*\.?\d*%?[-|〜|~]?\d*\.?\d*%?溶液[,，])$")
+ml_begin_patr = re.compile("^(\d*\.?\d*[-|〜|~]?\d*\.?\d*(mg\/kg|mg|ml|g))")
+
 
 #按作用切分句子
 def get_function_cut(str):
@@ -125,12 +143,29 @@ def get_function_cut(str):
         idxes_list = []
         f = re.finditer(fuction_patr, str)
         if f:
-            indexes = [i.start() for i in f]
+            indexes = [i.end()-1 if i.group().endswith((";","；")) else i.start()for i in f]  #当作用所在句子以分号结尾时，idx取句子结尾，不取开头
             for i, idx in enumerate(indexes):
+                forbi_flag = False
                 fuction_begin = str[:idx + 1]
                 fuction_next = str[idx + 1:] if i == len(indexes) - 1 else str[idx + 1:indexes[i + 1]]
-                if dose_patr.search(fuction_begin) and dose_patr.search(fuction_next):
-                    idxes_list.append(idx + 1)
+                #含部分关键字的不切分
+
+                fuction_next_first_match = exclude_patr.search(fuction_next)
+                if fuction_next_first_match:
+                    fuction_next_first = fuction_next_first_match.group()
+                    for forbi in dose_forbid:
+                        if forbi in fuction_next_first:
+                            forbi_flag = True
+                            break
+                #如果不含部分关键字，再判断前一句是否以  0.25%溶液，结尾 。后一句是否以15〜30ml开头（0.25%溶液，15〜30ml是一个整体，不应该切分）
+                if forbi_flag == False:
+                    if rongye_end_patr.search(fuction_begin) and ml_begin_patr.search(fuction_next):
+                        forbi_flag = True
+
+                if not forbi_flag:
+
+                    if dose_patr.search(fuction_begin) and dose_patr.search(fuction_next):
+                        idxes_list.append(idx + 1)
         # 用于断句的index_list,存放满足条件的年龄的index，切分即可
         if idxes_list:
             for j, idxx in enumerate(idxes_list):
@@ -160,8 +195,7 @@ age_patr = re.compile("[，。,;；][^，。,;；]*(维持量[,，。：:]?)?"+a
 
 # 不用管年龄、作用后面的用药关键字，被限制的可能性很小，因为年龄、作用本身就可以作为独立断句的标准了
 
-exclude_patr = re.compile("[^，。,;；]*[，。,;；]?")#获取年龄后的第一个句子
-dose_forbid=["维持量","极量","限量","最大量","总量"]
+
 #按年龄切分句子
 def get_age_cut(str):
     # str = str.replace("&nsp", "").replace("\t", "").replace(" ", "")
@@ -238,7 +272,7 @@ def get_age_func_cut(str_fun,ori_str):
     # 获得句首拼接字符串
     # 只有……（1）……①  -->  ①……
     if b_match:
-        # 有（1）标号，有①标号，直接拼接(1)和①标号之间的内容，①标号后开始断句处判断是否有服药方式，没有则拼接
+        # 有（1）标号，有①标号，直接拼接(1)和①标号之间的内容，①标号后开始第二句断句开始判断是否有服药方式，没有则拼接第一个断句的服药方式，第一个断句没有也不用拼接
         if cir_match:
             str = ori_str[cir_match.end():] #①后内容（不包含①）
             concat_string = ori_str[:cir_match.end()]# ……(1)……①
@@ -246,7 +280,7 @@ def get_age_func_cut(str_fun,ori_str):
         # 有（1）标号，没有①标号，判断断句是否有服用方式，没有则拼接包含标号（1）的首句中的服用方式
         else:
             str = ori_str[b_match.end():]
-            concat_string = ori_str[:b_match.end()]
+            concat_string = ori_str[:b_match.end()] #……(1)
     else:# ……①……  -->  ①……
         # 没有(1)标号，有①标号，前面有文字的直接拼接，①标号后断句判断是否有服用方式，没有拼接句首中服用方式
         if cir_match:
@@ -279,7 +313,7 @@ def get_age_func_cut(str_fun,ori_str):
     # 拼接给药方式和前面内容
     if tmp_result:
         #take_string 搜索给药方式的字符串 需要拼接切分句子的首句，以及拼接按年龄切分句子的句首，最后选择拼接字符串中离后面断句最近的给药方式，拼接到后面的断句
-        take_string = concat_string+tmp_result[0][0]
+        take_string = tmp_result[0][0]
         admin_route_string = ""
         for i,con in enumerate(tmp_result):
             #判断断句是否有服药方式，有则不需拼接服药方式，没有要拼接
@@ -336,7 +370,12 @@ if __name__=="__main__":
              "④浸润麻醉或静脉注射 区域阻滞：用0. 25% ~0. 5%溶液，50〜300 mg。⑤外周 神经阻滞：臂丛（单侧）用1.5%溶液，250〜300 mg；牙科 用2%溶液，20〜100 mg；" \
              "肋间神经（每支）用1%溶液 30 mg,300 mg为限；宫颈旁浸润用0. 5%〜1%溶液，左右 侧各100 mg；椎旁脊神经阻滞（每支）用1. 0%溶液30〜 50 mg,300 mg为限；" \
              "阴部神经用0.5%〜1%溶液，左右侧 各100 mg。⑥交感神经节阻滞:颈星状神经节用1.0%溶 液50 mg；⑦一次限量：不加肾上腺一般不要超过200 mg （4 mg/kg）,加肾上腺素为300〜350 mg（6 mg/kg）,静脉 注射区域阻滞极量4 mg/kg。"
-    # result =  get_sentence_cut(zd_str)
+
+    rongye_str = "③硬脊膜外阻滞时，0.25%〜0.375%溶液，10〜20ml可用于镇痛；0.5%溶液，10〜20ml,可用于一般的下腹部手术；0.75%溶液，10〜20ml用于中上腹部手术。"
+    test_begin = "口服（1）成人第1日50 mg,第 2日100 mg,第3日200 mg,第4日300 mg,以后逐渐增 加剂量到有效剂量范围。可根据患者的疗效和耐受情 况调整剂量，一般一日为300〜750 mg,分2次给药。&nsp（2）儿童青少年 起始剂量一次25 mg, 一日2次；根据病情和耐受情况逐渐加量，一次增加25〜50 mg,至 有效剂量或最大耐受剂量。最大剂量一日750 mg。&nsp（3）老年 用药应慎重，第1日为25 mg,以后每日 增加25〜50 mg,直到产生疗效。&nsp缓释片用法：应整片服下，一日1次,晚间服用。对 精神分裂患者的推荐的起始剂量为一日300 mg。滴定至 —日400 mg〜800 mg的范围。"
+    #
+    # result =  get_sentence_cut(test_begin)
+    # print(result)
 
 
     # 将多层list展平
@@ -362,18 +401,11 @@ if __name__=="__main__":
     def data_pro_2list(filepath):
         tmp = []
         json_str = ""
-        # try:
         for line in open(filepath, 'r', encoding='UTF-8'):
             json_str += line.replace("\n", "").replace("'"," ")
             if check_json_format(json_str):
                 tmp.append(json.loads(json_str))
                 json_str = ""
-        # except:
-        #     with open("C:/产品文档/转换器测试数据/1-200_20201116_cutsentence.json", "w", encoding='utf-8') as fp:
-        #         for drug in tmp:
-        #             fp.write(json.dumps(drug, indent=4, ensure_ascii=False))
-        #             fp.write('\n')
-
 
         if tmp:
             for drug_info in tmp:
@@ -387,7 +419,7 @@ if __name__=="__main__":
                     erke_sentence_cut = get_sentence_cut(erke_take_way)
                     drug_info["erke_sentence_cut"] = sum_brackets(erke_sentence_cut)
 
-            with open("C:/产品文档/转换器测试数据/1-200_20201116_cutsentence.json", "w", encoding='utf-8') as fp:
+            with open("C:/产品文档/转换器测试数据/1-200_20201116_cutsentence2.json", "w", encoding='utf-8') as fp:
                 for drug in tmp:
                     fp.write(json.dumps(drug, indent=4, ensure_ascii=False))
                     fp.write('\n')
