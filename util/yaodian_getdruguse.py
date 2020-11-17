@@ -28,10 +28,13 @@ age_str = "(成人|肝、肾功能损害者|高龄患者|老年和体弱或肝�
 
 age_priority = re.compile("\d*[-|〜|～|~]\d+岁")
 age_num_patr = re.compile("\d+")
+age_unit_patr = re.compile("岁|月|天")
 age_patr = re.compile(age_str)
+person2age = {"成人":"16岁","新生儿":"","幼儿":"","儿童":"4岁","青少年":"14岁","小儿":"","老年人":""}
 def get_age(str):
     age_result = {}
     age_str = ""
+    age_unit_string = ""
     age_search = age_patr.search(str)
     if age_search:
         age_string = age_search.group()
@@ -40,30 +43,46 @@ def get_age(str):
         age_sentence = age_sentence_patr.search(str).group()
 
         age_priority_match=age_priority.search(age_sentence)
+        #年龄所在句子优先匹配
         if age_priority_match:
             age_string = age_priority_match.group()
-            age_low_high = age_num_patr.search(age_string)
+            age_low_high = age_num_patr.findall(age_string)
             age_result["age_low"] =age_low_high[0]
             if len(age_low_high)>1:
                 age_result["age_high"] = age_low_high[1]
             else:
                 age_result["age_high"] = age_low_high[0]
+            age_unit_string = age_string
+        else:
+            age_list = age_patr.finditer(age_sentence)#以列表形式返回全部能匹配的子串
+            age_str_list = [f.group() for f in age_list]
+            age_str = age_str_list[-1]
+            if age_str in person2age.keys():
+                age_result_str = person2age[age_str]
+                age_low_high = age_num_patr.findall(age_result_str)
+                age_result["age_low"] = age_low_high[0]
+                age_unit_string =age_result_str
+        #年龄单位
+        age_unit_search = age_unit_patr.search(age_unit_string)
+        if age_unit_search:
+            age_result["age_unit"] = age_unit_search.group()
 
-
-        age_list = age_sentence_patr.finditer(age_sentence)#以列表形式返回全部能匹配的子串
-        age_str_list = [f.group() for f in age_list]
-        age_str = age_str_list[-1]
-    return age_str
+    return age_result
+age_test1 = "口服24-40kg的儿童，早、晚各lOOmg（2袋），或遵医嘱。"
 age_test = "2～12岁儿童：体重≤30公斤：一日1次，一次半片(5毫克)。"
-print("age:",get_age(age_test))
+print("age:",get_age(age_test1))
+
 
 weight_teststr = "①静脉滴注体重低于70kg（或血压不稳定）者，开始2小时可按每小时7.5μg/kg给药；如耐受性好，2小时后剂量可增至每小时15μg/kg。体重大于70kg者，开始2小时宜按每小时15μg/kg给药；如耐受性好，2小时后剂量可增至每小时30μg/kg。②体重34kg以下小儿,肌内注射2mg。或先静脉注射1mg,如30〜45秒钟无效，再重复静脉注射1mg,直到总量达5mg；③体重34kg以上儿童，肌内注射5mg,或先静脉注射2mg,若30~45秒钟无效，再重复静脉注射1mg,直到总量10mg。"
 weight_teststr1 = "口服24-40kg的儿童，早、晚各lOOmg（2袋），或遵医嘱。"
 weight_teststr2 = "2～12岁儿童：体重≤30公斤：一日1次，一次半片(5毫克)。"
-
-
+weight_high_patr = re.compile("低于|小于|≤|<|以下")
+weight_low_patr = re.compile("大于|高于|>|≥|以上")
+weight_num_patr = re.compile("\d+")
+#获取体重高、低值
 def get_weight(str):
-    weight_str = "(低于|大于|≤|<|>≥)?\d+[-|〜|~|~]?\d+(kg|公斤)(以下|以上)?"
+    weight_result = {}
+    weight_str = "(低于|大于|≤|<|>|≥)?\d+[-|〜|~|~]?\d+(kg|公斤)(以下|以上)?"
     weight_patr = re.compile(weight_str)
     weight_str = ""
     weight_search = weight_patr.search(str)
@@ -71,7 +90,11 @@ def get_weight(str):
         weight_iter = weight_patr.finditer(str)
         weight_str_list = [f.group() for f in weight_iter]
         weight_str = weight_str_list[-1]
-    return weight_str
+        if weight_low_patr.search(weight_str):
+            weight_result["weight_low"] =weight_num_patr.search(weight_str).group()
+        if weight_high_patr.search(weight_str):
+            weight_result["weight_high"] = weight_num_patr.search(weight_str).group()
+    return weight_result
 print("weight:", get_weight(weight_teststr2))
 
 
