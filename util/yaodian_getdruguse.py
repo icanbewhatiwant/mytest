@@ -238,23 +238,23 @@ dose1_string = "（1）口服成人①抗焦虑，一次2.5〜10mg,一日2〜4�
 dose2_string = "（1）口服抗惊厥，一日90~180mg,可在晚上一次顿服，或30〜60mg,一日3次。极量一次250mg,—日500mg。老年人或虚弱患者应减量，常用量即可产生兴奋、精神错乱或抑郁。"
 dosestime_sting = "皮下注射或静脉注射成人常用 量一次5〜10mg。极量一日40mg。"
 dosestime_stime = "（3）儿童剂量可稍高，每1kg体重0.2mg；用于维持麻醉时，小剂量静脉注射,剂量及注射间隔视患者个体差异而定。"
-test_str9 = "（2）肌内注射催眠，一次100mg；"
+test_str9 = "皮下注射或静脉注射成人常用量一次5〜10mg。极量一日40mg。"
 
 print("single_dose:", get_single_dose(test_str9))
 
-#获得单次剂量极值
-def get_stime_limit(str):
-    weight_str = "(低于|大于|≤|<|>≥)?\d+[-|〜|～|~]?\d+(kg|公斤)(以下|以上)?"
-    weight_patr = re.compile(weight_str)
-    weight_str = ""
-    weight_search = weight_patr.search(str)
-    if weight_search:
-        weight_iter = weight_patr.finditer(str)
-        weight_str_list = [f.group() for f in weight_iter]
-        weight_str = weight_str_list[-1]
-    return weight_str
+#获得单次剂量极值、单日剂量极值
+def get_limit(str):
+    limit_result = {}
+    limit_str = ""
+    limit_patr = re.compile(limit_str)
+    limit_search = limit_patr.search(str)
+    if limit_search:
+        limit_iter = limit_patr.finditer(str)
+        limit_str_list = [f.group() for f in limit_iter]
+        limit_str = limit_str_list[-1]
+    return limit_result
 
-jiliang_sting = "（1）口服抗惊厥，一日90~180mg,可在晚上一次顿服，或30〜60mg,一日3次。极量一次250mg,—日500mg。老年人或虚弱患者应减量，常用量即可产生兴奋、精神错乱或抑郁。"
+limit_sting = "（1）口服抗惊厥，一日90~180mg,可在晚上一次顿服，或30〜60mg,一日3次。极量一次250mg,—日500mg。老年人或虚弱患者应减量，常用量即可产生兴奋、精神错乱或抑郁。"
 
 # print("stime_limit:", get_stime_limit(jiliang_sting))
 
