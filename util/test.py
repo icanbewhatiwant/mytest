@@ -1,5 +1,5 @@
 
-# from util.yaodianRe import get_bracket_str #引入同一包下的模块，文件夹下创建__init__文件()，代表目录是一个包，模块名就是util
+from util.yaodianRe import get_bracket_str #引入同一包下的模块，文件夹下创建__init__文件()，代表目录是一个包，模块名就是util
 
 import re
 #"|"或是有先后顺序的，先匹配左边再匹配右边，所以短文本应该尽量在包含它的长文本后面，新加入的也要注意这个顺序
