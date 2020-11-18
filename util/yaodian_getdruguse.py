@@ -1,3 +1,5 @@
+from util.doseProcess import get_stime_sday
+from util.doseProcess import get_stime_jici
 import re
 # 需要提取字段
 # 年龄、体重、给药途径、单次推荐剂量、单日推荐剂量、单次剂量极值、单日剂量极值，推荐给药频次、推荐给药描述、用药推荐天数
@@ -135,100 +137,11 @@ chi2num = {"一":"1","二":"2","三":"3","四":"4","五":"5","六":"6","七":"7"
 
 pingci = re.compile("隔日|一日|—日|每日|分成|分|晚上|每晚|(?:\d|[一二三四五六七八九十])(?:小时|日|周)")
 cishu = re.compile("(?:\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])次")
-pingci_dict = ["隔日","一日","—日","每日","分成","分","晚上","每晚"]
 pingci_geri = re.compile("隔日")
 pingci_1day = re.compile("一日|—日|每日|分成|分|晚上|每晚")
 pingci_hour = re.compile("(?:\d|[一二三四五六七八九十])小时")
 pingci_day = re.compile("(?:\d|[一二三四五六七八九十])日")
 pingci_week = re.compile("(?:\d|[一二三四五六七八九十])周")
-
-#获得单次推荐剂量和单日推荐剂量
-def get_stime_sday(single_dose_str,dose_sentence):
-    dose_result = {}
-    # 获取单次给药剂量，分解 单次给药低、高值，以及剂量单位
-    # 单次剂量
-    single_dose = dose_num_patr.search(single_dose_str)
-    if single_dose:
-        sindose_low_high = num_patr.findall(single_dose.group())
-        dose_result["sdose_low"] = sindose_low_high[0]
-        if len(sindose_low_high) > 1:
-            dose_result["sdose_high"] = sindose_low_high[1]
-        else:
-            dose_result["sdose_high"] = sindose_low_high[0]
-    #单日剂量
-    sday_match = dose_sday.search(dose_sentence)
-    if sday_match:
-        sday_low_high = num_patr.findall(sday_match.group())
-        dose_result["sday_dose_low"] = sday_low_high[0]
-        if len(sday_low_high) > 1:
-            dose_result["sday_dose_high"] = sday_low_high[1]
-        else:
-            dose_result["sday_dose_high"] = sday_low_high[0]
-    return dose_result
-
-#获取单次给药剂量和频次
-def get_stime_jici(single_dose_str, dose_sentence):
-    dose_result = {}
-    # 单次剂量
-    single_dose = dose_num_patr.search(single_dose_str)
-    if single_dose:
-        sindose_low_high = num_patr.findall(single_dose.group())
-        dose_result["sdose_low"] = sindose_low_high[0]
-        if len(sindose_low_high) > 1:
-            dose_result["sdose_high"] = sindose_low_high[1]
-        else:
-            dose_result["sdose_high"] = sindose_low_high[0]
-
-    # 获取给药频次及其分解
-    stime_search = time_patr.search(dose_sentence)
-    if stime_search:
-        stime_string = stime_search.group()
-        pingci_match = pingci.search(stime_string)
-        pingci_string = pingci_match.group()
-        hour_match = pingci_hour.search(pingci_string)
-        week_match = pingci_week.search(pingci_string)
-        if pingci_match:
-            pingci_string = pingci_match.group()
-            if pingci_1day.search(pingci_string):
-                pingci_str = "1"
-            elif pingci_geri.search(pingci_string):
-                pingci_str = "2"
-            elif hour_match:
-                hour_string = hour_match.group()
-                hour_num_match = num_patr.search(hour_string)
-                hour_num = "0"
-                if hour_num_match:
-                    hour_num = hour_num_match.group()
-                else:
-                    chi_hour_match = chi_num_patr.search(hour_string)
-                    if chi_hour_match:
-                        chi_num = chi_hour_match.group()
-                    hour_num = chi2num.get(chi_num,"")
-            elif week_match:
-                week_string = week_match.group()
-                week_num_match = num_patr.search(week_string)
-                week_num = "0"
-                if week_num_match:
-                    week_num = week_num_match.group()
-                else:
-                    chi_week_match = chi_num_patr.search(week_string)
-                    if chi_week_match:
-                        chi_week_num = chi_week_match.group()
-                        week_num = chi2num.get(chi_week_num, "")
-                if week_num !="0":
-                    pingci_str = int(week_num)*7
-
-
-        time_low_high = num_patr.findall(stime_search.group())
-        dose_result["dose_time_low"] = time_low_high[0] + "/1"
-        dose_result["dose_time_low_des"] = "一日" + time_low_high[0] + "次"
-        if len(time_low_high) > 1:
-            dose_result["dose_time_high"] = time_low_high[1] + "/1"
-            dose_result["dose_time_high_des"] = "一日" + time_low_high[1] + "次"
-        else:
-            dose_result["dose_time_high"] = time_low_high[0] + "/1"
-            dose_result["dose_time_high_des"] = "一日" + time_low_high[0] + "次"
-
 
 #获取单次推荐剂量、推荐给药频次、单日推荐剂量、剂量单位
 def get_single_dose(str):
