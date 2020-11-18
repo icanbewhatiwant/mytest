@@ -243,24 +243,48 @@ test_str9 = "皮下注射或静脉注射成人常用量一次5〜10mg。极量�
 print("single_dose:", get_single_dose(test_str9))
 
 #获得单次剂量极值、单日剂量极值
+limit_list = ["极量"]
 def get_limit(str):
     limit_result = {}
-    limit_str = ""
-    limit_patr = re.compile(limit_str)
-    limit_search = limit_patr.search(str)
-    if limit_search:
-        limit_iter = limit_patr.finditer(str)
-        limit_str_list = [f.group() for f in limit_iter]
-        limit_str = limit_str_list[-1]
+    limit_num_patr = re.compile("\d*\.?\d+")
+    # 极量所在句，后面有句子时，往后再匹配最多一句
+    limit_2sen = "[,，。;；]?[^,，。;；]*极量.?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?"
+    limit_1day = re.compile("(?:一日|—日)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
+    #
+    limit_2patrr = re.compile(limit_2sen)
+    limit_2search = limit_2patrr.search(str)
+    #极量所在句子+后面一句
+
+    #单次剂量极值匹配时按极量所在句子匹配第一个用量，提高匹配度（一次这种匹配度比较低）单日的则一般是后面一个句子，用"一日"匹配，准确率高一些
+    if limit_2search:
+        limit_sentence = limit_2search.group()
+        dose_patr = re.compile(dose_str5)
+        dose_str = ""
+        dose_search = dose_patr.search(limit_sentence)
+        if dose_search:
+            dose_iter = dose_patr.finditer(limit_sentence)
+            dose_str_list = [f.group() for f in dose_iter]
+            dose_str = dose_str_list[0]
+            limit_result["limit_1time"] = limit_num_patr.search(dose_str).group()
+
+        day_search = limit_1day.search(limit_sentence)
+        if day_search:
+            limit_1daystr = limit_num_patr.search(day_search.group())
+            if limit_1daystr:
+                limit_result["limit_1day"] = limit_1daystr.group()
+
     return limit_result
 
-limit_sting = "（1）口服抗惊厥，一日90~180mg,可在晚上一次顿服，或30〜60mg,一日3次。极量一次250mg,—日500mg。老年人或虚弱患者应减量，常用量即可产生兴奋、精神错乱或抑郁。"
+limit_sting = "（1）口服抗惊厥，一日90~180mg,可在晚上一次顿服，或30〜60mg,一日3次。极量250mg,—日500mg。老年人或虚弱患者应减量，常用量即可产生兴奋、精神错乱或抑郁。"
 
-# print("stime_limit:", get_stime_limit(jiliang_sting))
+limit_string1="（1）癫痫口服成人每日按体重15mg/kg"
+limit_string2 = "（3）阿片全碱皮下注射②极量，一次30mg。"
 
+print("stime_limit:", get_limit(limit_string2))
 
-
-
+# 加一个单日、单次剂量单位
+# 最高量、最大剂量、最大维持量、最大用量、最大量 ——》查找最大数字，看句子是否包含这些关键字？
+# 口服。每次5～15mg(1～3粒)，每日3次，严重病人可遵医嘱增至每次30mg（6粒），每日3次。
 
 
 
