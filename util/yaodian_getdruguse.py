@@ -99,27 +99,32 @@ print("weight:", get_weight(weight_teststr2))
 
 
 
-# 一次……，一日……
-dose_str1 = "(一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g).+?(每日|一日|—日|每晚)\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(次|ml)?"
-# 一次……mg
-dose_str2 = "(一次)[^,.;，。；(不超过)]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g)"
-#一日，分N次
-dose_str3 = "(一日|—日|按体重)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g).*(每日|分成|分|晚上)(\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])(次)?"
-# 一日……一日……
-dose_str4 = "(一日|—日)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g).?(一日|—日)\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(次)?"
+# 一次……mg，一日……mg 单次推荐剂量 单日推荐剂量
+dose_str1 = "(每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g).+?(一日|—日|每日|每晚|晚上|按体重)\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g)?"
+
+# 一次……mg,一日……次  单次推荐剂量 推荐给药频次
+dose_str7 = "(每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g).+?(隔日|一日|—日|每日|分成|分|晚上|每晚|(?:\d|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])次"
+# 一次……mg 单次推荐剂量
+dose_str2 = "(每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*?\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g)"
+#一日……mg，分N次  单日推荐剂量，推荐给药频次
+dose_str3 = "(一日|—日|每日|每晚|晚上|按体重)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g).*?(隔日|一日|—日|每日|分成|分|晚上|每晚|(?:\d|[一二三四五六七八九十])(?:小时|日|周))(\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])次"
+# 一日……mg 单日推荐剂量
+dose_str4 = "((一日|—日|每日|每晚|晚上)[^,.;，。；]*?\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g)"
 #0. 4〜0.8mg
 dose_str5 = "\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)"
 # 每1kg体重0.15〜0.2mg。
 dose_str6 = "每\d*kg体重\d*\.?\d*[-|〜|～|~]?\d*\.?\d+[μg|mg|ml|g]"
 
-dose_timestr = "\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(?:次|ml)"
+dose_timestr = "(隔日|一日|—日|每日|分成|分|晚上|每晚|(?:\d|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])次"
 chi_dose_timestr = "[一二三四五六七八九十]次"
 
 dose_stime_sday = re.compile(dose_str1)
 dose_stime = re.compile(dose_str2)
 dose_sday_stime = re.compile(dose_str3)
-dose_sday_sday = re.compile(dose_str4)
+dose_sday = re.compile(dose_str4)
 dose_sweight = re.compile(dose_str6)
+dose_stime_jici = re.compile(dose_str7)
+
 time_patr = re.compile(dose_timestr)
 chi_time_patr = re.compile(chi_dose_timestr)
 num_patr = re.compile("\d*\.?\d+")
@@ -127,12 +132,111 @@ chi_num_patr = re.compile("[一二三四五六七八九十]+")
 dose_num_patr = re.compile("\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+")
 dose_unit_patr = re.compile("mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%")
 chi2num = {"一":"1","二":"2","三":"3","四":"4","五":"5","六":"6","七":"7","八":"8","九":"9","十":"10"}
-#单次推荐剂量、推荐给药频次
+
+pingci = re.compile("隔日|一日|—日|每日|分成|分|晚上|每晚|(?:\d|[一二三四五六七八九十])(?:小时|日|周)")
+cishu = re.compile("(?:\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])次")
+pingci_dict = ["隔日","一日","—日","每日","分成","分","晚上","每晚"]
+pingci_geri = re.compile("隔日")
+pingci_1day = re.compile("一日|—日|每日|分成|分|晚上|每晚")
+pingci_hour = re.compile("(?:\d|[一二三四五六七八九十])小时")
+pingci_day = re.compile("(?:\d|[一二三四五六七八九十])日")
+pingci_week = re.compile("(?:\d|[一二三四五六七八九十])周")
+
+#获得单次推荐剂量和单日推荐剂量
+def get_stime_sday(single_dose_str,dose_sentence):
+    dose_result = {}
+    # 获取单次给药剂量，分解 单次给药低、高值，以及剂量单位
+    # 单次剂量
+    single_dose = dose_num_patr.search(single_dose_str)
+    if single_dose:
+        sindose_low_high = num_patr.findall(single_dose.group())
+        dose_result["sdose_low"] = sindose_low_high[0]
+        if len(sindose_low_high) > 1:
+            dose_result["sdose_high"] = sindose_low_high[1]
+        else:
+            dose_result["sdose_high"] = sindose_low_high[0]
+    #单日剂量
+    sday_match = dose_sday.search(dose_sentence)
+    if sday_match:
+        sday_low_high = num_patr.findall(sday_match.group())
+        dose_result["sday_dose_low"] = sday_low_high[0]
+        if len(sday_low_high) > 1:
+            dose_result["sday_dose_high"] = sday_low_high[1]
+        else:
+            dose_result["sday_dose_high"] = sday_low_high[0]
+    return dose_result
+
+#获取单次给药剂量和频次
+def get_stime_jici(single_dose_str, dose_sentence):
+    dose_result = {}
+    # 单次剂量
+    single_dose = dose_num_patr.search(single_dose_str)
+    if single_dose:
+        sindose_low_high = num_patr.findall(single_dose.group())
+        dose_result["sdose_low"] = sindose_low_high[0]
+        if len(sindose_low_high) > 1:
+            dose_result["sdose_high"] = sindose_low_high[1]
+        else:
+            dose_result["sdose_high"] = sindose_low_high[0]
+
+    # 获取给药频次及其分解
+    stime_search = time_patr.search(dose_sentence)
+    if stime_search:
+        stime_string = stime_search.group()
+        pingci_match = pingci.search(stime_string)
+        pingci_string = pingci_match.group()
+        hour_match = pingci_hour.search(pingci_string)
+        week_match = pingci_week.search(pingci_string)
+        if pingci_match:
+            pingci_string = pingci_match.group()
+            if pingci_1day.search(pingci_string):
+                pingci_str = "1"
+            elif pingci_geri.search(pingci_string):
+                pingci_str = "2"
+            elif hour_match:
+                hour_string = hour_match.group()
+                hour_num_match = num_patr.search(hour_string)
+                hour_num = "0"
+                if hour_num_match:
+                    hour_num = hour_num_match.group()
+                else:
+                    chi_hour_match = chi_num_patr.search(hour_string)
+                    if chi_hour_match:
+                        chi_num = chi_hour_match.group()
+                    hour_num = chi2num.get(chi_num,"")
+            elif week_match:
+                week_string = week_match.group()
+                week_num_match = num_patr.search(week_string)
+                week_num = "0"
+                if week_num_match:
+                    week_num = week_num_match.group()
+                else:
+                    chi_week_match = chi_num_patr.search(week_string)
+                    if chi_week_match:
+                        chi_week_num = chi_week_match.group()
+                        week_num = chi2num.get(chi_week_num, "")
+                if week_num !="0":
+                    pingci_str = int(week_num)*7
+
+
+        time_low_high = num_patr.findall(stime_search.group())
+        dose_result["dose_time_low"] = time_low_high[0] + "/1"
+        dose_result["dose_time_low_des"] = "一日" + time_low_high[0] + "次"
+        if len(time_low_high) > 1:
+            dose_result["dose_time_high"] = time_low_high[1] + "/1"
+            dose_result["dose_time_high_des"] = "一日" + time_low_high[1] + "次"
+        else:
+            dose_result["dose_time_high"] = time_low_high[0] + "/1"
+            dose_result["dose_time_high_des"] = "一日" + time_low_high[0] + "次"
+
+
+#获取单次推荐剂量、推荐给药频次、单日推荐剂量、剂量单位
 def get_single_dose(str):
     dose_result = {}
-    single_dose_patr = re.compile(dose_str5)
+    single_dose_patr = re.compile(dose_str5)#0. 4〜0.8mg
     single_dose_str = ""
     single_dose_search = single_dose_patr.search(str)
+    #获取匹配到的第一个给药剂量，一般是单次给药剂量的概率较大
     if single_dose_search:
         single_dose_iter = single_dose_patr.finditer(str)
         single_dose_str_list = [f.group() for f in single_dose_iter]
@@ -146,34 +250,18 @@ def get_single_dose(str):
         stime_sday_search = dose_stime_sday.search(dose_sentence)
         stime_search = dose_stime.search(dose_sentence)
         sday_stime_search = dose_sday_stime.search(dose_sentence)
-        sday_sday_search = dose_sday_sday.search(dose_sentence)
+        sday_search = dose_sday.search(dose_sentence)
         sweight_search = dose_sweight.search(dose_sentence)
+        stime_jici_search = dose_stime_jici.search(dose_sentence)
 
         # 获取给药频次数据，分解 推荐给药频次低值、高值、描述
+        #单次推荐剂量和单日推荐剂量
         if stime_sday_search:
+            dose_result = get_stime_sday(single_dose_str, dose_sentence)
+        elif stime_jici_search:
+            dose_result = get_stime_jici(single_dose_str, dose_sentence)
 
-            # 获取单次给药剂量，分解 单次给药低、高值，以及剂量单位
-            single_dose = dose_num_patr.search(single_dose_str)
-            if single_dose:
-                sindose_low_high = num_patr.findall(single_dose.group())
-                dose_result["sdose_low"] = sindose_low_high[0]
-                if len(sindose_low_high) > 1:
-                    dose_result["sdose_high"] = sindose_low_high[1]
-                else:
-                    dose_result["sdose_time_high"] = sindose_low_high[0]
-            #获取给药频次及其分解
-            stime_search = time_patr.search(dose_sentence)
-            if stime_search:
-                time_low_high = num_patr.findall(stime_search.group())
-                dose_result["dose_time_low"] = time_low_high[0] + "/1"
-                dose_result["dose_time_low_des"] = "一日" + time_low_high[0] + "次"
-                if len(time_low_high)>1:
-                    dose_result["dose_time_high"] = time_low_high[1] + "/1"
-                    dose_result["dose_time_high_des"] = "一日" + time_low_high[1] + "次"
-                else:
-                    dose_result["dose_time_high"] = time_low_high[0] + "/1"
-                    dose_result["dose_time_high_des"] = "一日" + time_low_high[0] + "次"
-        elif sday_stime_search or sday_sday_search:
+        elif sday_stime_search:
             single_dose = dose_num_patr.search(single_dose_str)
             if single_dose:
                 sindose_low_high = num_patr.findall(single_dose.group())
@@ -243,19 +331,20 @@ test_str9 = "皮下注射或静脉注射成人常用量一次5〜10mg。极量�
 print("single_dose:", get_single_dose(test_str9))
 
 #获得单次剂量极值、单日剂量极值
-limit_list = ["极量"]
+limit_list = ["极量","极最"]
 def get_limit(str):
     limit_result = {}
     limit_num_patr = re.compile("\d*\.?\d+")
     # 极量所在句，后面有句子时，往后再匹配最多一句
     limit_2sen = "[,，。;；]?[^,，。;；]*极量.?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?"
-    limit_1day = re.compile("(?:一日|—日)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
+    limit_1day = re.compile("(?:一日|—日|每日|每晚)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
     #
     limit_2patrr = re.compile(limit_2sen)
     limit_2search = limit_2patrr.search(str)
     #极量所在句子+后面一句
 
     #单次剂量极值匹配时按极量所在句子匹配第一个用量，提高匹配度（一次这种匹配度比较低）单日的则一般是后面一个句子，用"一日"匹配，准确率高一些
+    # 也有一日极量的，这里还是需要修改，排除每日关键字
     if limit_2search:
         limit_sentence = limit_2search.group()
         dose_patr = re.compile(dose_str5)
@@ -281,11 +370,4 @@ limit_string1="（1）癫痫口服成人每日按体重15mg/kg"
 limit_string2 = "（3）阿片全碱皮下注射②极量，一次30mg。"
 
 print("stime_limit:", get_limit(limit_string2))
-
-# 加一个单日、单次剂量单位
-# 最高量、最大剂量、最大维持量、最大用量、最大量 ——》查找最大数字，看句子是否包含这些关键字？
-# 口服。每次5～15mg(1～3粒)，每日3次，严重病人可遵医嘱增至每次30mg（6粒），每日3次。
-
-
-
 
