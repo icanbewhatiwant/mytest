@@ -4,6 +4,7 @@ from util.doseProcess import get_sday_stime
 from util.doseProcess import get_weight_time
 from util.doseProcess import get_stime
 from util.doseProcess import get_sday
+from util.doseProcess import get_stimeday_limit
 
 import re
 # 需要提取字段
@@ -150,7 +151,7 @@ pingci_week = re.compile("(?:\d|[一二三四五六七八九十])周")
 
 #获得单次剂量极值、单日剂量极值
 #极量关键字
-limit_list = ["极量","极最","限量","最大剂量","剂量最大","一日剂量最大","最大量","最大最","最髙量","最高量","日剂量","最大每日","最大滴定剂量","最高不能超过","极限","为限"]
+limit_list = ["极量","极最","限量","最大剂量","剂量最大","一日剂量最大","最大量","最大最","最髙量","最高量","日剂量","最大每日","最大每次","最大滴定剂量","最高不能超过","极限","为限"]
 #判断句子是否包含极量关键字
 def is_limit(str):
     flag = False
@@ -229,43 +230,33 @@ dose3_string = "（1）口服成人①抗焦虑，一次2.5〜10mg"
 
 print("single_dose:", get_single_dose(dose3_string))
 
+#获取单次、单日极量极值
+limit_1time = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g)")
+limit_1day = re.compile("(?:一日|—日|每日|每天|每晚|晚上|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
+
+# 单次、单日剂量极值关键字（除了极量）
+day_limit_str = "(?:限量|极限|最大日剂量|最大剂量|日剂量最大|剂量最大|最大滴定剂量|最大量|最大最|限量|日剂量不超过|最大每日|一日剂量不得超过|—日剂量不宜超过|24小时不超过|最高不能超过)"
+day_limit_patr = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日)?"+day_limit_str+"(?:一日|—日|每日|每天|每晚|晚上|日)?")
+time_limit_str = "(?:限量|极限|最大剂量|剂量最大|最大滴定剂量|剂量不超过|剂量不得超过|剂量不宜超过|最大量|最大最|最高不能超过|最大每次|最髙量|最高量)"
+limit_list = ["极量","极最","限量","极限","为限","最大剂量","剂量最大","剂量不超过","剂量不得超过","剂量不宜超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
 
 def get_limit(str):
     limit_result = {}
     limit_num_patr = re.compile("\d*\.?\d+")
     # 极量所在句，后面有句子时，往后再匹配最多一句
-    limit_2sen = "[,，。;；]?[^,，。;；]*极量.?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?"
-    limit_1day = re.compile("(?:一日|—日|每日|每晚)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
-    #
+    limit_2sen = "[,，。;；]?[^,，。;；]*(?:极量|极最).?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?"
     limit_2patrr = re.compile(limit_2sen)
     limit_2search = limit_2patrr.search(str)
-    #极量所在句子+后面一句
-
-    #单次剂量极值匹配时按极量所在句子匹配第一个用量，提高匹配度（一次这种匹配度比较低）单日的则一般是后面一个句子，用"一日"匹配，准确率高一些
-    # 也有一日极量的，这里还是需要修改，排除每日关键字
     if limit_2search:
+        #极量关键字如果在前一句，则前后都为极量，如果在一日，则一般一日在前。
         limit_sentence = limit_2search.group()
-        dose_patr = re.compile(dose_str5)
-        dose_str = ""
-        dose_search = dose_patr.search(limit_sentence)
-        if dose_search:
-            dose_iter = dose_patr.finditer(limit_sentence)
-            dose_str_list = [f.group() for f in dose_iter]
-            dose_str = dose_str_list[0]
-            limit_result["limit_1time"] = limit_num_patr.search(dose_str).group()
-
-        day_search = limit_1day.search(limit_sentence)
-        if day_search:
-            limit_1daystr = limit_num_patr.search(day_search.group())
-            if limit_1daystr:
-                limit_result["limit_1day"] = limit_1daystr.group()
-
+        limit_result = get_stimeday_limit(limit_sentence)
     return limit_result
 
 limit_sting = "（1）口服抗惊厥，一日90~180mg,可在晚上一次顿服，或30〜60mg,一日3次。极量250mg,—日500mg。老年人或虚弱患者应减量，常用量即可产生兴奋、精神错乱或抑郁。"
 
-limit_string1="（1）癫痫口服成人每日按体重15mg/kg"
-limit_string2 = "（3）阿片全碱皮下注射②极量，一次30mg。"
+limit_string1="皮下注射或静脉注射成人常用量一次5〜10mg。极量一日40mg。"
+limit_string2 = "（3）阿片全碱皮下注射②极量，一次30mg。一日40mg。"
 
 print("stime_limit:", get_limit(limit_string2))
 
