@@ -151,7 +151,7 @@ pingci_week = re.compile("(?:\d|[一二三四五六七八九十])周")
 
 #获得单次剂量极值、单日剂量极值
 #极量关键字
-limit_list = ["极量","极最","限量","最大剂量","剂量最大","一日剂量最大","最大量","最大最","最髙量","最高量","日剂量","最大每日","最大每次","最大滴定剂量","最高不能超过","极限","为限"]
+limit_list = ["极量","极最","限量","限最","极限","为限","最大剂量","剂量最大","剂量不超过","剂量不得超过","剂量不宜超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
 #判断句子是否包含极量关键字
 def is_limit(str):
     flag = False
@@ -231,19 +231,27 @@ dose3_string = "（1）口服成人①抗焦虑，一次2.5〜10mg"
 print("single_dose:", get_single_dose(dose3_string))
 
 #获取单次、单日极量极值
-limit_1time = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g)")
+limit_1time = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g|%)")
 limit_1day = re.compile("(?:一日|—日|每日|每天|每晚|晚上|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
 
+
 # 单次、单日剂量极值关键字（除了极量）
-day_limit_str = "(?:限量|极限|最大日剂量|最大剂量|日剂量最大|剂量最大|最大滴定剂量|最大量|最大最|限量|日剂量不超过|最大每日|一日剂量不得超过|—日剂量不宜超过|24小时不超过|最高不能超过)"
-day_limit_patr = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日)?"+day_limit_str+"(?:一日|—日|每日|每天|每晚|晚上|日)?")
-time_limit_str = "(?:限量|极限|最大剂量|剂量最大|最大滴定剂量|剂量不超过|剂量不得超过|剂量不宜超过|最大量|最大最|最高不能超过|最大每次|最髙量|最高量)"
-limit_list = ["极量","极最","限量","极限","为限","最大剂量","剂量最大","剂量不超过","剂量不得超过","剂量不宜超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
+day_limit_str = "(?:限量|限最|极限|最大日剂量|最大剂量|日剂量最大|剂量最大|最大滴定剂量|最大量|最大最|限量|日剂量不超过|最大每日|一日剂量不得超过|—日剂量不宜超过|24小时不超过|最高不能超过)"
+day_limit_patr = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日|24小时)[^,，。;；]*"+day_limit_str+"[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
+day_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+day_limit_str+"[^,，。;；]*(?:一日|—日|每日|每天|每晚|晚上|日|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
+#……为限
+day_limit_patr3 = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)为限")
+time_limit_str = "(?:限量|限最|极限|为限|最大剂量|剂量最大|最大滴定剂量|剂量不超过|剂量不得超过|剂量不宜超过|最大量|最大最|最高不能超过|最大每次|最髙量|最高量)"
+time_limit_patr = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*"+time_limit_str+"[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
+time_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+time_limit_str+"[^,，。;；]*(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
+time_limit_patr3 = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)为限")
+# 在单次剂量过滤的关键字中，包含以上这些单次、单日极值，保证不会把极值存在单次剂量和单日剂量中，也保证过滤的极值会在单次剂量中获得
+# limit_list = ["极量","极最","限量","极限","为限","最大剂量","剂量最大","剂量不超过","剂量不得超过","剂量不宜超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
 
 def get_limit(str):
     limit_result = {}
     limit_num_patr = re.compile("\d*\.?\d+")
-    # 极量所在句，后面有句子时，往后再匹配最多一句
+    # (优先级最高)极量所在句，后面有句子时，往后再匹配最多一句
     limit_2sen = "[,，。;；]?[^,，。;；]*(?:极量|极最).?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?"
     limit_2patrr = re.compile(limit_2sen)
     limit_2search = limit_2patrr.search(str)
@@ -251,12 +259,38 @@ def get_limit(str):
         #极量关键字如果在前一句，则前后都为极量，如果在一日，则一般一日在前。
         limit_sentence = limit_2search.group()
         limit_result = get_stimeday_limit(limit_sentence)
+    else:
+        time_limit_list = []
+        day_limit_list = []
+        if time_limit_patr.search(str):
+            time_limit_list = time_limit_patr.finditer(str)
+        elif time_limit_patr2.search(str):
+            time_limit_list = time_limit_patr2.finditer(str)
+        elif time_limit_patr3.search(str):
+            time_limit_list = time_limit_patr3.finditer(str)
+        if time_limit_list:
+            time_limit_str_list = [f.group() for f in time_limit_list]
+            #以最后一次匹配到的极值数据作为单次剂量极值
+            limit_1time_match = limit_num_patr.search(time_limit_str_list[-1])
+            if limit_1time_match:
+                limit_result["limit_1time"] = limit_1time_match.group()
+        if day_limit_patr.search(str):
+            day_limit_list = day_limit_patr.finditer(str)
+        elif day_limit_patr2.search(str):
+            day_limit_list = day_limit_patr2.finditer(str)
+        elif day_limit_patr3.search(str):
+            day_limit_list = day_limit_patr3.finditer(str)
+        if day_limit_list:
+            day_limit_str_list = [f.group() for f in day_limit_list]
+            # 以最后一次匹配到的极值数据作为单日剂量极值
+            limit_day_match = limit_num_patr.search(day_limit_str_list[-1])
+            if limit_day_match:
+                limit_result["limit_1day"] = limit_day_match.group()
     return limit_result
 
-limit_sting = "（1）口服抗惊厥，一日90~180mg,可在晚上一次顿服，或30〜60mg,一日3次。极量250mg,—日500mg。老年人或虚弱患者应减量，常用量即可产生兴奋、精神错乱或抑郁。"
-
+limit_sting = "（1）口服抗惊厥，一日90~180mg,可在晚上一次顿服，或30〜60mg,一日3次。极量一次250mg,—日500mg。老年人或虚弱患者应减量，常用量即可产生兴奋、精神错乱或抑郁。"
 limit_string1="皮下注射或静脉注射成人常用量一次5〜10mg。极量一日40mg。"
-limit_string2 = "（3）阿片全碱皮下注射②极量，一次30mg。一日40mg。"
+limit_string2 = "黏膜表面局麻，1%〜10%溶液喷雾、涂抹或填塞，一次量以30mg为限。"
 
 print("stime_limit:", get_limit(limit_string2))
 
