@@ -303,6 +303,7 @@ limit_string2 = "（2）肌内或缓慢静脉注射成人肌内注射0.1g,可每
 print("stime_limit:", get_limit(limit_sting))
 
 liaocheng_str = re.compile("[,，。;；]?[^,，。;；]*\d*\.?\d*(?:天|日|周|月)?[-|〜|～|~]?\d*\.?\d+(?:天|日|周|月)[^,，。;；]*疗程")
+liaocheng_after_str = re.compile("[,，。;；]?[^,，。;；]*疗程[^,，。;；]*\d*\.?\d*(?:天|日|周|月)?[-|〜|～|~]?\d*\.?\d+(?:天|日|周|月)")
 #用几日停几日这种，可以计算相加
 liaocheng_neg = re.compile("[,，。;；]?[^,，。;；]*停\d*\.?\d*(?:天|日|周|月)?[-|〜|～|~]?\d*\.?\d+(?:天|日|周|月)[^,，。;；]*疗程")
 liaocheng_patr = re.compile("\d+(?:天|日|周|月)")
@@ -315,6 +316,7 @@ def get_recomend_days(str):
     #用几日停几日
     liaocheng_neg_match = liaocheng_neg.search(str)
     liaocheng_match = liaocheng_str.search(str)
+    liaocheng_after_match = liaocheng_after_str.search(str)
     tian_list = []
     if liaocheng_neg_match:
         neg_tian_list = []
@@ -326,8 +328,13 @@ def get_recomend_days(str):
                 neg_tian_list.append(int(tian)*int(num_unit))
         if neg_tian_list:
             tian_list.append(sum(neg_tian_list))
-    elif liaocheng_match:
-        liaocheng_list = liaocheng_patr.findall(liaocheng_neg_match.group())
+    elif liaocheng_match or liaocheng_after_match:
+        liaocheng_list = []
+        if liaocheng_match:
+            liaocheng_list = liaocheng_patr.findall(liaocheng_neg_match.group())
+        else:
+            liaocheng_list = liaocheng_patr.findall(liaocheng_after_match.group())
+
         if liaocheng_list:
             #3天~4天
             if len(liaocheng_list)>1:
@@ -359,8 +366,9 @@ def get_recomend_days(str):
     return dose_result
 
 tian_string = "(1)口服成人①一次0.5g，一日3次，连用3日停4日为1个疗程。"
+tian_string2 = "静脉滴注急性脑血栓和脑栓塞：一日2万〜4万U,溶于5%葡萄糖氯化钠注射液或右旋糖酊-40注射液500ml中,分1〜2次给药。疗程7天〜3周。可根据病情增减剂量。"
 
-print("recommand days:",get_recomend_days(tian_string))
+print("recommand days:",get_recomend_days(tian_string2))
 
 
 
