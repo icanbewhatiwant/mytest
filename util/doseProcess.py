@@ -219,6 +219,26 @@ def get_sday(single_dose_str,dose_result):
             dose_result["sday_dose_high"] = day_low_high[0]
     return dose_result
 
+limit_num_patr = re.compile("\d*\.?\d+")
+# 极量所在句，后面有句子时，往后再匹配最多一句
+limit_2sen = "[,，。;；]?[^,，。;；]*极量.?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?"
+limit_1day = re.compile("(?:一日|—日|每日|每天|每晚|晚上|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
+limit_1time = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g|%)")
+def get_stimeday_limit(limit_sentence):
+    limit_result = {}
+    time_search = limit_1time.search(limit_sentence)
+    if time_search:
+        limit_1timestr = limit_num_patr.search(time_search.group())
+        if limit_1timestr:
+            limit_result["limit_1time"] = limit_1timestr.group()
+
+    day_search = limit_1day.search(limit_sentence)
+    if day_search:
+        limit_1daystr = limit_num_patr.search(day_search.group())
+        if limit_1daystr:
+            limit_result["limit_1day"] = limit_1daystr.group()
+
+    return limit_result
 
 if __name__=="__main__":
     dose_result = {}
