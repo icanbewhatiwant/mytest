@@ -207,6 +207,19 @@ def get_stime(single_dose_str,dose_result):
             dose_result["sdose_time_high"] = sindose_low_high[0]
     return dose_result
 
+def get_sday(single_dose_str,dose_result):
+    # 获取单日给药剂量，分解 单次给药低、高值，以及剂量单位
+    day_dose = dose_num_patr.search(single_dose_str)
+    if day_dose:
+        day_low_high = num_patr.findall(day_dose.group())
+        dose_result["sday_dose_low"] = day_low_high[0]
+        if len(day_low_high) > 1:
+            dose_result["sday_dose_high"] = day_low_high[1]
+        else:
+            dose_result["sday_dose_high"] = day_low_high[0]
+    return dose_result
+
+
 if __name__=="__main__":
     dose_result = {}
     #调试给药频次
