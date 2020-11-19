@@ -206,9 +206,9 @@ def get_single_dose(str):
             dose_result = get_sday_stime(single_dose_str, dose_sentence)
         elif stime_search:# 一次……mg 单次推荐剂量  需要排除一些关键字(所在句子有：最大剂量,最大量,最大最,最髙量,最高量，不得超过，不超过)
             #添加获取总量，即单日推荐低值和高值  总量也能获取
-            dose_result = get_stime(single_dose_str,dose_result)
+            dose_result = get_stime(single_dose_str,dose_result,dose_sentence)
         elif sday_search:# 一日……mg 单日推荐剂量
-            dose_result = get_sday(single_dose_str,dose_result)
+            dose_result = get_sday(single_dose_str,dose_result,dose_sentence)
         elif sweight_search:# 每1kg体重0.15〜0.2mg。
             dose_result = get_weight_time(single_dose_str, dose_result)
             single_dose_str+="/kg"
@@ -226,7 +226,7 @@ dose2_string = "（1）口服抗惊厥，一日90~180mg,可在晚上一次顿服
 dosestime_sting = "皮下注射或静脉注射成人常用 量一次5〜10mg。极量一日40mg。"
 dosestime_stime = "（3）儿童剂量可稍高，每1kg体重0.2mg；用于维持麻醉时，小剂量静脉注射,剂量及注射间隔视患者个体差异而定。"
 test_str9 = "（1）镇痛①口服成人常用量：一次50〜100mg,一日200〜400mg。"
-dose3_string = "（1）口服成人①抗焦虑，一次2.5〜10mg"
+dose3_string = "（2）肌内注射抗惊厥一次6〜10mg/kg,必要时4小时后可重复，一次极量不超过0.2g。"
 
 print("single_dose:", get_single_dose(dose3_string))
 
@@ -236,15 +236,15 @@ limit_1day = re.compile("(?:一日|—日|每日|每天|每晚|晚上|24小时)[
 
 
 # 单次、单日剂量极值关键字（除了极量）
-day_limit_str = "(?:限量|限最|极限|最大日剂量|最大剂量|日剂量最大|剂量最大|最大滴定剂量|最大量|最大最|限量|日剂量不超过|最大每日|一日剂量不得超过|—日剂量不宜超过|24小时不超过|最高不能超过)"
-day_limit_patr = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日|24小时)[^,，。;；]*"+day_limit_str+"[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
-day_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+day_limit_str+"[^,，。;；]*(?:一日|—日|每日|每天|每晚|晚上|日|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
+day_limit_str = "(?:限量|限最|极限|最大剂量|剂量最大|最大滴定剂量|最大量|最大最|限量|剂量不超过|最大|剂量不得超过|剂量不宜超过|最高不能超过|不超过)"
+day_limit_patr = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日|24小时内|24小时)[^,，。;；]*"+day_limit_str+"[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
+day_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+day_limit_str+"[^,，。;；]*(?:一日|—日|每日|每天|每晚|晚上|日|24小时内|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
 #……为限
-day_limit_patr3 = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)为限")
-time_limit_str = "(?:限量|限最|极限|为限|最大剂量|剂量最大|最大滴定剂量|剂量不超过|剂量不得超过|剂量不宜超过|最大量|最大最|最高不能超过|最大每次|最髙量|最高量)"
+day_limit_patr3 = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日|24小时内|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)(?:为限|为极限)")
+time_limit_str = "(?:限量|限最|极限|为限|最大剂量|剂量最大|剂量不超过|剂量不得超过|剂量不宜超过|最大量|最大最|最高不能超过|最大每次|最髙量|最高量)"
 time_limit_patr = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*"+time_limit_str+"[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
 time_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+time_limit_str+"[^,，。;；]*(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
-time_limit_patr3 = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)为限")
+time_limit_patr3 = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)(?:为限|为极限)")
 # 在单次剂量过滤的关键字中，包含以上这些单次、单日极值，保证不会把极值存在单次剂量和单日剂量中，也保证过滤的极值会在单次剂量中获得
 # limit_list = ["极量","极最","限量","极限","为限","最大剂量","剂量最大","剂量不超过","剂量不得超过","剂量不宜超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
 
@@ -252,13 +252,14 @@ def get_limit(str):
     limit_result = {}
     limit_num_patr = re.compile("\d*\.?\d+")
     # (优先级最高)极量所在句，后面有句子时，往后再匹配最多一句
-    limit_2sen = "[,，。;；]?[^,，。;；]*(?:极量|极最).?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?"
+    limit_2sen = "[,，。;；]?[^,，。;；]*(?:极量|极最|最大日剂量|最大滴定剂量|最大剂量).?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?"
     limit_2patrr = re.compile(limit_2sen)
     limit_2search = limit_2patrr.search(str)
     if limit_2search:
         #极量关键字如果在前一句，则前后都为极量，如果在一日，则一般一日在前。
         limit_sentence = limit_2search.group()
         limit_result = get_stimeday_limit(limit_sentence)
+    #其他有极量关键字的，与一次、一日不在同一句的，不要再往前匹配每日、每次，可能是错的
     else:
         time_limit_list = []
         day_limit_list = []
@@ -271,9 +272,9 @@ def get_limit(str):
         if time_limit_list:
             time_limit_str_list = [f.group() for f in time_limit_list]
             #以最后一次匹配到的极值数据作为单次剂量极值
-            limit_1time_match = limit_num_patr.search(time_limit_str_list[-1])
-            if limit_1time_match:
-                limit_result["limit_1time"] = limit_1time_match.group()
+            limit_1time_num_list = limit_num_patr.findall(time_limit_str_list[-1])
+            if limit_1time_num_list:
+                limit_result["limit_1time"] = limit_1time_num_list[-1]
         if day_limit_patr.search(str):
             day_limit_list = day_limit_patr.finditer(str)
         elif day_limit_patr2.search(str):
@@ -283,14 +284,89 @@ def get_limit(str):
         if day_limit_list:
             day_limit_str_list = [f.group() for f in day_limit_list]
             # 以最后一次匹配到的极值数据作为单日剂量极值
-            limit_day_match = limit_num_patr.search(day_limit_str_list[-1])
-            if limit_day_match:
-                limit_result["limit_1day"] = limit_day_match.group()
+            day_limit_string = day_limit_str_list[-1]
+            limit_day_num_list = limit_num_patr.findall(day_limit_string)
+            if limit_day_num_list:
+                limit_result["limit_1day"] = limit_day_num_list[-1]
+
+            #如果单次剂量为空，此时剂量单位应该也为空，补充为剂量极值的单位
+            if limit_result.get("single_dose_unit","") == "":
+                single_dose_unit = dose_unit_patr.search(day_limit_string)
+                if single_dose_unit:
+                    limit_result["single_dose_unit"] = single_dose_unit.group()
     return limit_result
 
-limit_sting = "（1）口服抗惊厥，一日90~180mg,可在晚上一次顿服，或30〜60mg,一日3次。极量一次250mg,—日500mg。老年人或虚弱患者应减量，常用量即可产生兴奋、精神错乱或抑郁。"
-limit_string1="皮下注射或静脉注射成人常用量一次5〜10mg。极量一日40mg。"
-limit_string2 = "黏膜表面局麻，1%〜10%溶液喷雾、涂抹或填塞，一次量以30mg为限。"
+limit_sting = "（2）肌内注射抗惊厥一次6〜10mg/kg,必要时4小时后可重复，一次极量不超过0.2g。"
+limit_string1="皮下注射、肌内注射或静脉注射每次10mg,必要时3〜6小时重复。最大剂量每次20mg,每天160mg。"
+limit_string2 = "（2）肌内或缓慢静脉注射成人肌内注射0.1g,可每6小时1次，24小时内不超过0.5g。"
 
-print("stime_limit:", get_limit(limit_string2))
+print("stime_limit:", get_limit(limit_sting))
+
+liaocheng_str = re.compile("[,，。;；]?[^,，。;；]*\d*\.?\d*(?:天|日|周|月)?[-|〜|～|~]?\d*\.?\d+(?:天|日|周|月)[^,，。;；]*疗程")
+#用几日停几日这种，可以计算相加
+liaocheng_neg = re.compile("[,，。;；]?[^,，。;；]*停\d*\.?\d*(?:天|日|周|月)?[-|〜|～|~]?\d*\.?\d+(?:天|日|周|月)[^,，。;；]*疗程")
+liaocheng_patr = re.compile("\d+(?:天|日|周|月)")
+low_high_patr = re.compile("\d*\.?\d+[-|〜|～|~]\d*\.?\d+(?:天|日|周|月)")
+liaocheng_num = re.compile("\d+")
+liaocheng_unit = re.compile("天|日|周|月")
+unit2num = {"周":"7","天":"1","日":"1","月":"30"}
+def get_recomend_days(str):
+    dose_result = {}
+    #用几日停几日
+    liaocheng_neg_match = liaocheng_neg.search(str)
+    liaocheng_match = liaocheng_str.search(str)
+    tian_list = []
+    if liaocheng_neg_match:
+        neg_tian_list = []
+        liaocheng_list = liaocheng_patr.findall(liaocheng_neg_match.group())
+        if liaocheng_list:
+            for i in liaocheng_list:
+                tian = liaocheng_num.search(i).group()
+                num_unit = unit2num.get(liaocheng_unit.search(i).group(),"")
+                neg_tian_list.append(int(tian)*int(num_unit))
+        if neg_tian_list:
+            tian_list.append(sum(neg_tian_list))
+    elif liaocheng_match:
+        liaocheng_list = liaocheng_patr.findall(liaocheng_neg_match.group())
+        if liaocheng_list:
+            #3天~4天
+            if len(liaocheng_list)>1:
+                for i in liaocheng_list:
+                    tian = liaocheng_num.search(i).group()
+                    num_unit = unit2num.get(liaocheng_unit.search(i).group(), "")
+                    tian_list.append(int(tian) * int(num_unit))
+            # 可能包含3~4天这种、或者3天这两种情况
+            else:
+                unit_string = liaocheng_list[0]
+                num_unit = unit2num.get(liaocheng_unit.search(unit_string).group(), "")
+                #3~4天
+                low_high_match= low_high_patr.search(str)
+                if low_high_match:
+                    tianshu_list = liaocheng_num.findall(low_high_match.group())
+                    if tianshu_list:
+                        tian_list = [int(num_unit)*int(i) for i in tianshu_list]
+                #4天
+                else:
+                    tian = liaocheng_num.search(liaocheng_list[0]).group()
+                    tian_list.append(int(tian)*int(num_unit))
+    if tian_list:
+            if len(tian_list)==1:
+                dose_result["recommand_days_low"] = tian_list[0]
+                dose_result["recommand_days_high"] = tian_list[0]
+            else:
+                dose_result["recommand_days_low"] = tian_list[0]
+                dose_result["recommand_days_high"] = tian_list[1]
+    return dose_result
+
+tian_string = "(1)口服成人①一次0.5g，一日3次，连用3日停4日为1个疗程。"
+
+print("recommand days:",get_recomend_days(tian_string))
+
+
+
+
+
+
+
+
 
