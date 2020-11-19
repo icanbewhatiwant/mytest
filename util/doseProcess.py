@@ -194,8 +194,9 @@ def get_weight_time(single_dose_str,dose_result):
             dose_result["sdose_time_high"] = sindose_low_high[0]
     return dose_result
 
-
-def get_stime(single_dose_str,dose_result):
+pingci_repeat_time = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*?\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g)[,.;，。；][^,.;，。；]*可重复")
+pingci_repeat_day = re.compile("(?:一日|—日|每日|每天|每晚|晚上|24小时|按体重)[^,.;，。；]*?\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g)[,.;，。；][^,.;，。；]*可重复")
+def get_stime(single_dose_str,dose_result,dose_sentence):
     # 获取单次给药剂量，分解 单次给药低、高值，以及剂量单位
     single_dose = dose_num_patr.search(single_dose_str)
     if single_dose:
@@ -205,9 +206,15 @@ def get_stime(single_dose_str,dose_result):
             dose_result["sdose_high"] = sindose_low_high[1]
         else:
             dose_result["sdose_time_high"] = sindose_low_high[0]
+
+    if pingci_repeat_time.search(dose_sentence):
+        dose_result["dose_time_low_des"] = "需要时"
+        dose_result["dose_time_high_des"] = "需要时"
+        dose_result["dose_time_low"] = "1/1"
+        dose_result["dose_time_high"] = "1/1"
     return dose_result
 
-def get_sday(single_dose_str,dose_result):
+def get_sday(single_dose_str,dose_result,dose_sentence):
     # 获取单日给药剂量，分解 单次给药低、高值，以及剂量单位
     day_dose = dose_num_patr.search(single_dose_str)
     if day_dose:
@@ -217,27 +224,42 @@ def get_sday(single_dose_str,dose_result):
             dose_result["sday_dose_high"] = day_low_high[1]
         else:
             dose_result["sday_dose_high"] = day_low_high[0]
+    if pingci_repeat_day.search(dose_sentence):
+        dose_result["dose_time_low_des"] = "需要时"
+        dose_result["dose_time_high_des"] = "需要时"
+        dose_result["dose_time_low"] = "1/1"
+        dose_result["dose_time_high"] = "1/1"
     return dose_result
 
 limit_num_patr = re.compile("\d*\.?\d+")
 # 极量所在句，后面有句子时，往后再匹配最多一句
 limit_2sen = "[,，。;；]?[^,，。;；]*极量.?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?"
-limit_1day = re.compile("(?:一日|—日|每日|每天|每晚|晚上|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
-limit_1time = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g|%)")
+limit_1day = re.compile("(?:一日|—日|每日|日|每天|每晚|晚上|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
+limit_1time = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量|最大滴定剂量)[^,.;，。；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g|%)")
 def get_stimeday_limit(limit_sentence):
     limit_result = {}
     time_search = limit_1time.search(limit_sentence)
+    unit_string = ""
     if time_search:
+        unit_string = time_search.group()
         limit_1timestr = limit_num_patr.search(time_search.group())
         if limit_1timestr:
             limit_result["limit_1time"] = limit_1timestr.group()
 
     day_search = limit_1day.search(limit_sentence)
     if day_search:
+        if unit_string == "":
+            unit_string = day_search.group()
         limit_1daystr = limit_num_patr.search(day_search.group())
         if limit_1daystr:
             limit_result["limit_1day"] = limit_1daystr.group()
 
+    # 如果单次剂量为空，此时剂量单位应该也为空，补充为剂量极值的单位
+    if limit_result.get("single_dose_unit", "") == "":
+        if unit_string !="":
+            single_dose_unit = dose_unit_patr.search(unit_string)
+            if single_dose_unit:
+                limit_result["single_dose_unit"] = single_dose_unit.group()
     return limit_result
 
 if __name__=="__main__":
