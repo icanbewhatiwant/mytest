@@ -30,58 +30,105 @@ def get_admin_route(str):
 
 print("admin_route:",get_admin_route(test_str))
 
-age_str = "(成人|肝、肾功能损害者|高龄患者|老年和体弱或肝功能不全患者|老年人?[或及、和]?体弱患?者|老年人?[或及、和]?虚弱的?患?者|老年人|年老[或及、和]?体弱患?者|特殊人群：严重肝损患者|老年、重病和肝功能受损患者" \
-           "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童青?少年" \
-           "|\d*[-|〜|～|~]?\d+岁小儿|\d+岁以上患?儿?|\d+岁以下|d+岁或以上者|<\d+岁|>\d+岁|\d*[-|〜|～|~]\d+岁|儿童|小儿|的?患?者)"
+# age_str = "(成人|肝、肾功能损害者|高龄患者|老年和体弱或肝功能不全患者|老年人?[或及、和]?体弱患?者|老年人?[或及、和]?虚弱的?患?者|老年人|年老[或及、和]?体弱患?者|特殊人群：严重肝损患者|老年、重病和肝功能受损患者" \
+#            "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童青?少年" \
+#            "|\d*[-|〜|～|~]?\d+岁小儿|\d+岁以上患?儿?|\d+岁以下|\d+岁或以上者|<\d+岁|>\d+岁|\d*[-|〜|～|~]\d+岁|儿童|小儿|的?患?者)"
+
+#年龄数字+人描述词（有年龄对应的）
+person2age_string = "(?:成人|新生儿|婴儿|幼儿|儿童|青少年|小儿|少儿|老年人|老人)"
+age_d2d_patr = re.compile("(?:\d+[-|〜|～|~]\d+岁)[^,.;，。；]*?"+person2age_string+"?")
+age_lowd_patr = re.compile("(?:\d+岁以上|>\d+岁|\d+岁或以上)[^,.;，。；]*?"+person2age_string+"?")
+age_highd_patr = re.compile("(?:\d+岁以下|<\d+岁|\d+岁或以下)[^,.;，。；]*?"+person2age_string+"?")
+person_patr = re.compile(person2age_string)
+
 
 age_priority = re.compile("\d*[-|〜|～|~]?\d+(?:岁|月|天)")
 age_num_patr = re.compile("\d+")
 age_unit_patr = re.compile("岁|月|天")
-age_patr = re.compile(age_str)
+# age_patr = re.compile(age_str)
 person2age = {"成人":{"low":"16","unit":"岁"},"新生儿":{"low":"0","high":"28","unit":"天"},"婴儿":{"low":"28","high":"12","unit":"天/月"},
               "幼儿":{"low":"1","high":"3","unit":"岁"},"儿童":{"high":"16","unit":"岁"},"青少年":{"high":"18","unit":"岁"},"小儿":{"high":"7","unit":"岁"},
               "少儿":{"high":"12","unit":"岁"},"老年人":{"low":"65","unit":"岁"},"老人":{"low":"65","unit":"岁"}}
+#只有岁数+年龄的能匹配到年龄高值、低值、单位，其他：患者……无法匹配
 def get_age(str):
     age_result = {}
-    age_str = ""
     age_unit_string = ""
-    age_search = age_patr.search(str)
-    if age_search:
-        age_string = age_search.group()
-        #匹配年龄所在的一句话
-        age_sentence_patr = re.compile("[,，。;；]?[^,，。;；]*" + age_string + "[^,，。;；]*[,，。;；]")
-        age_sentence = age_sentence_patr.search(str).group()
 
-        #数字化的年龄字段 4~20岁
-        age_priority_match=age_priority.search(age_sentence)
-        #年龄所在句子优先匹配
-        if age_priority_match:
-            age_string = age_priority_match.group()
-            age_low_high = age_num_patr.findall(age_string)
-            age_result["age_low"] =age_low_high[0]
-            if len(age_low_high)>1:
-                age_result["age_high"] = age_low_high[1]
-            else:
-                age_result["age_high"] = age_low_high[0]
-            age_unit_string = age_string
+    #数字化的年龄字段 4~20岁
+    age_d2d_match=age_d2d_patr.search(str)
+    age_lowd_match = age_lowd_patr.search(str)
+    age_highd_match = age_highd_patr.search(str)
+    person_match = person_patr.search(str)
+
+    #数字年龄+人物描述
+    if age_d2d_match:
+        age_string = age_d2d_match.group()
+        age_low_high = age_num_patr.findall(age_string)
+        age_result["age_low"] =age_low_high[0]
+        if len(age_low_high)>1:
+            age_result["age_high"] = age_low_high[1]
         else:
-            age_list = age_patr.finditer(age_sentence)#以列表形式返回全部能匹配的子串
-            age_str_list = [f.group() for f in age_list]
-            age_str = age_str_list[-1]
-            if age_str in person2age.keys():
-                age_result_str = person2age[age_str]
-                age_low_high = age_num_patr.findall(age_result_str)
-                age_result["age_low"] = age_low_high[0]
-                age_unit_string =age_result_str
-        #年龄单位
+            age_result["age_high"] = age_low_high[0]
+        age_unit_string = age_string
+
+    elif age_lowd_match:
+        #指定低值
+        age_string = age_lowd_match.group()
+        age_low = age_num_patr.search(age_string).group()
+        age_result["age_low"] = age_low
+        age_unit_string = age_string
+
+        per_match = person_patr.search(age_string)
+        if per_match:
+            per_age_dict = person2age.get(per_match.group(),{})
+            if per_age_dict:
+                age_high = per_age_dict.get("high","")
+                if age_high !="":
+                    age_result["age_high"] = age_high
+                age_unit = per_age_dict.get("unit","")
+                if age_unit !="":
+                    age_result["age_unit"] = age_unit
+    elif age_highd_match:
+        #指定高值
+        age_string = age_highd_match.group()
+        age_high = age_num_patr.search(age_string).group()
+        age_result["age_high"] = age_high
+        age_unit_string = age_string
+
+        per_match = person_patr.search(age_string)
+        if per_match:
+            per_age_dict = person2age.get(per_match.group(), {})
+            if per_age_dict:
+                age_low = per_age_dict.get("low", "")
+                if age_low != "":
+                    age_result["age_low"] = age_low
+                age_unit = per_age_dict.get("unit", "")
+                if age_unit != "":
+                    age_result["age_unit"] = age_unit
+    #仅有人物字段
+    elif person_match:
+        age_string = person_match.group()
+        per_age_dict = person2age.get(age_string, {})
+        if per_age_dict:
+            age_low = per_age_dict.get("low", "")
+            if age_low != "":
+                age_result["age_low"] = age_low
+            age_high = per_age_dict.get("high", "")
+            if age_high != "":
+                age_result["age_high"] = age_high
+            age_unit = per_age_dict.get("unit", "")
+            if age_unit != "":
+                age_result["age_unit"] = age_unit
+
+    #没有匹配到人的组合时，就没有年龄单位赋值
+    if  age_result.get("age_unit","")=="" and age_unit_string !="":
         age_unit_search = age_unit_patr.search(age_unit_string)
         if age_unit_search:
             age_result["age_unit"] = age_unit_search.group()
-
     return age_result
 age_test1 = "口服24-40kg的儿童，早、晚各lOOmg（2袋），或遵医嘱。"
 age_test = "2～12岁儿童：体重≤30公斤：一日1次，一次半片(5毫克)。"
-print("age:",get_age(age_test1))
+print("age:",get_age(age_test))
 
 
 weight_teststr = "①静脉滴注体重低于70kg（或血压不稳定）者，开始2小时可按每小时7.5μg/kg给药；如耐受性好，2小时后剂量可增至每小时15μg/kg。体重大于70kg者，开始2小时宜按每小时15μg/kg给药；如耐受性好，2小时后剂量可增至每小时30μg/kg。②体重34kg以下小儿,肌内注射2mg。或先静脉注射1mg,如30〜45秒钟无效，再重复静脉注射1mg,直到总量达5mg；③体重34kg以上儿童，肌内注射5mg,或先静脉注射2mg,若30~45秒钟无效，再重复静脉注射1mg,直到总量10mg。"
