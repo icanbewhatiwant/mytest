@@ -34,11 +34,13 @@ age_str = "(成人|肝、肾功能损害者|高龄患者|老年和体弱或肝�
            "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童青?少年" \
            "|\d*[-|〜|～|~]?\d+岁小儿|\d+岁以上患?儿?|\d+岁以下|d+岁或以上者|<\d+岁|>\d+岁|\d*[-|〜|～|~]\d+岁|儿童|小儿|的?患?者)"
 
-age_priority = re.compile("\d*[-|〜|～|~]\d+岁")
+age_priority = re.compile("\d*[-|〜|～|~]?\d+(?:岁|月|天)")
 age_num_patr = re.compile("\d+")
 age_unit_patr = re.compile("岁|月|天")
 age_patr = re.compile(age_str)
-person2age = {"成人":"16岁","新生儿":"","幼儿":"","儿童":"4岁","青少年":"14岁","小儿":"","老年人":""}
+person2age = {"成人":{"low":"16","unit":"岁"},"新生儿":{"low":"0","high":"28","unit":"天"},"婴儿":{"low":"28","high":"12","unit":"天/月"},
+              "幼儿":{"low":"1","high":"3","unit":"岁"},"儿童":{"high":"16","unit":"岁"},"青少年":{"high":"18","unit":"岁"},"小儿":{"high":"7","unit":"岁"},
+              "少儿":{"high":"12","unit":"岁"},"老年人":{"low":"65","unit":"岁"},"老人":{"low":"65","unit":"岁"}}
 def get_age(str):
     age_result = {}
     age_str = ""
@@ -50,6 +52,7 @@ def get_age(str):
         age_sentence_patr = re.compile("[,，。;；]?[^,，。;；]*" + age_string + "[^,，。;；]*[,，。;；]")
         age_sentence = age_sentence_patr.search(str).group()
 
+        #数字化的年龄字段 4~20岁
         age_priority_match=age_priority.search(age_sentence)
         #年龄所在句子优先匹配
         if age_priority_match:
@@ -331,7 +334,7 @@ def get_recomend_days(str):
     elif liaocheng_match or liaocheng_after_match:
         liaocheng_list = []
         if liaocheng_match:
-            liaocheng_list = liaocheng_patr.findall(liaocheng_neg_match.group())
+            liaocheng_list = liaocheng_patr.findall(liaocheng_match.group())
         else:
             liaocheng_list = liaocheng_patr.findall(liaocheng_after_match.group())
 
@@ -367,8 +370,10 @@ def get_recomend_days(str):
 
 tian_string = "(1)口服成人①一次0.5g，一日3次，连用3日停4日为1个疗程。"
 tian_string2 = "静脉滴注急性脑血栓和脑栓塞：一日2万〜4万U,溶于5%葡萄糖氯化钠注射液或右旋糖酊-40注射液500ml中,分1〜2次给药。疗程7天〜3周。可根据病情增减剂量。"
+tian_sting3 = "口服一次30万U,一日3次，连用4周为1个疗程。可连服2〜3个疗程，也可连续服用至症状好转。"
+tian_no = "静脉滴注首次剂量为10BU,以后维持剂量可减为5BU,隔日1次。先用0.9%氯化钠注射液100〜250ml稀释后，静脉滴注1〜1.5小时。一般治疗急性脑血管病，隔日一次，3次为1个疗程。"
 
-print("recommand days:",get_recomend_days(tian_string2))
+print("recommand days:",get_recomend_days(tian_sting3))
 
 
 
