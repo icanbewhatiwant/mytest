@@ -43,6 +43,7 @@ pingci_hour = re.compile("(?:\d+|[一二三四五六七八九十])小时")
 pingci_day = re.compile("(?:\d+|[一二三四五六七八九十])日")
 pingci_week = re.compile("(?:\d+|[一二三四五六七八九十])周")
 
+
 #获取给药频次
 def get_pingci(dose_result,stime_string):
     # 获取给药频次及其分解
@@ -230,6 +231,62 @@ def get_sday(single_dose_str,dose_result,dose_sentence):
         dose_result["dose_time_low"] = "1/1"
         dose_result["dose_time_high"] = "1/1"
     return dose_result
+
+def  get_rongye_dose(str,dose_result):
+
+    rongye_stime_sday_search = dose_stime_sday.search(str)
+    rongye_stime_search = dose_stime.search(str)
+    rongye_sday_stime_search = dose_sday_stime.search(str)
+    rongye_sday_search = dose_sday.search(str)
+    rongye_sweight_search = dose_sweight.search(str)
+    rongye_stime_jici_search = dose_stime_jici.search(str)
+    unit_string = ""
+
+    #直接搜索句子中第一次匹配到的单次用法用量数据
+    if rongye_stime_sday_search:# 一次……mg，一日……mg
+        #获得单次、单日用量
+        stime_sday_string = rongye_stime_sday_search.group()
+        stime_string = dose_stime.search(stime_sday_string).group()
+        sday_string = dose_sday.search(stime_sday_string).group()
+        dose_result = get_stime(stime_string,dose_result,stime_sday_string)
+        dose_result = get_sday(sday_string,dose_result,stime_sday_string)
+    elif rongye_stime_jici_search:  # 一次……mg,一日……次
+        stime_jici_string = rongye_stime_jici_search.group()
+        stime_string = dose_stime.search(stime_jici_string).group()
+        dose_result = get_stime_jici(stime_string,stime_jici_string)
+    elif rongye_sday_stime_search:#一日……mg，分N次
+        sday_stime_string = rongye_sday_stime_search.group()
+        sday_string = dose_sday.search(sday_stime_string).group()
+        dose_result = get_sday_stime(sday_string,sday_stime_string)
+    elif rongye_stime_search:# 一次……mg 单次推荐剂量  需要排除一些关键字(所在句子有：最大剂量,最大量,最大最,最髙量,最高量，不得超过，不超过)
+        stime_search_string = rongye_stime_search.group()
+        dose_result = get_stime(stime_search_string, dose_result, stime_search_string)
+    elif rongye_sday_search:# 一日……mg 单日推荐剂量
+        sday_search_string = rongye_sday_search.group()
+        dose_result = get_sday(sday_search_string,dose_result,sday_search_string)
+    elif rongye_sweight_search:# 每1kg体重0.15〜0.2mg。
+        sweight_string =rongye_sweight_search.group()
+        dose_result = get_weight_time(sweight_string, dose_result)
+        unit_string += "/kg"
+
+    # 获取剂量单位
+    single_dose_unit = dose_unit_patr.search(single_dose_str)
+    if single_dose_unit:
+        dose_result["single_dose_unit"] = single_dose_unit.group()
+    return dose_result
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 limit_num_patr = re.compile("\d*\.?\d+")
 # 极量所在句，后面有句子时，往后再匹配最多一句
