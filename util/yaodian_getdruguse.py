@@ -5,6 +5,7 @@ from util.doseProcess import get_weight_time
 from util.doseProcess import get_stime
 from util.doseProcess import get_sday
 from util.doseProcess import get_stimeday_limit
+from util.doseProcess import get_rongye_dose
 
 import re
 # 需要提取字段
@@ -213,6 +214,11 @@ pingci_hour = re.compile("(?:\d|[一二三四五六七八九十])小时")
 pingci_day = re.compile("(?:\d|[一二三四五六七八九十])日")
 pingci_week = re.compile("(?:\d|[一二三四五六七八九十])周")
 
+#溶液所在句子
+rongye_sentence_patr = re.compile("[,，。;；][^,，。;；]*\d+%[^,，。;；]*溶液[^,，。;；]*[,，。;；]")
+rongye_num_patr = re.compile("\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g)")
+rongye_percent_patr = re.compile("\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+%")
+
 #获得单次剂量极值、单日剂量极值
 #极量关键字
 limit_list = ["极量","极最","限量","限最","极限","为限","最大剂量","剂量最大","剂量不超过","剂量不得超过","剂量不宜超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
@@ -260,11 +266,14 @@ def get_single_dose(str):
         sweight_search = dose_sweight.search(dose_sentence)
         stime_jici_search = dose_stime_jici.search(dose_sentence)
 
+        #溶液数据单独处理，匹配是否是溶液句子(上面是按第一次出现的用量进行匹配，对溶液来说并不适用，在默认处理前进行溶液处理)
+        rongye_search = rongye_sentence_patr.search(str)
+
         # 获取给药频次数据，分解 推荐给药频次低值、高值、描述
         #单次推荐剂量和单日推荐剂量
         if stime_sday_search: # 一次……mg，一日……mg
             dose_result = get_stime_sday(single_dose_str, dose_sentence)
-        if stime_jici_search:# 一次……mg,一日……次
+        elif stime_jici_search:# 一次……mg,一日……次
             dose_result = get_stime_jici(single_dose_str, dose_sentence)
         elif sday_stime_search:#一日……mg，分N次
             dose_result = get_sday_stime(single_dose_str, dose_sentence)
@@ -276,9 +285,25 @@ def get_single_dose(str):
         elif sweight_search:# 每1kg体重0.15〜0.2mg。
             dose_result = get_weight_time(single_dose_str, dose_result)
             single_dose_str+="/kg"
+        elif rongye_search:#
+            #一次 一日 的各种组合，同上面的if else
+            dose_result = get_rongye_dose(str,dose_result)
+            if not dose_result:#……溶液\dml  ……ml……溶液 100mg(5%〜7.5%溶液)
+                #溶液所在的句子
+                rongye_string = rongye_search.group()
+                #除了%以外的其他的用量单位
+                rongye_single_search = rongye_num_patr.search(rongye_string)
+                if rongye_single_search:
+                    rongye_num_list = num_patr.findall(rongye_single_search.group())
+                    dose_result["sdose_low"] = rongye_num_list[0]
+                    if len(rongye_num_list) > 1:
+                        dose_result["sdose_high"] = rongye_num_list[1]
+                    else:
+                        dose_result["sdose_time_high"] = rongye_num_list[0]
+                #3、直接使用溶液的百分号数据，下面的else可以做到
         else:
             #不包含一些关键字的时候，默认选第一个为单次……按单次的方法处理
-            dose_result = get_stime(single_dose_str,dose_result)
+            dose_result = get_stime(single_dose_str,dose_result,dose_sentence)
         #获取剂量单位
         single_dose_unit = dose_unit_patr.search(single_dose_str)
         if single_dose_unit:
@@ -444,7 +469,7 @@ tian_no = "静脉滴注首次剂量为10BU,以后维持剂量可减为5BU,隔日
 
 #完整处理一个句子中的字段
 if __name__=="__main__":
-    yao_string = "(1)口服成人①一次0.5g，一日3次，连用3日停4日为1个疗程。"
+    yao_string = "盐酸丁卡因粉针剂需加氯化钠注射液或灭菌注射用水溶解使用。药液浓度及用量按用途分别如下。（1）硬膜外阻滞:常用浓度为0.15%〜0.3%溶液，与盐酸利多卡因合用，最高浓度为0.3%,一次常用量为40〜50mg。极量为80mg。"
     print(yao_string)
     yaodian_result = {}
 
