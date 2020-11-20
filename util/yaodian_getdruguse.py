@@ -8,13 +8,14 @@ from util.doseProcess import get_stimeday_limit
 from util.doseProcess import get_rongye_dose
 
 import re
+import json
 # 需要提取字段
 # 年龄、体重、给药途径、单次推荐剂量、单日推荐剂量、单次剂量极值、单日剂量极值，推荐给药频次、推荐给药描述、用药推荐天数
 
 test_str = "（2）肌内或静脉注射成人①口服基础麻醉或静脉全麻。10-30mg。"
-print("str:",test_str)
+# print("str:",test_str)
 admin_route_str = "(口服.灌肠|餐?后?口服成?人?|含服|涂敷患?处?|喷于患处|外用|肌内注?射?或缓?慢?静脉缓?慢?注射|静脉注?射?或肌内注射" \
-                  "|肌内注射或缓?慢?静脉缓?慢?推注|皮下或肌内注射|肌内或皮下注射|静脉注射|静脉滴注|深?部?肌内注射|皮下注射|静脉推注|冲服|嚼服|浸润局麻|浸润麻醉|外周神经\(丛\)阻滞|外用" \
+                  "|肌内注射或缓?慢?静脉缓?慢?推注|皮下或肌内注射|肌内或皮下注射|静脉注射|静脉滴注|深?部?肌内注射|皮下注射|静脉推注|冲服|嚼服|浸润局麻|浸润麻醉|外用" \
                   "|滴眼|滴鼻|冲洗|阴道给药|肛门内?给药|舌下含服|阴道用药|瘤体注射|吸入|阴道冲洗|漱口|关节腔注射|处方|保留灌肠|灌肠|直肠灌注|贴患处" \
                   "|注入脐静脉|涂抹|靶控输注系统给药|注入)"
 
@@ -215,13 +216,13 @@ pingci_day = re.compile("(?:\d|[一二三四五六七八九十])日")
 pingci_week = re.compile("(?:\d|[一二三四五六七八九十])周")
 
 #溶液所在句子
-rongye_sentence_patr = re.compile("[,，。;；][^,，。;；]*\d+%[^,，。;；]*溶液[^,，。;；]*[,，。;；]")
-rongye_num_patr = re.compile("\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g)")
+rongye_sentence_patr = re.compile("[,，。;；]?[^,，。;；]*\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+%[^,，。;；]*溶液[^,，。;；]*[,，。;；]?")
+rongye_num_patr = re.compile("\d*\.?\d*?[-|〜|～|~]?\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g)")
 rongye_percent_patr = re.compile("\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+%")
 
 #获得单次剂量极值、单日剂量极值
 #极量关键字
-limit_list = ["极量","极最","限量","限最","极限","为限","最大剂量","剂量最大","剂量不超过","剂量不得超过","剂量不宜超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
+limit_list = ["极量","极最","限量","限最","极限","为限","最大剂量","剂量最大","剂量不超过","剂量不得超过","剂量不宜超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过","一次不得超过","一次不超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
 #判断句子是否包含极量关键字
 def is_limit(str):
     flag = False
@@ -268,46 +269,54 @@ def get_single_dose(str):
 
         #溶液数据单独处理，匹配是否是溶液句子(上面是按第一次出现的用量进行匹配，对溶液来说并不适用，在默认处理前进行溶液处理)
         rongye_search = rongye_sentence_patr.search(str)
-
-        # 获取给药频次数据，分解 推荐给药频次低值、高值、描述
-        #单次推荐剂量和单日推荐剂量
-        if stime_sday_search: # 一次……mg，一日……mg
-            dose_result = get_stime_sday(single_dose_str, dose_sentence)
-        elif stime_jici_search:# 一次……mg,一日……次
-            dose_result = get_stime_jici(single_dose_str, dose_sentence)
-        elif sday_stime_search:#一日……mg，分N次
-            dose_result = get_sday_stime(single_dose_str, dose_sentence)
-        elif stime_search:# 一次……mg 单次推荐剂量  需要排除一些关键字(所在句子有：最大剂量,最大量,最大最,最髙量,最高量，不得超过，不超过)
-            #添加获取总量，即单日推荐低值和高值  总量也能获取
-            dose_result = get_stime(single_dose_str,dose_result,dose_sentence)
-        elif sday_search:# 一日……mg 单日推荐剂量
-            dose_result = get_sday(single_dose_str,dose_result,dose_sentence)
-        elif sweight_search:# 每1kg体重0.15〜0.2mg。
-            dose_result = get_weight_time(single_dose_str, dose_result)
-            single_dose_str+="/kg"
-        elif rongye_search:#
-            #一次 一日 的各种组合，同上面的if else
-            dose_result = get_rongye_dose(str,dose_result)
-            if not dose_result:#……溶液\dml  ……ml……溶液 100mg(5%〜7.5%溶液)
-                #溶液所在的句子
-                rongye_string = rongye_search.group()
-                #除了%以外的其他的用量单位
+        # 溶液所在的句子
+        if rongye_search:
+            rongye_string = rongye_search.group()
+            # 一次 一日 的各种组合，同上面的if else
+            dose_result = get_rongye_dose(str, dose_result)
+            if not dose_result:
+                # ……溶液\dml  ……ml……溶液 100mg(5%〜7.5%溶液)
+                # 匹配除了%以外的其他的用量单位
                 rongye_single_search = rongye_num_patr.search(rongye_string)
                 if rongye_single_search:
-                    rongye_num_list = num_patr.findall(rongye_single_search.group())
+                    # 0.4-0.4mg
+                    rongye_dose_string = rongye_single_search.group()
+                    rongye_num_list = num_patr.findall(rongye_dose_string)
                     dose_result["sdose_low"] = rongye_num_list[0]
                     if len(rongye_num_list) > 1:
                         dose_result["sdose_high"] = rongye_num_list[1]
                     else:
                         dose_result["sdose_time_high"] = rongye_num_list[0]
-                #3、直接使用溶液的百分号数据，下面的else可以做到
+                    single_dose_str = rongye_dose_string
+            # 3、直接使用溶液的百分号数据，下面的else可以做到
+            if not dose_result: # 不包含一些关键字的时候，默认选第一个为单次……按单次的方法处理
+                dose_result = get_stime(single_dose_str, dose_result, rongye_string)
         else:
-            #不包含一些关键字的时候，默认选第一个为单次……按单次的方法处理
-            dose_result = get_stime(single_dose_str,dose_result,dose_sentence)
-        #获取剂量单位
-        single_dose_unit = dose_unit_patr.search(single_dose_str)
-        if single_dose_unit:
-            dose_result["single_dose_unit"] = single_dose_unit.group()
+
+            # 获取给药频次数据，分解 推荐给药频次低值、高值、描述
+            #单次推荐剂量和单日推荐剂量
+            if stime_sday_search: # 一次……mg，一日……mg
+                dose_result = get_stime_sday(single_dose_str, dose_sentence)
+            elif stime_jici_search:# 一次……mg,一日……次
+                dose_result = get_stime_jici(single_dose_str, dose_sentence)
+            elif sday_stime_search:#一日……mg，分N次
+                dose_result = get_sday_stime(single_dose_str, dose_sentence)
+            elif stime_search:# 一次……mg 单次推荐剂量  需要排除一些关键字(所在句子有：最大剂量,最大量,最大最,最髙量,最高量，不得超过，不超过)
+                #添加获取总量，即单日推荐低值和高值  总量也能获取
+                dose_result = get_stime(single_dose_str,dose_result,dose_sentence)
+            elif sday_search:# 一日……mg 单日推荐剂量
+                dose_result = get_sday(single_dose_str,dose_result,dose_sentence)
+            elif sweight_search:# 每1kg体重0.15〜0.2mg。
+                dose_result = get_weight_time(single_dose_str, dose_result)
+                single_dose_str+="/kg"
+            else:
+                #不包含一些关键字的时候，默认选第一个为单次……按单次的方法处理
+                dose_result = get_stime(single_dose_str,dose_result,dose_sentence)
+            #获取剂量单位,溶液的剂量单位已经处理过了，溶液以外的没有，判断
+        if dose_result.get("single_dose_unit","")=="":
+            single_dose_unit = dose_unit_patr.search(single_dose_str)
+            if single_dose_unit:
+                dose_result["single_dose_unit"] = single_dose_unit.group()
     return dose_result
 
 dose1_string = "（1）口服成人①抗焦虑，一次2.5〜10mg,一日2〜4次。"
@@ -329,7 +338,7 @@ day_limit_patr = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日|24
 day_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+day_limit_str+"[^,，。;；]*(?:一日|—日|每日|每天|每晚|晚上|日|24小时内|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
 #……为限
 day_limit_patr3 = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日|24小时内|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)(?:为限|为极限)")
-time_limit_str = "(?:限量|限最|极限|为限|最大剂量|剂量最大|剂量不超过|剂量不得超过|剂量不宜超过|最大量|最大最|最高不能超过|最大每次|最髙量|最高量)"
+time_limit_str = "(?:限量|限最|极限|为限|最大剂量|剂量最大|剂量不超过|剂量不得超过|不得超过|不超过|剂量不宜超过|最大量|最大最|最高不能超过|最大每次|最髙量|最高量)"
 time_limit_patr = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*"+time_limit_str+"[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
 time_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+time_limit_str+"[^,，。;；]*(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
 time_limit_patr3 = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)(?:为限|为极限)")
@@ -469,42 +478,114 @@ tian_no = "静脉滴注首次剂量为10BU,以后维持剂量可减为5BU,隔日
 
 #完整处理一个句子中的字段
 if __name__=="__main__":
-    yao_string = "盐酸丁卡因粉针剂需加氯化钠注射液或灭菌注射用水溶解使用。药液浓度及用量按用途分别如下。（1）硬膜外阻滞:常用浓度为0.15%〜0.3%溶液，与盐酸利多卡因合用，最高浓度为0.3%,一次常用量为40〜50mg。极量为80mg。"
+    yao_string = "(4)成人。一次用量不得超过1.0g，过量中毒的症状如头昏、目眩、继之寒战、震颤、恐慌、多言，最后可致惊厥和昏迷。"
     print(yao_string)
-    yaodian_result = {}
+    #获取句子中的字段值
+    def get_gruguse_result(str):
+        yaodian_result = {}
+        #给药方式
+        admin_route_way = get_admin_route(str)
+        if admin_route_way != "":
+            yaodian_result["admin_route"] = admin_route_way
 
-    #给药方式
-    admin_route_way = get_admin_route(yao_string)
-    if admin_route_way != "":
-        yaodian_result["admin_route"] = admin_route_way
+        #年龄
+        age_result = get_age(str)
+        if age_result:
+            yaodian_result.update(**age_result)
 
-    #年龄
-    age_result = get_age(yao_string)
-    if age_result:
-        yaodian_result.update(**age_result)
+        #体重
+        weight_result = get_weight(str)
+        if weight_result:
+            yaodian_result.update(**weight_result)
 
-    #体重
-    weight_result = get_weight(yao_string)
-    if weight_result:
-        yaodian_result.update(**weight_result)
+        #获取单次推荐剂量、推荐给药频次、单日推荐剂量、剂量单位
+        dose_result = get_single_dose(str)
+        if dose_result:
+            yaodian_result.update(**dose_result)
 
-    #获取单次推荐剂量、推荐给药频次、单日推荐剂量、剂量单位
-    dose_result = get_single_dose(yao_string)
-    if dose_result:
-        yaodian_result.update(**dose_result)
+        #获得单次、单日极量极值：
+        limit_result = get_limit(str)
+        if limit_result:
+            yaodian_result.update(**limit_result)
 
-    #获得单次、单日极量极值：
-    limit_result = get_limit(yao_string)
-    if limit_result:
-        yaodian_result.update(**limit_result)
+        #获得推荐给药天数
+        recommand_result= get_recomend_days(str)
+        if recommand_result:
+            yaodian_result.update(**recommand_result)
+        return yaodian_result
 
-    #获得推荐给药天数
-    recommand_result= get_recomend_days(yao_string)
-    if recommand_result:
-        yaodian_result.update(**recommand_result)
 
-    if yaodian_result:
-        print(yaodian_result)
+    # 将多层list展平
+    def sum_brackets(a):
+        return sum(a, [])
+
+        # print(sum_brackets(result))
+
+
+    def check_json_format(raw_msg):
+        """
+        用于判断一个字符串是否符合Json格式
+        """
+        if isinstance(raw_msg, str):  # 首先判断变量是否为字符串
+            try:
+                json.loads(raw_msg, encoding='utf-8')
+            except ValueError:
+                return False
+            return True
+        else:
+            return False
+
+    def data2excel(result_dict):
+        pass
+
+
+    def data_process(filepath):
+        tmp = []
+        json_str = ""
+        for line in open(filepath, 'r', encoding='UTF-8'):
+            json_str += line.replace("\n", "").replace("'", " ")
+            if check_json_format(json_str):
+                tmp.append(json.loads(json_str))
+                json_str = ""
+
+        if tmp:
+            for drug_info in tmp:
+                take_way = drug_info.get("sentence_cut", "")
+                take_result_list=[]
+                erke_take_way = drug_info.get("erke_sentence_cut", "")
+                erke_take_result_list = []
+                if take_way != "":
+                    for take_string in take_way:
+                        take_result = {}
+                        take_way_dict = get_gruguse_result(take_string)
+                        take_result["1"] = take_string
+                        take_result["2"] = take_way_dict
+                        take_result_list.append(take_result)
+                    del drug_info["sentence_cut"]
+                    if take_result_list:
+                        drug_info["s_result"] = take_result_list
+
+                if erke_take_way != "":
+                    for erke_take_string in erke_take_way:
+                        erke_take_result = {}
+                        erke_take_way_dict = get_gruguse_result(erke_take_string)
+                        erke_take_result["1"] = erke_take_string
+                        erke_take_result["2"] = erke_take_way_dict
+                        erke_take_result_list.append(erke_take_result)
+                    del drug_info["erke_sentence_cut"]
+                    if erke_take_result_list:
+                        drug_info["e_s_result"] = erke_take_result_list
+
+
+
+
+            with open("C:/产品文档/转换器测试数据/1-200_20201120_ziduan.json", "w", encoding='utf-8') as fp:
+                for drug in tmp:
+                    fp.write(json.dumps(drug, indent=4, ensure_ascii=False))
+                    fp.write('\n')
+
+    filepath = "C:/产品文档/转换器测试数据/1-200_20201120_cutsentence.json"
+    data_process(filepath)
 
 
 
