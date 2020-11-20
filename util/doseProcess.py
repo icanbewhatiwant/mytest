@@ -119,7 +119,7 @@ def get_pingci(dose_result,stime_string):
     return dose_result
 
 
-
+#获取单次、单日给药剂量
 def get_stime_sday(single_dose_str,dose_sentence):
     dose_result = {}
     # 获取单次给药剂量，分解 单次给药低、高值，以及剂量单位
@@ -192,7 +192,7 @@ def get_weight_time(single_dose_str,dose_result):
         if len(sindose_low_high) > 1:
             dose_result["sdose_high"] = sindose_low_high[1]
         else:
-            dose_result["sdose_time_high"] = sindose_low_high[0]
+            dose_result["sdose_high"] = sindose_low_high[0]
     return dose_result
 
 pingci_repeat_time = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*?\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g)[,.;，。；][^,.;，。；]*可重复")
@@ -206,7 +206,7 @@ def get_stime(single_dose_str,dose_result,dose_sentence):
         if len(sindose_low_high) > 1:
             dose_result["sdose_high"] = sindose_low_high[1]
         else:
-            dose_result["sdose_time_high"] = sindose_low_high[0]
+            dose_result["sdose_high"] = sindose_low_high[0]
 
     if pingci_repeat_time.search(dose_sentence):
         dose_result["dose_time_low_des"] = "需要时"
@@ -232,7 +232,29 @@ def get_sday(single_dose_str,dose_result,dose_sentence):
         dose_result["dose_time_high"] = "1/1"
     return dose_result
 
+#极量关键字
+limit_list = ["极量","极最","限量","限最","极限","为限","最大剂量","剂量最大","剂量不超过","剂量不得超过","剂量不宜超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
+#判断句子是否包含极量关键字
+def is_limit(str):
+    flag = False
+    for i in limit_list:
+        if i in str:
+            flag = True
+            break
+    return flag
+
+def is_rongye_limit(str):
+    flag = False
+    is_limit_string = re.compile("[,，。;；]?[^,，。;；]*" + str + "[^,，。;；]*[,，。;；]?")
+    limit_sentence_match = is_limit_string.search(str)
+    if limit_sentence_match:
+        limit_sentence = limit_sentence_match.group()
+        flag = is_limit(limit_sentence)
+        return flag
+
 def  get_rongye_dose(str,dose_result):
+    single_dose_patr = re.compile(dose_str5)  #0. 4〜0.8mg
+    unit_string = ""
 
     rongye_stime_sday_search = dose_stime_sday.search(str)
     rongye_stime_search = dose_stime.search(str)
@@ -240,7 +262,7 @@ def  get_rongye_dose(str,dose_result):
     rongye_sday_search = dose_sday.search(str)
     rongye_sweight_search = dose_sweight.search(str)
     rongye_stime_jici_search = dose_stime_jici.search(str)
-    unit_string = ""
+
 
     #直接搜索句子中第一次匹配到的单次用法用量数据
     if rongye_stime_sday_search:# 一次……mg，一日……mg
@@ -248,44 +270,77 @@ def  get_rongye_dose(str,dose_result):
         stime_sday_string = rongye_stime_sday_search.group()
         stime_string = dose_stime.search(stime_sday_string).group()
         sday_string = dose_sday.search(stime_sday_string).group()
-        dose_result = get_stime(stime_string,dose_result,stime_sday_string)
-        dose_result = get_sday(sday_string,dose_result,stime_sday_string)
+
+        #判断句子是否为极量句子：
+
+        is_time_limit= is_rongye_limit(stime_string)
+        is_day_limit = is_rongye_limit(sday_string)
+        if not is_time_limit:
+            dose_result = get_stime(stime_string,dose_result,stime_sday_string)
+        if not is_day_limit:
+            dose_result = get_sday(sday_string,dose_result,stime_sday_string)
+        #获取用药字符串，用来获取用药单位
+        if not is_time_limit or not is_day_limit:
+            single_dose_search = single_dose_patr.search(stime_string)
+            if single_dose_search:
+                unit_string = single_dose_search.group()
+
     elif rongye_stime_jici_search:  # 一次……mg,一日……次
         stime_jici_string = rongye_stime_jici_search.group()
         stime_string = dose_stime.search(stime_jici_string).group()
-        dose_result = get_stime_jici(stime_string,stime_jici_string)
+
+        is_time_jici_limit = is_rongye_limit(stime_string)
+        if not is_time_jici_limit:
+            dose_result = get_stime_jici(stime_string,stime_jici_string)
+            #用药单位
+            single_dose_search = single_dose_patr.search(stime_string)
+            if single_dose_search:
+                unit_string = single_dose_search.group()
     elif rongye_sday_stime_search:#一日……mg，分N次
         sday_stime_string = rongye_sday_stime_search.group()
         sday_string = dose_sday.search(sday_stime_string).group()
-        dose_result = get_sday_stime(sday_string,sday_stime_string)
+        is_day_limit = is_rongye_limit(sday_string)
+        if not is_day_limit:
+            dose_result = get_sday_stime(sday_string,sday_stime_string)
+
+            single_dose_search = single_dose_patr.search(sday_string)
+            if single_dose_search:
+                unit_string = single_dose_search.group()
     elif rongye_stime_search:# 一次……mg 单次推荐剂量  需要排除一些关键字(所在句子有：最大剂量,最大量,最大最,最髙量,最高量，不得超过，不超过)
         stime_search_string = rongye_stime_search.group()
-        dose_result = get_stime(stime_search_string, dose_result, stime_search_string)
+        is_stime_limit = is_rongye_limit(stime_search_string)
+        if not is_stime_limit:
+            dose_result = get_stime(stime_search_string, dose_result, stime_search_string)
+
+            single_dose_search = single_dose_patr.search(stime_search_string)
+            if single_dose_search:
+                unit_string = single_dose_search.group()
     elif rongye_sday_search:# 一日……mg 单日推荐剂量
         sday_search_string = rongye_sday_search.group()
-        dose_result = get_sday(sday_search_string,dose_result,sday_search_string)
+        is_sday_limit = is_rongye_limit(sday_search_string)
+        if not is_sday_limit:
+            dose_result = get_sday(sday_search_string,dose_result,sday_search_string)
+
+            single_dose_search = single_dose_patr.search(sday_search_string)
+            if single_dose_search:
+                unit_string = single_dose_search.group()
     elif rongye_sweight_search:# 每1kg体重0.15〜0.2mg。
         sweight_string =rongye_sweight_search.group()
-        dose_result = get_weight_time(sweight_string, dose_result)
-        unit_string += "/kg"
+        is_weight_limit = is_rongye_limit(sweight_string)
+        if not is_weight_limit:
+            dose_result = get_weight_time(sweight_string, dose_result)
+
+            single_dose_search = single_dose_patr.search(sweight_string)
+            if single_dose_search:
+                unit_string = single_dose_search.group()
+                unit_string += "/kg"
 
     # 获取剂量单位
-    single_dose_unit = dose_unit_patr.search(single_dose_str)
-    if single_dose_unit:
-        dose_result["single_dose_unit"] = single_dose_unit.group()
+    if unit_string!="":
+        single_dose_unit = dose_unit_patr.search(unit_string)
+        if single_dose_unit:
+            dose_result["single_dose_unit"] = single_dose_unit.group()
     return dose_result
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 limit_num_patr = re.compile("\d*\.?\d+")
