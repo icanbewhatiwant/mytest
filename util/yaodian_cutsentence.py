@@ -419,7 +419,7 @@ if __name__=="__main__":
                     erke_sentence_cut = get_sentence_cut(erke_take_way)
                     drug_info["erke_sentence_cut"] = sum_brackets(erke_sentence_cut)
 
-            with open("C:/产品文档/转换器测试数据/1-200_20201116_cutsentence2.json", "w", encoding='utf-8') as fp:
+            with open("C:/产品文档/转换器测试数据/1-200_20201120_cutsentence.json", "w", encoding='utf-8') as fp:
                 for drug in tmp:
                     fp.write(json.dumps(drug, indent=4, ensure_ascii=False))
                     fp.write('\n')
