@@ -263,7 +263,7 @@ def  get_rongye_dose(str,dose_result):
     rongye_sweight_search = dose_sweight.search(str)
     rongye_stime_jici_search = dose_stime_jici.search(str)
 
-
+    per_minute = False
     #直接搜索句子中第一次匹配到的单次用法用量数据
     if rongye_stime_sday_search:# 一次……mg，一日……mg
         #获得单次、单日用量
@@ -271,7 +271,7 @@ def  get_rongye_dose(str,dose_result):
         stime_string = dose_stime.search(stime_sday_string).group()
         sday_string = dose_sday.search(stime_sday_string).group()
         #判断用药单位后是否要添加“/min”
-        per_minute = False
+
 
         #判断句子是否为极量句子：
 
