@@ -420,7 +420,7 @@ limit_num_patr = re.compile("\d*\.?\d+")
 # yici_string = "(?:每次|一次|初量|开始时|开始|初次量|初始量|最大滴定剂量)"
 # yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|按体重)"
 limit_1day = re.compile(yiri_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
-limit_1time = re.compile(yici_string+"[^,.;，。；]*\d*\.?\d+"++percent_unit_string)
+limit_1time = re.compile(yici_string+"[^,.;，。；]*\d*\.?\d+"+percent_unit_string)
 #需要跟yaodian_getdruguse文件一致
 def get_stimeday_limit(limit_sentence,yaodian_result):
 
