@@ -12,8 +12,7 @@ import json
 # 需要提取字段
 # 年龄、体重、给药途径、单次推荐剂量、单日推荐剂量、单次剂量极值、单日剂量极值，推荐给药频次、推荐给药描述、用药推荐天数
 
-test_str = "（2）肌内或静脉注射成人①口服基础麻醉或静脉全麻。10-30mg。"
-# print("str:",test_str)
+
 admin_route_str = "(口服.灌肠|口服或舌下含服|口服或皮下注射|舌下含服.舌下喷雾.黏膜给药|口服.静脉注射|口服.肌内注射.静脉滴注|餐?后?口服成?人?|涂敷患?处?|喷于患处|外用|肌内注?射?或缓?慢?静脉缓?慢?注射|静脉注?射?或肌内注射" \
                   "|肌内注射或缓?慢?静脉缓?慢?推注|皮下或肌内注射|肌内或皮下注射|皮下.肌内注射.缓慢静脉注射|肌内注射.静脉注射|心内注射或静脉注射|皮下.静脉注射|静脉注射.静脉滴注|静脉注射或滴注|静脉注射|静脉滴注|球后注射|结膜下注射|深?部?肌内注射|皮下注射|静脉推注|静脉输注|静脉给药" \
                   "|冲服|嚼服|浸润局麻|浸润麻醉|外用|经眼给药|滴眼|滴鼻|冲洗|阴道给药|肛门内?给药|舌下含服|含服|阴道用药|瘤体注射|喷雾吸入|雾化吸入|气雾剂?吸入|粉雾吸入|干粉吸入|吸入|阴道冲洗|漱口|关节腔注射|注射给药|处方|保留灌肠|灌肠|直肠灌注|直肠给药|贴患处|贴片|外贴" \
@@ -30,12 +29,9 @@ def get_admin_route(str):
         admin_route_list = [f.group() for f in admin_route]
         admin_route_str = admin_route_list[-1]
     return admin_route_str
-
+# test_str = "（2）肌内或静脉注射成人①口服基础麻醉或静脉全麻。10-30mg。"
 # print("admin_route:",get_admin_route(test_str))
 
-# age_str = "(成人|肝、肾功能损害者|高龄患者|老年和体弱或肝功能不全患者|老年人?[或及、和]?体弱患?者|老年人?[或及、和]?虚弱的?患?者|老年人|年老[或及、和]?体弱患?者|特殊人群：严重肝损患者|老年、重病和肝功能受损患者" \
-#            "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童青?少年" \
-#            "|\d*[-|〜|～|~]?\d+岁小儿|\d+岁以上患?儿?|\d+岁以下|\d+岁或以上者|<\d+岁|>\d+岁|\d*[-|〜|～|~]\d+岁|儿童|小儿|的?患?者)"
 
 #年龄数字+人描述词（有年龄对应的）
 person2age_string = "(?:成人|新生儿|婴儿|幼儿|儿童|青少年|小儿|少儿|老年人|老人)"
@@ -173,20 +169,36 @@ def get_weight(str):
 # print("weight:", get_weight(weight_teststr))
 
 
+#一次
+fanwei_string = "[-|—|〜|～|~]"
+unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
+percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
+yici_string = "(?:每次|一次|初量|开始时|开始|初次量|初始量|最大滴定剂量)"
+yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|24小时内|按体重)"
+cishu_string =  "(?:隔日|一日|—日|每日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十])次"
+
 # 一次……mg，一日……mg 单次推荐剂量 单日推荐剂量
-dose_str1 = "(每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d*[-|—|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g).+?(一日|—日|每日|每天|每晚|晚上|24小时|按体重)\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g)"
+
+dose_str1 = yici_string+"[^,.;，。；]*\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string+".+?"+yiri_string+"\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string
+
 # 一次……mg,一日……次  单次推荐剂量 推荐给药频次
-dose_str7 = "(每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g).+?(隔日|一日|—日|每日|每天|分成|分|晚上|每晚|(?:\d*|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])次"
+dose_str7 = yici_string+"[^,.;，。；]*\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string+".+?"+cishu_string
+
 # 一次……mg 单次推荐剂量
-dose_str2 = "(每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*?\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
+dose_str2 = yici_string+"[^,.;，。；]*?\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string
+
 #一日……mg，分N次  单日推荐剂量，推荐给药频次
-dose_str3 = "(一日|—日|每日|每天|每晚|晚上|24小时|按体重)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g).*?(隔日|一日|—日|每日|每天|分成|分|晚上|每晚|(?:\d*|[一二三四五六七八九十])(?:小时|日|周))(\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])次"
+dose_str3 = yiri_string+"[^,.;，。；]*\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string+".*?"+cishu_string
+
 # 一日……mg 单日推荐剂量
-dose_str4 = "(一日|—日|每日|每天|每晚|晚上|24小时|按体重)[^,.;，。；]*?\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
+dose_str4 = yiri_string+"[^,.;，。；]*?\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string
+
 #0. 4〜0.8mg
-dose_str5 = "\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
+dose_str5 = "\d*\.?\d*%?"+fanwei_string+"?\d*\.?\d+"+percent_unit_string
+
 # 每1kg体重0.15〜0.2mg。
-dose_str6 = "每\d*kg体重\d*\.?\d*[-|〜|～|~]?\d*\.?\d+[μg|mg|ml|g]"
+dose_str6 = "每\d*kg体重\d*\.?\d*"+fanwei_string+"?\d*\.?\d+[μg|mg|ml|g|IU]"
+
 
 dose_stime_sday = re.compile(dose_str1)
 dose_stime = re.compile(dose_str2)
@@ -196,15 +208,16 @@ dose_sweight = re.compile(dose_str6)
 dose_stime_jici = re.compile(dose_str7)
 
 num_patr = re.compile("\d*\.?\d+")
-dose_unit_patr = re.compile("mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|mg|ml|g|%")
+dose_unit_patr = re.compile("mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%")
 
 #溶液所在句子
-rongye_sentence_patr = re.compile("[,，。;；]?[^,，。;；]*\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+%[^,，。;；]*溶液[^,，。;；]*[,，。;；]?")
-rongye_num_patr = re.compile("\d*\.?\d*?[-|〜|～|~]?\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|mg|ml|g)")
+rongye_sentence_patr = re.compile("[,，。;；]?[^,，。;；]*\d*\.?\d*%?"+fanwei_string+"?\d*\.?\d+%[^,，。;；]*溶液[^,，。;；]*[,，。;；]?")
+rongye_num_patr = re.compile("\d*\.?\d*?"+fanwei_string+"?\d*\.?\d+"+unit_string)
 
 #获得单次剂量极值、单日剂量极值
 #极量关键字
 limit_list = ["极量","极最","限量","限最","极限","为限","最大剂量","剂量最大","剂量不超过","剂量不得超过","剂量不宜超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过","一次不得超过","一次不超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
+
 #判断句子是否包含极量关键字
 def is_limit(str):
     flag = False
@@ -320,21 +333,25 @@ def get_single_dose(str):
 # dose3_string = "（2）肌内注射抗惊厥一次6〜10mg/kg,必要时4小时后可重复，一次极量不超过0.2g。"
 # print("single_dose:", get_single_dose(dose3_string))
 
+# fanwei_string = "[-|—|〜|～|~]"
+# unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
+# percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
+# yici_string = "(?:每次|一次|初量|开始时|开始|初次量|初始量|最大滴定剂量)"
+# yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|按体重)"
 #获取单次、单日极量极值
-limit_1time = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)")
-limit_1day = re.compile("(?:一日|—日|每日|每天|每晚|晚上|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)")
-
+limit_1time = re.compile(yici_string+"[^,.;，。；]*\d*\.?\d+"+percent_unit_string)
+limit_1day = re.compile(yiri_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 
 # 单次、单日剂量极值关键字（除了极量）
 day_limit_str = "(?:限量|限最|极限|最大剂量|剂量最大|最大滴定剂量|最大量|最大最|限量|剂量不超过|最大|剂量不得超过|剂量不宜超过|最高不能超过|不超过)"
-day_limit_patr = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日|24小时内|24小时)[^,，。;；]*"+day_limit_str+"[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)")
-day_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+day_limit_str+"[^,，。;；]*(?:一日|—日|每日|每天|每晚|晚上|日|24小时内|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)")
+day_limit_patr = re.compile(yiri_string+"[^,，。;；]*"+day_limit_str+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
+day_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+day_limit_str+"[^,，。;；]*"+yiri_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 #……为限
-day_limit_patr3 = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日|24小时内|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)(?:为限|为极限)")
+day_limit_patr3 = re.compile(yiri_string+"[^,，。;；]*\d*\.?\d+"++percent_unit_string+"(?:为限|为极限)")
 time_limit_str = "(?:限量|限最|极限|为限|最大剂量|剂量最大|剂量不超过|剂量不得超过|不得超过|不超过|剂量不宜超过|最大量|最大最|最高不能超过|最大每次|最髙量|最高量)"
-time_limit_patr = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*"+time_limit_str+"[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)")
-time_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+time_limit_str+"[^,，。;；]*(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)")
-time_limit_patr3 = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)(?:为限|为极限)")
+time_limit_patr = re.compile(yici_string+"[^,，。;；]*"+time_limit_str+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
+time_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+time_limit_str+"[^,，。;；]*"+yici_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
+time_limit_patr3 = re.compile(yici_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string+"(?:为限|为极限)")
 # 在单次剂量过滤的关键字中，包含以上这些单次、单日极值，保证不会把极值存在单次剂量和单日剂量中，也保证过滤的极值会在单次剂量中获得
 # limit_list = ["极量","极最","限量","极限","为限","最大剂量","剂量最大","剂量不超过","剂量不得超过","剂量不宜超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
 #获得单次、单日极量极值，1、极量……2、其他关键字
@@ -408,14 +425,15 @@ def get_limit(str,yaodian_result):
 # limit_string2 = "（2）肌内或缓慢静脉注射成人肌内注射0.1g,可每6小时1次，24小时内不超过0.5g。"
 # print("stime_limit:", get_limit(limit_sting))
 
-liaocheng_str = re.compile("[,，。;；]?[^,，。;；]*\d*\.?\d*(?:天|日|周|月)?[-|〜|～|~]?\d*\.?\d+(?:天|日|周|月)[^,，。;；]*疗程")
-liaocheng_after_str = re.compile("[,，。;；]?[^,，。;；]*疗程[^,，。;；]*\d*\.?\d*(?:天|日|周|月)?[-|〜|～|~]?\d*\.?\d+(?:天|日|周|月)")
+days_type = "(?:天|日|周|月)"
+liaocheng_str = re.compile("[,，。;；]?[^,，。;；]*\d*\.?\d*"+days_type+"?"+fanwei_string+"?\d*\.?\d+"+days_type+"[^,，。;；]*疗程")
+liaocheng_after_str = re.compile("[,，。;；]?[^,，。;；]*疗程[^,，。;；]*\d*\.?\d*"+days_type+"?"+fanwei_string+"?\d*\.?\d+"+days_type)
 #用几日停几日这种，可以计算相加
-liaocheng_neg = re.compile("[,，。;；]?[^,，。;；]*停\d*\.?\d*(?:天|日|周|月)?[-|〜|～|~]?\d*\.?\d+(?:天|日|周|月)[^,，。;；]*疗程")
-liaocheng_patr = re.compile("\d+(?:天|日|周|月)")
-low_high_patr = re.compile("\d*\.?\d+[-|〜|～|~]\d*\.?\d+(?:天|日|周|月)")
+liaocheng_neg = re.compile("[,，。;；]?[^,，。;；]*停\d*\.?\d*"+days_type+"?"+fanwei_string+"?\d*\.?\d+"+days_type+"[^,，。;；]*疗程")
+liaocheng_patr = re.compile("\d+"+days_type)
+low_high_patr = re.compile("\d*\.?\d+"+fanwei_string+"\d*\.?\d+"+days_type)
 liaocheng_num = re.compile("\d+")
-liaocheng_unit = re.compile("天|日|周|月")
+liaocheng_unit = re.compile(days_type)
 unit2num = {"周":"7","天":"1","日":"1","月":"30"}
 def get_recomend_days(str):
     dose_result = {}
