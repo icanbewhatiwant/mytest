@@ -119,24 +119,13 @@ def get_zd_cut(str):
 
 
 take_patr = re.compile(admin_route_str+"+")
-dose_str = ""
-# 一次……，一日……
-dose_str1 = "(一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d*[-|〜|~|~]?\d*\.?\d*(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g).+?(一日|—日|每晚)\d*\.?\d*[-|〜|~|~]?\d*\.?\d*(次|ml)?"
-# 一次……mg
-dose_str2 = "(一次)[^,.;，。；(不超过)]*\d*\.?\d*[-|〜|~|~]?\d*\.?\d*(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g)"
-#一日，分N次
-dose_str3 = "(一日|—日|按体重)[^,.;，。；]*\d*\.?\d*[-|〜|~]?\d*\.?\d*(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g).?(分成|分)\d*\.?\d*[-|〜|~]?\d*\.?\d*(次)?"
-# 一日……一日……
-dose_str4 = "(一日|—日)[^,.;，。；]*\d*\.?\d*[-|〜|~]?\d*\.?\d*(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g).?(一日|—日)\d*\.?\d*[-|〜|~]?\d*\.?\d*(次)?"
 #0. 4〜0.8mg
-dose_str5 = "\d*\.?\d*%?[-|〜|~]?\d*\.?\d*(mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)"
-# 每1kg体重0.15〜0.2mg。
-dose_str6 = "每\d*kg体重\d*\.?\d*[-|〜|~]?\d*\.?\d*[μg|mg|ml|g]"
+dose_str5 = "\d*\.?\d*%?[-|〜|~]?\d*\.?\d*(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
 
 fuction_patr = re.compile("[，。,;；][^，。,;；]*"+function_str+"[^，。,;；]*[，。,;；]")
 dose_patr = re.compile(dose_str5)
 rongye_end_patr = re.compile("(\d*\.?\d*%?[-|〜|~]?\d*\.?\d*%?溶液[,，])$")
-ml_begin_patr = re.compile("^(\d*\.?\d*[-|〜|~]?\d*\.?\d*(mg\/kg|mg|ml|g))")
+ml_begin_patr = re.compile("^(\d*\.?\d*[-|〜|~]?\d*\.?\d*(?:mg\/kg|μg|mg|ml|g))")
 
 
 #按作用切分句子
