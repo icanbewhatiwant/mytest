@@ -5,67 +5,67 @@ import os
 import json
 
 
-def pre_process():
-    #json文件数据入库
-    data_df = pd.DataFrame()
-    drug_names = []
-    dose_info = []
-    erke_dose_info = []
-    sentences = []
-    #切分字段
-    age_low = []
-    age_high = []
-    age_unit = []
-    weight_low = []
-    weight_high = []
-    admin_route = []
-    sdose_low = []
-    sdose_high = []
-    dose_time_low = []
-    dose_time_high = []
-    dose_time_low_des = []
-    dose_time_high_des = []
-    sday_dose_low = []
-    sday_dose_high = []
-    single_dose_unit = []
-    limit_1time = []
-    limit_1day = []
-    recommand_days_low = []
-    recommand_days_high = []
-
-    data_df["药品名称"] = drug_names
-    data_df["用药用量"] = dose_info
-    data_df["儿科用药用量"] = erke_dose_info
-    data_df["审查结果"] = sentences
-
-    #字段
-    data_df["年龄低值"] = age_low
-    data_df["年龄高值"] = age_high
-    data_df["年龄单位（岁；月；天）"] = age_unit
-    data_df["体重低值"] = weight_low
-    data_df["体重高值"] = weight_high
-    data_df["给药途径"] = admin_route
-    data_df["单次推荐剂量低值"] = sdose_low
-    data_df["单次推荐剂量高值"] = sdose_high
-    data_df["单次剂量极值"] = limit_1time
-    data_df["单日推荐剂量低值"] = sday_dose_low
-    data_df["单日推荐剂量高值"] = sday_dose_high
-    data_df["单日剂量极值"] = limit_1day
-    data_df["剂量单位"] = single_dose_unit
-    data_df["推荐给药频次低值"] = dose_time_low
-    data_df["推荐给药频次低值描述"] = dose_time_low_des
-    data_df["推荐给药频次高值"] = dose_time_high
-    data_df["推荐给药频次高值描述"] = dose_time_high_des
-    data_df["用药推荐天数低值"] = recommand_days_low
-    data_df["用药推荐天数高值"] = recommand_days_high
-
-
-    #创建excel文件
-    writer = pd.ExcelWriter('C:/产品文档/转换器测试数据/shenme.xlsx')
-    # result2.to_excel(writer, float_format='%.5f')
-    data_df.to_excel(writer,index = False,encoding='UTF-8')#不保存索引
-    writer.save()
-    writer.close()
+# def pre_process():
+#     #json文件数据入库
+#     data_df = pd.DataFrame()
+#     drug_names = []
+#     dose_info = []
+#     erke_dose_info = []
+#     sentences = []
+#     #切分字段
+#     age_low = []
+#     age_high = []
+#     age_unit = []
+#     weight_low = []
+#     weight_high = []
+#     admin_route = []
+#     sdose_low = []
+#     sdose_high = []
+#     dose_time_low = []
+#     dose_time_high = []
+#     dose_time_low_des = []
+#     dose_time_high_des = []
+#     sday_dose_low = []
+#     sday_dose_high = []
+#     single_dose_unit = []
+#     limit_1time = []
+#     limit_1day = []
+#     recommand_days_low = []
+#     recommand_days_high = []
+#
+#     data_df["药品名称"] = drug_names
+#     data_df["用药用量"] = dose_info
+#     data_df["儿科用药用量"] = erke_dose_info
+#     data_df["审查结果"] = sentences
+#
+#     #字段
+#     data_df["年龄低值"] = age_low
+#     data_df["年龄高值"] = age_high
+#     data_df["年龄单位（岁；月；天）"] = age_unit
+#     data_df["体重低值"] = weight_low
+#     data_df["体重高值"] = weight_high
+#     data_df["给药途径"] = admin_route
+#     data_df["单次推荐剂量低值"] = sdose_low
+#     data_df["单次推荐剂量高值"] = sdose_high
+#     data_df["单次剂量极值"] = limit_1time
+#     data_df["单日推荐剂量低值"] = sday_dose_low
+#     data_df["单日推荐剂量高值"] = sday_dose_high
+#     data_df["单日剂量极值"] = limit_1day
+#     data_df["剂量单位"] = single_dose_unit
+#     data_df["推荐给药频次低值"] = dose_time_low
+#     data_df["推荐给药频次低值描述"] = dose_time_low_des
+#     data_df["推荐给药频次高值"] = dose_time_high
+#     data_df["推荐给药频次高值描述"] = dose_time_high_des
+#     data_df["用药推荐天数低值"] = recommand_days_low
+#     data_df["用药推荐天数高值"] = recommand_days_high
+#
+#
+#     #创建excel文件
+#     writer = pd.ExcelWriter('C:/产品文档/转换器测试数据/shenme.xlsx')
+#     # result2.to_excel(writer, float_format='%.5f')
+#     data_df.to_excel(writer,index = False,encoding='UTF-8')#不保存索引
+#     writer.save()
+#     writer.close()
 
 
 def check_json_format(raw_msg):
@@ -248,7 +248,7 @@ if __name__=="__main__":
         writer.close()
 
 
-    filepath = "C:/产品文档/转换器测试数据/1-200_20201120_ziduan.json"
+    filepath = "C:/产品文档/转换器测试数据/1-200_20201123_ziduan.json"
     data_process(filepath)
 
 
