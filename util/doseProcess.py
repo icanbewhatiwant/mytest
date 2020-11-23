@@ -229,6 +229,10 @@ def get_weight_time(single_dose_str,dose_result):
 # yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|按体重)"
 pingci_repeat_time = re.compile(yici_string+"[^,.;，。；]*?\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string+"[,.;，。；][^,.;，。；]*可重复")
 pingci_repeat_day = re.compile(yiri_string+"[^,.;，。；]*?\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string+"[,.;，。；][^,.;，。；]*可重复")
+one_time = re.compile("(?:睡前服用)")
+
+#为前面没有一次关键词的句子 匹配频率
+cishu_patr = re.compile(cishu_string)
 def get_stime(single_dose_str,dose_result,dose_sentence):
     # 获取单次给药剂量，分解 单次给药低、高值，以及剂量单位
     single_dose = dose_num_patr.search(single_dose_str)
@@ -240,11 +244,22 @@ def get_stime(single_dose_str,dose_result,dose_sentence):
         else:
             dose_result["sdose_high"] = sindose_low_high[0]
 
-    if pingci_repeat_time.search(dose_sentence):
+    #获取频次
+    if cishu_patr.search(dose_sentence):
+        dose_result = get_pingci(dose_result,dose_sentence)
+    elif pingci_repeat_time.search(dose_sentence):
         dose_result["dose_time_low_des"] = "需要时"
         dose_result["dose_time_high_des"] = "需要时"
         dose_result["dose_time_low"] = "1/1"
         dose_result["dose_time_high"] = "1/1"
+
+    elif one_time.search(dose_sentence):
+        one_time_match = one_time.search(dose_sentence)
+        dose_result["dose_time_low_des"] = one_time_match.group()
+        dose_result["dose_time_high_des"] = one_time_match.group()
+        dose_result["dose_time_low"] = "1/1"
+        dose_result["dose_time_high"] = "1/1"
+
     return dose_result
 
 def get_sday(single_dose_str,dose_result,dose_sentence):
@@ -257,9 +272,19 @@ def get_sday(single_dose_str,dose_result,dose_sentence):
             dose_result["sday_dose_high"] = day_low_high[1]
         else:
             dose_result["sday_dose_high"] = day_low_high[0]
-    if pingci_repeat_day.search(dose_sentence):
+
+    # 获取频次
+    if cishu_patr.search(dose_sentence):
+        dose_result = get_pingci(dose_result, dose_sentence)
+    elif pingci_repeat_day.search(dose_sentence):
         dose_result["dose_time_low_des"] = "需要时"
         dose_result["dose_time_high_des"] = "需要时"
+        dose_result["dose_time_low"] = "1/1"
+        dose_result["dose_time_high"] = "1/1"
+    elif one_time.search(dose_sentence):
+        one_time_match = one_time.search(dose_sentence)
+        dose_result["dose_time_low_des"] = one_time_match.group()
+        dose_result["dose_time_high_des"] = one_time_match.group()
         dose_result["dose_time_low"] = "1/1"
         dose_result["dose_time_high"] = "1/1"
     return dose_result
