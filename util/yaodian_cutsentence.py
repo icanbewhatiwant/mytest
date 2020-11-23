@@ -120,11 +120,14 @@ take_patr = re.compile(admin_route_str+"+")
 # #0. 4〜0.8mg
 # dose_str5 = "\d*\.?\d*%?[-|〜|~]?\d*\.?\d*(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
 #0. 4〜0.8mg
-dose_str5 = "\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
+fanwei_string = "[-|—|〜|～|~]"
+unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
+percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
+dose_str5 = "\d*\.?\d*%?"+fanwei_string+"?\d*\.?\d+"+percent_unit_string
 fuction_patr = re.compile("[，。,;；][^，。,;；]*"+function_str+"[^，。,;；]*[，。,;；]")
 dose_patr = re.compile(dose_str5)
-rongye_end_patr = re.compile("(\d*\.?\d*%?[-|〜|~]?\d*\.?\d*%?溶液[,，])$")
-ml_begin_patr = re.compile("^(\d*\.?\d*[-|〜|~]?\d*\.?\d*(?:mg\/kg|μg|mg|ml|g))")
+rongye_end_patr = re.compile("(\d*\.?\d*%?"+fanwei_string+"?\d*\.?\d*%?溶液[,，])$")
+ml_begin_patr = re.compile("^(\d*\.?\d*"+fanwei_string+"?\d*\.?\d*(?:mg\/kg|ml\/kg|μg|mg|ml|g))")
 
 
 #按作用切分句子
@@ -183,7 +186,7 @@ def get_function_cut(str):
 
 age_str = "(肝、肾功能损害者|高龄患者|老年和体弱或肝功能不全患者|老年人?[或及、和]?体弱患?者|老年人?[或及、和]?虚弱的?患?者|老年人|年老[或及、和]?体弱患?者|特殊人群：严重肝损患者|老年、重病和肝功能受损患者" \
            "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童青?少年|儿童" \
-           "|<?\d*岁|\d*[-|〜|~|~]?\d*岁小儿|\d*岁以上患?儿?|\d*[-|〜|~|~]\d*岁|\d*岁以下|\d*岁或以上者|>\d*岁|小儿|的?患?者)"
+           "|<?\d*岁|\d*"+fanwei_string+"?\d*岁小儿|\d*岁以上患?儿?|\d*"+fanwei_string+"\d*岁|\d*岁以下|\d*岁或以上者|>\d*岁|小儿|的?患?者)"
 
 age_patr = re.compile("[，。,;；][^，。,;；]*(维持量[,，。：:]?)?"+age_str)
 
