@@ -347,7 +347,7 @@ day_limit_str = "(?:限量|限最|极限|最大剂量|剂量最大|最大滴定�
 day_limit_patr = re.compile(yiri_string+"[^,，。;；]*"+day_limit_str+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 day_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+day_limit_str+"[^,，。;；]*"+yiri_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 #……为限
-day_limit_patr3 = re.compile(yiri_string+"[^,，。;；]*\d*\.?\d+"++percent_unit_string+"(?:为限|为极限)")
+day_limit_patr3 = re.compile(yiri_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string+"(?:为限|为极限)")
 time_limit_str = "(?:限量|限最|极限|为限|最大剂量|剂量最大|剂量不超过|剂量不得超过|不得超过|不超过|剂量不宜超过|最大量|最大最|最高不能超过|最大每次|最髙量|最高量)"
 time_limit_patr = re.compile(yici_string+"[^,，。;；]*"+time_limit_str+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 time_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+time_limit_str+"[^,，。;；]*"+yici_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
@@ -600,7 +600,7 @@ if __name__=="__main__":
 
 
 
-            with open("C:/产品文档/转换器测试数据/1-200_20201120_ziduan.json", "w", encoding='utf-8') as fp:
+            with open("C:/产品文档/转换器测试数据/1-200_20201123_ziduan.json", "w", encoding='utf-8') as fp:
                 for drug in tmp:
                     fp.write(json.dumps(drug, indent=4, ensure_ascii=False))
                     fp.write('\n')
