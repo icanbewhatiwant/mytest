@@ -287,7 +287,7 @@ def get_single_dose(str):
                     if len(rongye_num_list) > 1:
                         dose_result["sdose_high"] = rongye_num_list[1]
                     else:
-                        dose_result["sdose_time_high"] = rongye_num_list[0]
+                        dose_result["sdose_high"] = rongye_num_list[0]
                     single_dose_str = rongye_dose_string
             # 3、直接使用溶液的百分号数据，下面的else可以做到
             if not dose_result: # 不包含一些关键字的时候，默认选第一个为单次……按单次的方法处理
