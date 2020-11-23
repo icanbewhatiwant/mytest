@@ -45,10 +45,8 @@ age_highd_patr = re.compile("(?:\d+岁以下|<\d+岁|\d+岁或以下)[^,.;，。
 person_patr = re.compile(person2age_string)
 
 
-age_priority = re.compile("\d*[-|〜|～|~]?\d+(?:岁|月|天)")
 age_num_patr = re.compile("\d+")
 age_unit_patr = re.compile("岁|月|天")
-# age_patr = re.compile(age_str)
 person2age = {"成人":{"low":"16","unit":"岁"},"新生儿":{"low":"0","high":"28","unit":"天"},"婴儿":{"low":"28","high":"12","unit":"天/月"},
               "幼儿":{"low":"1","high":"3","unit":"岁"},"儿童":{"high":"16","unit":"岁"},"青少年":{"high":"18","unit":"岁"},"小儿":{"high":"7","unit":"岁"},
               "少儿":{"high":"12","unit":"岁"},"老年人":{"low":"65","unit":"岁"},"老人":{"low":"65","unit":"岁"}}
@@ -129,8 +127,8 @@ def get_age(str):
         if age_unit_search:
             age_result["age_unit"] = age_unit_search.group()
     return age_result
-age_test1 = "口服24-40kg的儿童，早、晚各lOOmg（2袋），或遵医嘱。"
-age_test = "2～12岁儿童：体重≤30公斤：一日1次，一次半片(5毫克)。"
+# age_test1 = "口服24-40kg的儿童，早、晚各lOOmg（2袋），或遵医嘱。"
+# age_test = "2～12岁儿童：体重≤30公斤：一日1次，一次半片(5毫克)。"
 # print("age:",get_age(age_test))
 
 weight_high_patr = re.compile("低于|小于|≤|<|以下")
@@ -169,29 +167,26 @@ def get_weight(str):
             weight_result["weight_high"] = weight_scopenum_list[1]
     return weight_result
 
-weight_teststr = "体重大于70kg者，开始2小时宜按每小时15μg/kg给药；如耐受性好，2小时后剂量可增至每小时30μg/kg。"
-weight_teststr1 = "口服24-40kg的儿童，早、晚各lOOmg（2袋），或遵医嘱。"
-weight_teststr2 = "2～12岁儿童：体重≤30公斤：一日1次，一次半片(5毫克)。"
+# weight_teststr = "体重大于70kg者，开始2小时宜按每小时15μg/kg给药；如耐受性好，2小时后剂量可增至每小时30μg/kg。"
+# weight_teststr1 = "口服24-40kg的儿童，早、晚各lOOmg（2袋），或遵医嘱。"
+# weight_teststr2 = "2～12岁儿童：体重≤30公斤：一日1次，一次半片(5毫克)。"
 # print("weight:", get_weight(weight_teststr))
 
 
 # 一次……mg，一日……mg 单次推荐剂量 单日推荐剂量
-dose_str1 = "(每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g).+?(一日|—日|每日|每天|每晚|晚上|24小时|按体重)\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g)"
+dose_str1 = "(每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d*[-|—|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g).+?(一日|—日|每日|每天|每晚|晚上|24小时|按体重)\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g)"
 # 一次……mg,一日……次  单次推荐剂量 推荐给药频次
-dose_str7 = "(每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g).+?(隔日|一日|—日|每日|每天|分成|分|晚上|每晚|(?:\d|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])次"
+dose_str7 = "(每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g).+?(隔日|一日|—日|每日|每天|分成|分|晚上|每晚|(?:\d*|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])次"
 # 一次……mg 单次推荐剂量
-dose_str2 = "(每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*?\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g)"
+dose_str2 = "(每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*?\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
 #一日……mg，分N次  单日推荐剂量，推荐给药频次
-dose_str3 = "(一日|—日|每日|每天|每晚|晚上|24小时|按体重)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g).*?(隔日|一日|—日|每日|每天|分成|分|晚上|每晚|(?:\d|[一二三四五六七八九十])(?:小时|日|周))(\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])次"
+dose_str3 = "(一日|—日|每日|每天|每晚|晚上|24小时|按体重)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g).*?(隔日|一日|—日|每日|每天|分成|分|晚上|每晚|(?:\d*|[一二三四五六七八九十])(?:小时|日|周))(\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])次"
 # 一日……mg 单日推荐剂量
-dose_str4 = "(一日|—日|每日|每天|每晚|晚上|24小时|按体重)[^,.;，。；]*?\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g)"
+dose_str4 = "(一日|—日|每日|每天|每晚|晚上|24小时|按体重)[^,.;，。；]*?\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
 #0. 4〜0.8mg
-dose_str5 = "\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)"
+dose_str5 = "\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
 # 每1kg体重0.15〜0.2mg。
 dose_str6 = "每\d*kg体重\d*\.?\d*[-|〜|～|~]?\d*\.?\d+[μg|mg|ml|g]"
-
-dose_timestr = "(隔日|一日|—日|每日|分成|分|晚上|每晚|(?:\d|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])次"
-chi_dose_timestr = "[一二三四五六七八九十]次"
 
 dose_stime_sday = re.compile(dose_str1)
 dose_stime = re.compile(dose_str2)
@@ -200,26 +195,12 @@ dose_sday = re.compile(dose_str4)
 dose_sweight = re.compile(dose_str6)
 dose_stime_jici = re.compile(dose_str7)
 
-time_patr = re.compile(dose_timestr)
-chi_time_patr = re.compile(chi_dose_timestr)
 num_patr = re.compile("\d*\.?\d+")
-chi_num_patr = re.compile("[一二三四五六七八九十]+")
-dose_num_patr = re.compile("\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+")
-dose_unit_patr = re.compile("mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%")
-chi2num = {"一":"1","二":"2","三":"3","四":"4","五":"5","六":"6","七":"7","八":"8","九":"9","十":"10"}
-
-pingci = re.compile("隔日|一日|—日|每日|每天|分成|分|晚上|每晚|(?:\d|[一二三四五六七八九十])(?:小时|日|周)")
-cishu = re.compile("(?:\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])次")
-pingci_geri = re.compile("隔日")
-pingci_1day = re.compile("一日|—日|每日|每天|分成|分|晚上|每晚")
-pingci_hour = re.compile("(?:\d|[一二三四五六七八九十])小时")
-pingci_day = re.compile("(?:\d|[一二三四五六七八九十])日")
-pingci_week = re.compile("(?:\d|[一二三四五六七八九十])周")
+dose_unit_patr = re.compile("mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|mg|ml|g|%")
 
 #溶液所在句子
 rongye_sentence_patr = re.compile("[,，。;；]?[^,，。;；]*\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+%[^,，。;；]*溶液[^,，。;；]*[,，。;；]?")
-rongye_num_patr = re.compile("\d*\.?\d*?[-|〜|～|~]?\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g)")
-rongye_percent_patr = re.compile("\d*\.?\d*%?[-|〜|～|~]?\d*\.?\d+%")
+rongye_num_patr = re.compile("\d*\.?\d*?[-|〜|～|~]?\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|mg|ml|g)")
 
 #获得单次剂量极值、单日剂量极值
 #极量关键字
@@ -331,33 +312,33 @@ def get_single_dose(str):
                         dose_result["single_dose_unit"] += "/min"
     return dose_result
 
-dose1_string = "（1）口服成人①抗焦虑，一次2.5〜10mg,一日2〜4次。"
-dose2_string = "（1）口服抗惊厥，一日90~180mg,可在晚上一次顿服，或30〜60mg,一日3次。极量一次250mg,—日500mg。老年人或虚弱患者应减量，常用量即可产生兴奋、精神错乱或抑郁。"
-dosestime_sting = "皮下注射或静脉注射成人常用 量一次5〜10mg。极量一日40mg。"
-dosestime_stime = "（3）儿童剂量可稍高，每1kg体重0.2mg；用于维持麻醉时，小剂量静脉注射,剂量及注射间隔视患者个体差异而定。"
-test_str9 = "（1）镇痛①口服成人常用量：一次50〜100mg,一日200〜400mg。"
-dose3_string = "（2）肌内注射抗惊厥一次6〜10mg/kg,必要时4小时后可重复，一次极量不超过0.2g。"
+# dose1_string = "（1）口服成人①抗焦虑，一次2.5〜10mg,一日2〜4次。"
+# dose2_string = "（1）口服抗惊厥，一日90~180mg,可在晚上一次顿服，或30〜60mg,一日3次。极量一次250mg,—日500mg。老年人或虚弱患者应减量，常用量即可产生兴奋、精神错乱或抑郁。"
+# dosestime_sting = "皮下注射或静脉注射成人常用 量一次5〜10mg。极量一日40mg。"
+# dosestime_stime = "（3）儿童剂量可稍高，每1kg体重0.2mg；用于维持麻醉时，小剂量静脉注射,剂量及注射间隔视患者个体差异而定。"
+# test_str9 = "（1）镇痛①口服成人常用量：一次50〜100mg,一日200〜400mg。"
+# dose3_string = "（2）肌内注射抗惊厥一次6〜10mg/kg,必要时4小时后可重复，一次极量不超过0.2g。"
 # print("single_dose:", get_single_dose(dose3_string))
 
 #获取单次、单日极量极值
-limit_1time = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g|%)")
-limit_1day = re.compile("(?:一日|—日|每日|每天|每晚|晚上|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
+limit_1time = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)")
+limit_1day = re.compile("(?:一日|—日|每日|每天|每晚|晚上|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)")
 
 
 # 单次、单日剂量极值关键字（除了极量）
 day_limit_str = "(?:限量|限最|极限|最大剂量|剂量最大|最大滴定剂量|最大量|最大最|限量|剂量不超过|最大|剂量不得超过|剂量不宜超过|最高不能超过|不超过)"
-day_limit_patr = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日|24小时内|24小时)[^,，。;；]*"+day_limit_str+"[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
-day_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+day_limit_str+"[^,，。;；]*(?:一日|—日|每日|每天|每晚|晚上|日|24小时内|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
+day_limit_patr = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日|24小时内|24小时)[^,，。;；]*"+day_limit_str+"[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)")
+day_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+day_limit_str+"[^,，。;；]*(?:一日|—日|每日|每天|每晚|晚上|日|24小时内|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)")
 #……为限
-day_limit_patr3 = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日|24小时内|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)(?:为限|为极限)")
+day_limit_patr3 = re.compile("(?:一日|—日|每日|每天|每晚|晚上|日|24小时内|24小时)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)(?:为限|为极限)")
 time_limit_str = "(?:限量|限最|极限|为限|最大剂量|剂量最大|剂量不超过|剂量不得超过|不得超过|不超过|剂量不宜超过|最大量|最大最|最高不能超过|最大每次|最髙量|最高量)"
-time_limit_patr = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*"+time_limit_str+"[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
-time_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+time_limit_str+"[^,，。;；]*(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)")
-time_limit_patr3 = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|IU|μg|mg|ml|g|%)(?:为限|为极限)")
+time_limit_patr = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*"+time_limit_str+"[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)")
+time_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+time_limit_str+"[^,，。;；]*(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)")
+time_limit_patr3 = re.compile("(?:每次|一次|初量|开始时|开始|初次量|初始量)[^,，。;；]*\d*\.?\d+(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)(?:为限|为极限)")
 # 在单次剂量过滤的关键字中，包含以上这些单次、单日极值，保证不会把极值存在单次剂量和单日剂量中，也保证过滤的极值会在单次剂量中获得
 # limit_list = ["极量","极最","限量","极限","为限","最大剂量","剂量最大","剂量不超过","剂量不得超过","剂量不宜超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
 #获得单次、单日极量极值，1、极量……2、其他关键字
-def get_limit(str):
+def get_limit(str,yaodian_result):
     limit_result = {}
     limit_num_patr = re.compile("\d*\.?\d+")
     # (优先级最高)极量所在句，后面有句子时，往后再匹配最多一句
@@ -367,7 +348,8 @@ def get_limit(str):
     if limit_2search:
         #极量关键字如果在前一句，则前后都为极量，如果在一日，则一般一日在前。
         limit_sentence = limit_2search.group()
-        limit_result = get_stimeday_limit(limit_sentence)
+        #yaodian_result判断是否已经在单次用药中保存了用药单位
+        limit_result = get_stimeday_limit(limit_sentence,yaodian_result)
     #其他有极量关键字的，与一次、一日不在同一句的，不要再往前匹配每日、每次，可能是错的
     else:
         time_limit_list = []
@@ -406,7 +388,7 @@ def get_limit(str):
                 unit_string = day_limit_string
 
         #如果单次剂量为空，此时剂量单位应该也为空，补充为剂量极值的单位
-        if limit_result.get("single_dose_unit","") == "":
+        if yaodian_result.get("single_dose_unit","") == "":
             per_minute = False
             single_dose_unit = dose_unit_patr.search(unit_string)
             if single_dose_unit:
@@ -421,9 +403,9 @@ def get_limit(str):
                         limit_result["single_dose_unit"] += "/min"
     return limit_result
 
-limit_sting = "（2）肌内注射抗惊厥一次6〜10mg/kg,必要时4小时后可重复，一次极量不超过0.2g。"
-limit_string1="皮下注射、肌内注射或静脉注射每次10mg,必要时3〜6小时重复。最大剂量每次20mg,每天160mg。"
-limit_string2 = "（2）肌内或缓慢静脉注射成人肌内注射0.1g,可每6小时1次，24小时内不超过0.5g。"
+# limit_sting = "（2）肌内注射抗惊厥一次6〜10mg/kg,必要时4小时后可重复，一次极量不超过0.2g。"
+# limit_string1="皮下注射、肌内注射或静脉注射每次10mg,必要时3〜6小时重复。最大剂量每次20mg,每天160mg。"
+# limit_string2 = "（2）肌内或缓慢静脉注射成人肌内注射0.1g,可每6小时1次，24小时内不超过0.5g。"
 # print("stime_limit:", get_limit(limit_sting))
 
 liaocheng_str = re.compile("[,，。;；]?[^,，。;；]*\d*\.?\d*(?:天|日|周|月)?[-|〜|～|~]?\d*\.?\d+(?:天|日|周|月)[^,，。;；]*疗程")
@@ -491,10 +473,10 @@ def get_recomend_days(str):
                 dose_result["recommand_days_high"] = tian_list[1]
     return dose_result
 
-tian_string = "(1)口服成人①一次0.5g，一日3次，连用3日停4日为1个疗程。"
-tian_string2 = "静脉滴注急性脑血栓和脑栓塞：一日2万〜4万U,溶于5%葡萄糖氯化钠注射液或右旋糖酊-40注射液500ml中,分1〜2次给药。疗程7天〜3周。可根据病情增减剂量。"
-tian_sting3 = "口服一次30万U,一日3次，连用4周为1个疗程。可连服2〜3个疗程，也可连续服用至症状好转。"
-tian_no = "静脉滴注首次剂量为10BU,以后维持剂量可减为5BU,隔日1次。先用0.9%氯化钠注射液100〜250ml稀释后，静脉滴注1〜1.5小时。一般治疗急性脑血管病，隔日一次，3次为1个疗程。"
+# tian_string = "(1)口服成人①一次0.5g，一日3次，连用3日停4日为1个疗程。"
+# tian_string2 = "静脉滴注急性脑血栓和脑栓塞：一日2万〜4万U,溶于5%葡萄糖氯化钠注射液或右旋糖酊-40注射液500ml中,分1〜2次给药。疗程7天〜3周。可根据病情增减剂量。"
+# tian_sting3 = "口服一次30万U,一日3次，连用4周为1个疗程。可连服2〜3个疗程，也可连续服用至症状好转。"
+# tian_no = "静脉滴注首次剂量为10BU,以后维持剂量可减为5BU,隔日1次。先用0.9%氯化钠注射液100〜250ml稀释后，静脉滴注1〜1.5小时。一般治疗急性脑血管病，隔日一次，3次为1个疗程。"
 # print("recommand days:",get_recomend_days(tian_sting3))
 
 #完整处理一个句子中的字段
@@ -524,8 +506,8 @@ if __name__=="__main__":
         if dose_result:
             yaodian_result.update(**dose_result)
 
-        #获得单次、单日极量极值：
-        limit_result = get_limit(str)
+        #获得单次、单日极量极值：单日极量极值中会判断单位是否存在，带入药典数据，判断单位是否已经存在
+        limit_result = get_limit(str,yaodian_result)
         if limit_result:
             yaodian_result.update(**limit_result)
 
@@ -607,6 +589,7 @@ if __name__=="__main__":
 
     filepath = "C:/产品文档/转换器测试数据/1-200_20201120_cutsentence.json"
     data_process(filepath)
+
 
 
 
