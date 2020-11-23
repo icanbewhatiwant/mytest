@@ -274,6 +274,7 @@ def get_single_dose(str):
         if rongye_search:
             rongye_string = rongye_search.group()
             # 一次 一日 的各种组合，同上面的if else
+            #溶液的单位已处理每分钟，不用赋值single_dose_str
             dose_result = get_rongye_dose(str, dose_result)
             if not dose_result:
                 # ……溶液\dml  ……ml……溶液 100mg(5%〜7.5%溶液)
@@ -289,9 +290,10 @@ def get_single_dose(str):
                     else:
                         dose_result["sdose_high"] = rongye_num_list[0]
                     single_dose_str = rongye_dose_string
-            # 3、直接使用溶液的百分号数据，下面的else可以做到
+            # 3、直接使用溶液的百分号数据
             if not dose_result: # 不包含一些关键字的时候，默认选第一个为单次……按单次的方法处理
                 dose_result = get_stime(single_dose_str, dose_result, rongye_string)
+                single_dose_str = dose_1sentence
         else:
 
             # 获取给药频次数据，分解 推荐给药频次低值、高值、描述
@@ -315,9 +317,18 @@ def get_single_dose(str):
                 dose_result = get_stime(single_dose_str,dose_result,dose_sentence)
             #获取剂量单位,溶液的剂量单位已经处理过了，溶液以外的没有，判断
         if dose_result.get("single_dose_unit","")=="":
+            per_minute = False
             single_dose_unit = dose_unit_patr.search(single_dose_str)
             if single_dose_unit:
                 dose_result["single_dose_unit"] = single_dose_unit.group()
+                #判断是否要在单位后面添加"/min"
+                per_minute_patr = re.compile("[，。,;；][^，。,;；]*"+single_dose_str)
+                per_minute_match = per_minute_patr.search(str)
+                if per_minute_match:
+                    if "每分钟" in per_minute_match.group():
+                        per_minute = True
+                    if per_minute:
+                        dose_result["single_dose_unit"] += "/min"
     return dose_result
 
 dose1_string = "（1）口服成人①抗焦虑，一次2.5〜10mg,一日2〜4次。"
@@ -396,9 +407,18 @@ def get_limit(str):
 
         #如果单次剂量为空，此时剂量单位应该也为空，补充为剂量极值的单位
         if limit_result.get("single_dose_unit","") == "":
+            per_minute = False
             single_dose_unit = dose_unit_patr.search(unit_string)
             if single_dose_unit:
                 limit_result["single_dose_unit"] = single_dose_unit.group()
+                # 判断是否要在单位后面添加"/min"
+                per_minute_patr = re.compile("[，。,;；][^，。,;；]*" + unit_string)
+                per_minute_match = per_minute_patr.search(str)
+                if per_minute_match:
+                    if "每分钟" in per_minute_match.group():
+                        per_minute = True
+                    if per_minute:
+                        limit_result["single_dose_unit"] += "/min"
     return limit_result
 
 limit_sting = "（2）肌内注射抗惊厥一次6〜10mg/kg,必要时4小时后可重复，一次极量不超过0.2g。"
