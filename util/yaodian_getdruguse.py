@@ -32,10 +32,10 @@ def get_admin_route(str):
 # test_str = "（2）肌内或静脉注射成人①口服基础麻醉或静脉全麻。10-30mg。"
 # print("admin_route:",get_admin_route(test_str))
 
-
+fanwei_string = "[-|—|〜|～|~]"
 #年龄数字+人描述词（有年龄对应的）
 person2age_string = "(?:成人|新生儿|婴儿|幼儿|儿童|青少年|小儿|少儿|老年人|老人)"
-age_d2d_patr = re.compile("(?:\d+[-|〜|～|~]\d+岁)[^,.;，。；]*?"+person2age_string+"?")
+age_d2d_patr = re.compile("(?:\d+"+fanwei_string+"\d+岁)[^,.;，。；]*?"+person2age_string+"?")
 age_lowd_patr = re.compile("(?:\d+岁以上|>\d+岁|\d+岁或以上)[^,.;，。；]*?"+person2age_string+"?")
 age_highd_patr = re.compile("(?:\d+岁以下|<\d+岁|\d+岁或以下)[^,.;，。；]*?"+person2age_string+"?")
 person_patr = re.compile(person2age_string)
@@ -130,11 +130,11 @@ def get_age(str):
 weight_high_patr = re.compile("低于|小于|≤|<|以下")
 weight_low_patr = re.compile("大于|高于|>|≥|以上")
 weight_num_patr = re.compile("\d+")
-weight_scope_patr = re.compile("\d+[-|〜|~|~]\d+(?:kg|公斤)")
+weight_scope_patr = re.compile("\d+"+fanwei_string+"\d+(?:kg|公斤)")
 #获取体重高、低值
 def get_weight(str):
     weight_result = {}
-    weight_str = "(?:低于|大于|≤|<|>|≥)?\d*[-|〜|~|~]?\d+(?:kg|公斤)(?:以下|以上)?"
+    weight_str = "(?:低于|大于|≤|<|>|≥)?\d*"+fanwei_string+"?\d+(?:kg|公斤)(?:以下|以上)?"
     weight_patr = re.compile(weight_str)
     weight_string = ""
     weight_search = weight_patr.search(str)
@@ -170,7 +170,7 @@ def get_weight(str):
 
 
 #一次
-fanwei_string = "[-|—|〜|～|~]"
+# fanwei_string = "[-|—|〜|～|~]" 修改第一个方法前的fanwei_string
 unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
 percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
 yici_string = "(?:每次|一次|初量|开始时|开始|初次量|初始量|最大滴定剂量)"
