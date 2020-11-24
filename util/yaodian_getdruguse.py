@@ -526,8 +526,8 @@ if __name__=="__main__":
     # print(get_single_dose(yao_string))
     # print(get_age("（1）口服成人镇静催眠。睡前服2〜4mg。年老体弱者应减量。12岁以下小儿安全性与剂量尚未确定。"))
     # print(get_single_dose("②镇静，一次5〜10mg,一日15〜40mg；"))
-    print("成人①臂丛神经阻滞,0.375%溶液，20ml。")
-    print(get_single_dose("成人①臂丛神经阻滞,0.375%溶液，20ml。"))
+    # print("成人①臂丛神经阻滞,0.375%溶液，20ml。")
+    # print(get_single_dose("成人①臂丛神经阻滞,0.375%溶液，20ml。"))
 
 
     #调用方法
@@ -635,8 +635,8 @@ if __name__=="__main__":
                     fp.write(json.dumps(drug, indent=4, ensure_ascii=False))
                     fp.write('\n')
 
-    # filepath = "C:/产品文档/转换器测试数据/1-200_20201124_cutsentence.json"
-    # data_process(filepath)
+    filepath = "C:/产品文档/转换器测试数据/1-200_20201124_cutsentence.json"
+    data_process(filepath)
 
 
 
