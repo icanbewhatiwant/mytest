@@ -6,7 +6,7 @@ fanwei_string = "[-|—|〜|～|~]"
 unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
 percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
 yici_string = "(?:每次|一次|初量|开始时|开始|初次量|初始量|最大滴定剂量|按体重)"
-yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|按体重)"
+yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时.*|按体重)"
 cishu_string =  "(?:隔日|一日|—日|每日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十])次"
 
 # 一次……mg，一日……mg 单次推荐剂量 单日推荐剂量
