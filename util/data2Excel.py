@@ -112,7 +112,7 @@ if __name__=="__main__":
     cut_senteces = []
 
     #读取切分结果，excel保存
-    def data_process(filepath):
+    def data_process(filepath,file_name):
         tmp = []
         json_str = ""
         for line in open(filepath, 'r', encoding='UTF-8'):
@@ -241,14 +241,14 @@ if __name__=="__main__":
         data_df["用药推荐天数高值"] = recommand_days_high
 
         # 创建excel文件
-        writer = pd.ExcelWriter('C:/产品文档/转换器测试数据/100-200-1.xlsx')
+        writer = pd.ExcelWriter('C:/产品文档/转换器测试数据/excel_result/'+file_name+'.xlsx')
         # result2.to_excel(writer, float_format='%.5f')
         data_df.to_excel(writer, index=False, encoding='UTF-8')  # 不保存索引
         writer.save()
         writer.close()
 
-
-    filepath = "C:/产品文档/转换器测试数据/1-200_20201124_ziduan.json"
-    data_process(filepath)
+    file_name = "200_400"
+    filepath = "C:/产品文档/转换器测试数据/excel_result/"+file_name+"_ziduan.json"
+    data_process(filepath,file_name)
 
 
