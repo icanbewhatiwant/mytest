@@ -57,8 +57,30 @@ def get_age(str):
     age_highd_match = age_highd_patr.search(str)#<16
     person_match = person_patr.search(str)#老人、少儿……
 
+    #字符串中有多个年龄，一般最后一个可能有岁数，但是后面没有数据，所以没有切分，这里应该按第一个匹配到的年龄来计算
     #数字年龄+人物描述
+    idx_dict = {}
+    sort_string = "" #对应最前的年龄匹配字符串
     if age_d2d_match:# 4~20岁
+        d2d_idx = age_d2d_match.start()
+        idx_dict["age_d2d_match"] = d2d_idx
+    if age_lowd_match:#16>
+        lowd_idx = age_lowd_match.start()
+        idx_dict["age_lowd_match"] = lowd_idx
+    if age_highd_match:
+        highd_idx = age_highd_match.start()
+        idx_dict["age_highd_match"] = highd_idx
+    if person_match:
+        person_idx = person_match.start()
+        idx_dict["person_match"] = person_idx
+
+    # 对字典按value排序 获得最前的年龄idxd对应的字符串
+    if idx_dict:
+        idx_dict_sort = sorted(idx_dict.items(), key=lambda x: x[1])
+        sort_string = idx_dict_sort[0][0]
+
+    #数字年龄+人物描述
+    if sort_string == "age_d2d_match":# 4~20岁
         age_string = age_d2d_match.group()
         age_low_high = age_num_patr.findall(age_string)
         age_result["age_low"] =age_low_high[0]
@@ -68,7 +90,7 @@ def get_age(str):
             age_result["age_high"] = age_low_high[0]
         age_unit_string = age_string
 
-    elif age_lowd_match:#16>
+    elif sort_string == "age_lowd_match":#16>
         #指定低值
         age_string = age_lowd_match.group()
         age_low = age_num_patr.search(age_string).group()
@@ -85,7 +107,7 @@ def get_age(str):
                 age_unit = per_age_dict.get("unit","")
                 if age_unit !="":
                     age_result["age_unit"] = age_unit
-    elif age_highd_match:#<16
+    elif sort_string == "age_highd_match":#<16
         #指定高值
         age_string = age_highd_match.group()
         age_high = age_num_patr.search(age_string).group()
@@ -103,7 +125,7 @@ def get_age(str):
                 if age_unit != "":
                     age_result["age_unit"] = age_unit
     #仅有人物字段  老人、少儿……
-    elif person_match:
+    elif sort_string =="person_match":
         age_string = person_match.group()
         per_age_dict = person2age.get(age_string, {})
         if per_age_dict:
@@ -173,8 +195,8 @@ def get_weight(str):
 # fanwei_string = "[-|—|〜|～|~]" 修改第一个方法前的fanwei_string
 unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
 percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
-yici_string = "(?:每次|一次|初量|开始时|开始|初次量|初始量|最大滴定剂量)"
-yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|24小时内|按体重)"
+yici_string = "(?:每次|一次|初量|开始时|开始|初次量|初始量|最大滴定剂量|按体重)"
+yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|24小时内.*|按体重)"
 cishu_string =  "(?:隔日|一日|—日|每日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十])次"
 
 # 一次……mg，一日……mg 单次推荐剂量 单日推荐剂量
@@ -228,6 +250,8 @@ def is_limit(str):
     return flag
 
 #获取单次推荐剂量、推荐给药频次、单日推荐剂量、剂量单位
+#匹配纯中文的一句话
+zhongwen = re.compile("[,，。;；][\u4e00-\u9fa5]*[,，。;；]")
 def get_single_dose(str):
     dose_result = {}
     single_dose_patr = re.compile(dose_str5)#0. 4〜0.8mg
@@ -250,9 +274,18 @@ def get_single_dose(str):
         #匹配用量所在最多连续两句话
         dose_sentence_patr = re.compile("[,，。;；]?[^,，。;；]*"+single_dose_str+"[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?")
         dose_sentence = dose_sentence_patr.search(str).group()
+        #如果匹配到第二句话为纯中文，dose_sentence 匹配连续三句话
+        zhongwen_string = ""
+        zhongwen_match = zhongwen.search(dose_sentence)
+        if zhongwen_match:
+            zhongwen_string = zhongwen_match.group()
+            dose_3sentence_patr = re.compile("[,，。;；]?[^,，。;；]*"+single_dose_str+"[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?")
+            dose_3sentence = dose_3sentence_patr.search(str).group()
+            dose_sentence = dose_3sentence
         #前面一句不包含极值关键字，判断后面一句是否包含极值关键字,包含则只取第一个句子提取推荐剂量，否则两句都可以
         if is_limit(dose_sentence):
             dose_sentence = dose_1sentence
+
 
         #用量的各种匹配模式
         stime_sday_search = dose_stime_sday.search(dose_sentence)
@@ -499,8 +532,14 @@ def get_recomend_days(str):
 
 #完整处理一个句子中的字段
 if __name__=="__main__":
-    yao_string = "(4)成人。一次用量不得超过1.0g，过量中毒的症状如头昏、目眩、继之寒战、震颤、恐慌、多言，最后可致惊厥和昏迷。"
-    print(yao_string)
+    yao_string = "（3）静脉注射癫痫持续状态,按体重0.05mg/kg,一次不超过4mg,如10〜15分钟后发作仍继续或再发。可重复注射0.05mg/kg,如再经10〜15分钟仍无效。需采用其他措施，12小时内用量一般不超过8mg。"
+    # print(yao_string)
+    # print(get_single_dose(yao_string))
+    # print(get_age("（1）口服成人镇静催眠。睡前服2〜4mg。年老体弱者应减量。12岁以下小儿安全性与剂量尚未确定。"))
+    print(get_single_dose("（2）肌内注射术后应用，必要时重复，24小时内总量不超过可达400mg。极量一次250mg,一日500mg。"))
+
+
+    #调用方法
     #获取句子中的字段值
     def get_gruguse_result(str):
         yaodian_result = {}
@@ -605,8 +644,8 @@ if __name__=="__main__":
                     fp.write(json.dumps(drug, indent=4, ensure_ascii=False))
                     fp.write('\n')
 
-    filepath = "C:/产品文档/转换器测试数据/1-200_20201120_cutsentence.json"
-    data_process(filepath)
+    # filepath = "C:/产品文档/转换器测试数据/1-200_20201120_cutsentence.json"
+    # data_process(filepath)
 
 
 
