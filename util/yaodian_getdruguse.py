@@ -29,8 +29,7 @@ def get_admin_route(str):
         admin_route_list = [f.group() for f in admin_route]
         admin_route_str = admin_route_list[-1]
     return admin_route_str
-# test_str = "（2）肌内或静脉注射成人①口服基础麻醉或静脉全麻。10-30mg。"
-# print("admin_route:",get_admin_route(test_str))
+
 
 fanwei_string = "[-|—|〜|～|~]"
 #年龄数字+人描述词（有年龄对应的）
@@ -145,9 +144,7 @@ def get_age(str):
         if age_unit_search:
             age_result["age_unit"] = age_unit_search.group()
     return age_result
-# age_test1 = "口服24-40kg的儿童，早、晚各lOOmg（2袋），或遵医嘱。"
-# age_test = "2～12岁儿童：体重≤30公斤：一日1次，一次半片(5毫克)。"
-# print("age:",get_age(age_test))
+
 
 weight_high_patr = re.compile("低于|小于|≤|<|以下")
 weight_low_patr = re.compile("大于|高于|>|≥|以上")
@@ -185,22 +182,17 @@ def get_weight(str):
             weight_result["weight_high"] = weight_scopenum_list[1]
     return weight_result
 
-# weight_teststr = "体重大于70kg者，开始2小时宜按每小时15μg/kg给药；如耐受性好，2小时后剂量可增至每小时30μg/kg。"
-# weight_teststr1 = "口服24-40kg的儿童，早、晚各lOOmg（2袋），或遵医嘱。"
-# weight_teststr2 = "2～12岁儿童：体重≤30公斤：一日1次，一次半片(5毫克)。"
-# print("weight:", get_weight(weight_teststr))
 
-
-#一次
 # fanwei_string = "[-|—|〜|～|~]" 修改第一个方法前的fanwei_string
 unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
 percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
 yici_string = "(?:每次|一次|初量|开始时|开始|初次量|初始量|最大滴定剂量|按体重)"
-yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|24小时内.*|按体重)"
+# yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|24小时内.*|按体重)"
+yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时.*|按体重)"
+
 cishu_string =  "(?:隔日|一日|—日|每日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十])次"
 
 # 一次……mg，一日……mg 单次推荐剂量 单日推荐剂量
-
 dose_str1 = yici_string+"[^,.;，。；]*\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string+".+?"+yiri_string+"\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string
 
 # 一次……mg,一日……次  单次推荐剂量 推荐给药频次
@@ -274,18 +266,19 @@ def get_single_dose(str):
         #匹配用量所在最多连续两句话
         dose_sentence_patr = re.compile("[,，。;；]?[^,，。;；]*"+single_dose_str+"[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?")
         dose_sentence = dose_sentence_patr.search(str).group()
-        #如果匹配到第二句话为纯中文，dose_sentence 匹配连续三句话
-        zhongwen_string = ""
-        zhongwen_match = zhongwen.search(dose_sentence)
-        if zhongwen_match:
-            zhongwen_string = zhongwen_match.group()
-            dose_3sentence_patr = re.compile("[,，。;；]?[^,，。;；]*"+single_dose_str+"[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?")
-            dose_3sentence = dose_3sentence_patr.search(str).group()
-            dose_sentence = dose_3sentence
-        #前面一句不包含极值关键字，判断后面一句是否包含极值关键字,包含则只取第一个句子提取推荐剂量，否则两句都可以
+        # 前面一句不包含极值关键字，判断后面一句是否包含极值关键字,包含则只取第一个句子提取推荐剂量，否则两句都可以
         if is_limit(dose_sentence):
             dose_sentence = dose_1sentence
 
+        #如果匹配到第二句话为纯中文，dose_sentence 匹配连续三句话(从第二句开始不包含极量关键字时才会作为一整句话来进行字段提取),如下例子
+        # "一次100〜200mg,必要时重复，24小时内总量可达400mg"
+        zhongwen_match = zhongwen.search(dose_sentence)
+        if zhongwen_match:
+            dose_3sentence_patr = re.compile("[,，。;；]?[^,，。;；]*"+single_dose_str+"[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?")
+            dose_3sentence = dose_3sentence_patr.search(str).group()
+            #前面一句不包含极值关键字，判断后面一句是否包含极值关键字,包含则只取第一个句子提取推荐剂量，否则两句都可以
+            if not is_limit(dose_3sentence):
+                dose_sentence = dose_3sentence
 
         #用量的各种匹配模式
         stime_sday_search = dose_stime_sday.search(dose_sentence)
@@ -357,14 +350,6 @@ def get_single_dose(str):
                     if per_minute:
                         dose_result["single_dose_unit"] += "/min"
     return dose_result
-
-# dose1_string = "（1）口服成人①抗焦虑，一次2.5〜10mg,一日2〜4次。"
-# dose2_string = "（1）口服抗惊厥，一日90~180mg,可在晚上一次顿服，或30〜60mg,一日3次。极量一次250mg,—日500mg。老年人或虚弱患者应减量，常用量即可产生兴奋、精神错乱或抑郁。"
-# dosestime_sting = "皮下注射或静脉注射成人常用 量一次5〜10mg。极量一日40mg。"
-# dosestime_stime = "（3）儿童剂量可稍高，每1kg体重0.2mg；用于维持麻醉时，小剂量静脉注射,剂量及注射间隔视患者个体差异而定。"
-# test_str9 = "（1）镇痛①口服成人常用量：一次50〜100mg,一日200〜400mg。"
-# dose3_string = "（2）肌内注射抗惊厥一次6〜10mg/kg,必要时4小时后可重复，一次极量不超过0.2g。"
-# print("single_dose:", get_single_dose(dose3_string))
 
 # fanwei_string = "[-|—|〜|～|~]"
 # unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
@@ -453,11 +438,6 @@ def get_limit(str,yaodian_result):
                         limit_result["single_dose_unit"] += "/min"
     return limit_result
 
-# limit_sting = "（2）肌内注射抗惊厥一次6〜10mg/kg,必要时4小时后可重复，一次极量不超过0.2g。"
-# limit_string1="皮下注射、肌内注射或静脉注射每次10mg,必要时3〜6小时重复。最大剂量每次20mg,每天160mg。"
-# limit_string2 = "（2）肌内或缓慢静脉注射成人肌内注射0.1g,可每6小时1次，24小时内不超过0.5g。"
-# print("stime_limit:", get_limit(limit_sting))
-
 days_type = "(?:天|日|周|月)"
 liaocheng_str = re.compile("[,，。;；]?[^,，。;；]*\d*\.?\d*"+days_type+"?"+fanwei_string+"?\d*\.?\d+"+days_type+"[^,，。;；]*疗程")
 liaocheng_after_str = re.compile("[,，。;；]?[^,，。;；]*疗程[^,，。;；]*\d*\.?\d*"+days_type+"?"+fanwei_string+"?\d*\.?\d+"+days_type)
@@ -536,7 +516,7 @@ if __name__=="__main__":
     # print(yao_string)
     # print(get_single_dose(yao_string))
     # print(get_age("（1）口服成人镇静催眠。睡前服2〜4mg。年老体弱者应减量。12岁以下小儿安全性与剂量尚未确定。"))
-    print(get_single_dose("（2）肌内注射术后应用，必要时重复，24小时内总量不超过可达400mg。极量一次250mg,一日500mg。"))
+    print(get_single_dose("（2）肌内注射术后应用，一日100〜200mg,必要时重复，24小时内总量不超过400mg。极量一次250mg,一日500mg。"))
 
 
     #调用方法
