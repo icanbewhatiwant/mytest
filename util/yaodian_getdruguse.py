@@ -222,7 +222,7 @@ dose_sweight = re.compile(dose_str6)
 dose_stime_jici = re.compile(dose_str7)
 
 num_patr = re.compile("\d*\.?\d+")
-dose_unit_patr = re.compile("mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%")
+dose_unit_patr = re.compile(percent_unit_string)
 
 #溶液所在句子
 rongye_sentence_patr = re.compile("[,，。;；]?[^,，。;；]*\d*\.?\d*%?"+fanwei_string+"?\d*\.?\d+%[^,，。;；]*溶液[^,，。;；]*[,，。;；]?")
@@ -293,6 +293,15 @@ def get_single_dose(str):
         # 溶液所在的句子
         if rongye_search:
             rongye_string = rongye_search.group()
+            #x%溶液，结尾,溶液后面没有剂量单位的，多匹配后面一句
+            rongye_end_patr = re.compile("溶液[,，。;；]")
+            rongye_end_match = rongye_end_patr.search(rongye_string)
+            if rongye_end_match:
+                rongye_2sen_patr = re.compile(rongye_string+"[^,，。;；]*[,，。;；]?")
+                rongye_2sen_match =rongye_2sen_patr.search(str)
+                if rongye_2sen_match:
+                    rongye_2sentence = rongye_2sen_match.group()
+                    rongye_string = rongye_2sentence
             # 一次 一日 的各种组合，同上面的if else
             #溶液的单位已处理每分钟，不用赋值single_dose_str
             dose_result = get_rongye_dose(str, dose_result)
@@ -512,11 +521,13 @@ def get_recomend_days(str):
 
 #完整处理一个句子中的字段
 if __name__=="__main__":
-    yao_string = "（3）静脉注射癫痫持续状态,按体重0.05mg/kg,一次不超过4mg,如10〜15分钟后发作仍继续或再发。可重复注射0.05mg/kg,如再经10〜15分钟仍无效。需采用其他措施，12小时内用量一般不超过8mg。"
+    # yao_string = "（3）静脉注射癫痫持续状态,按体重0.05mg/kg,一次不超过4mg,如10〜15分钟后发作仍继续或再发。可重复注射0.05mg/kg,如再经10〜15分钟仍无效。需采用其他措施，12小时内用量一般不超过8mg。"
     # print(yao_string)
     # print(get_single_dose(yao_string))
     # print(get_age("（1）口服成人镇静催眠。睡前服2〜4mg。年老体弱者应减量。12岁以下小儿安全性与剂量尚未确定。"))
-    print(get_single_dose("（2）肌内注射术后应用，一日100〜200mg,必要时重复，24小时内总量不超过400mg。极量一次250mg,一日500mg。"))
+    # print(get_single_dose("②镇静，一次5〜10mg,一日15〜40mg；"))
+    print("成人①臂丛神经阻滞,0.375%溶液，20ml。")
+    print(get_single_dose("成人①臂丛神经阻滞,0.375%溶液，20ml。"))
 
 
     #调用方法
@@ -619,12 +630,12 @@ if __name__=="__main__":
 
 
 
-            with open("C:/产品文档/转换器测试数据/1-200_20201123_ziduan.json", "w", encoding='utf-8') as fp:
+            with open("C:/产品文档/转换器测试数据/1-200_20201124_ziduan.json", "w", encoding='utf-8') as fp:
                 for drug in tmp:
                     fp.write(json.dumps(drug, indent=4, ensure_ascii=False))
                     fp.write('\n')
 
-    # filepath = "C:/产品文档/转换器测试数据/1-200_20201120_cutsentence.json"
+    # filepath = "C:/产品文档/转换器测试数据/1-200_20201124_cutsentence.json"
     # data_process(filepath)
 
 
