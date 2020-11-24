@@ -185,8 +185,8 @@ def get_function_cut(str):
 
 
 age_str = "(肝、肾功能损害者|高龄患者|老年和体弱或肝功能不全患者|老年人?[或及、和]?体弱患?者|老年人?[或及、和]?虚弱的?患?者|老年人|年老[或及、和]?体弱患?者|特殊人群：严重肝损患者|老年、重病和肝功能受损患者" \
-           "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童青?少年|儿童" \
-           "|<?\d*岁|≤d+岁|\d*"+fanwei_string+"?\d*岁小儿|\d*岁以上患?儿?|\d*"+fanwei_string+"\d+岁|\d*岁以下|\d*岁或以上者|>\d+岁|≥\d+岁|小儿|的?患?者|患儿)"
+           "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童青?少年|儿童| 婴儿" \
+           "|<?\d*岁|≤d+岁|小于\d+岁|\d*"+fanwei_string+"?\d*岁小儿|\d*岁以上患?儿?|\d*"+fanwei_string+"\d+岁|\d*岁以下|\d*岁或以上者|>\d+岁|≥\d+岁|大于\d+岁|小儿|的?患?者|患儿)"
 
 age_patr = re.compile("[，。,;；][^，。,;；]*(维持量[,，。：:]?)?"+age_str)
 
@@ -246,7 +246,7 @@ def get_concat_str(search_string):
 
 #按年龄和功能切分①后句子，并拼接
 def get_age_func_cut(str_fun,ori_str):
-    # ori_str = ori_str.replace("&nsp", "").replace("\t", "").replace(" ", "")
+    ori_str = ori_str.replace("&nsp", "").replace("\t", "").replace(" ", "")
     take_patr_b = re.compile("([（(]\d[）)])+")
     take_patr_cir = re.compile("([①②③④⑤⑥⑦⑧⑨⑩])+")
     b_match = take_patr_b.search(ori_str)
@@ -347,8 +347,9 @@ def get_sentence_cut(str):
     return function_age_result
 
 if __name__=="__main__":
-    # result =  get_sentence_cut(test_begin)
-    # print(result)
+    test_begin= "（1）治疗放、化疗所致呕吐 用药 剂量和途径应视化疗及放疗所致恶心、呕吐的严重程度 而定。①成人：对于高度催吐性化疗药引起的呕吐，化 疗前15分钟与化疗后4小时、8小时各静脉注射8 mg, 停止化疗以后每8〜12小时口服8 mg,连用5天；对催 吐程度不太强的化疗药引起的呕吐，化疗前15分钟静 脉注射8 mg,以后每8〜12小时口服8 mg,连用5天；对 于放射治疗引起的呕吐，首剂须于放疗前1〜2小时口 服8 mg,以后每8小时口服8 mg,疗程视放疗的疗程而 定；对于高剂量顺钳可于化疗前静脉加注20 mg地塞米 松磷酸钠，可加强本品对高度催吐化疗引致呕吐的疗 效。"
+    result =  get_sentence_cut(test_begin)
+    print(result)
 
 
     # 将多层list展平
@@ -399,7 +400,7 @@ if __name__=="__main__":
 
     file_name = "200_400"
     filepath = "C:/产品文档/转换器测试数据/json/"+file_name+".json"
-    data_pro_2list(filepath,file_name)
+    # data_pro_2list(filepath,file_name)
 
 
 

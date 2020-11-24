@@ -35,8 +35,8 @@ fanwei_string = "[-|—|〜|～|~]"
 #年龄数字+人描述词（有年龄对应的）
 person2age_string = "(?:成人|新生儿|婴儿|幼儿|儿童|青少年|小儿|少儿|老年人|老人)"
 age_d2d_patr = re.compile("(?:\d+"+fanwei_string+"\d+岁)[^,.;，。；]*?"+person2age_string+"?")
-age_lowd_patr = re.compile("(?:\d+岁以上|>\d+岁|≥\d+岁|\d+岁或以上)[^,.;，。；]*?"+person2age_string+"?")
-age_highd_patr = re.compile("(?:\d+岁以下|<\d+岁|≤d+岁|\d+岁或以下)[^,.;，。；]*?"+person2age_string+"?")
+age_lowd_patr = re.compile("(?:\d+岁以上|>\d+岁|≥\d+岁|\d+岁或以上|大于\d+岁)[^,.;，。；]*?"+person2age_string+"?")
+age_highd_patr = re.compile("(?:\d+岁以下|<\d+岁|≤d+岁|\d+岁或以下|小于\d+岁)[^,.;，。；]*?"+person2age_string+"?")
 person_patr = re.compile(person2age_string)
 
 
@@ -184,9 +184,9 @@ def get_weight(str):
 
 
 # fanwei_string = "[-|—|〜|～|~]" 修改第一个方法前的fanwei_string
-unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
-percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
-yici_string = "(?:每次|一次|单次|初量|开始时|开始|初次量|初始量|最大滴定剂量|按体重)"
+unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|片)"
+percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|片|%)"
+yici_string = "(?:每次|一次|单次|首次|初量|开始时|开始|初次量|初始量|最大滴定剂量|按体重)"
 # yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|24小时内.*|按体重)"
 yiri_string = "(?:一日|—日|单日|每日|日|每天|每晚|晚上|24小时.*|按体重)"
 
