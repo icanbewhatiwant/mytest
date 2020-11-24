@@ -188,9 +188,9 @@ unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
 percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
 yici_string = "(?:每次|一次|单次|初量|开始时|开始|初次量|初始量|最大滴定剂量|按体重)"
 # yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|24小时内.*|按体重)"
-yiri_string = "(?:一日|—日|每日|日|每天|每晚|晚上|24小时.*|按体重)"
+yiri_string = "(?:一日|—日|单日|每日|日|每天|每晚|晚上|24小时.*|按体重)"
 
-cishu_string =  "(?:隔日|一日|—日|每日|日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十])次"
+cishu_string =  "(?:隔日|一日|—日|每日|单日|日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十])次"
 
 # 一次……mg，一日……mg 单次推荐剂量 单日推荐剂量
 dose_str1 = yici_string+"[^,.;，。；]*\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string+".+?"+yiri_string+"\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string
@@ -370,12 +370,12 @@ limit_1time = re.compile(yici_string+"[^,.;，。；]*\d*\.?\d+"+percent_unit_st
 limit_1day = re.compile(yiri_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 
 # 单次、单日剂量极值关键字（除了极量）
-day_limit_str = "(?:限量|限最|极限|最大剂量|剂量最大|最大滴定剂量|最大量|最大最|限量|剂量不超过|最大|剂量不得超过|剂量不宜超过|最高不能超过|不超过)"
+day_limit_str = "(?:限量|限最|极限|最大剂量|剂量最大|最高剂量|剂量最高|最大滴定剂量|最大量|最大最|剂量不超过|最大|剂量不得超过|剂量不宜超过|剂量不应超过|剂量不能超过|最高不能超过|不超过)"
 day_limit_patr = re.compile(yiri_string+"[^,，。;；]*"+day_limit_str+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 day_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+day_limit_str+"[^,，。;；]*"+yiri_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 #……为限
 day_limit_patr3 = re.compile(yiri_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string+"(?:为限|为极限)")
-time_limit_str = "(?:限量|限最|极限|为限|最大剂量|剂量最大|剂量不超过|剂量不得超过|不得超过|不超过|剂量不宜超过|最大量|最大最|最高不能超过|最大每次|最髙量|最高量)"
+time_limit_str = "(?:限量|限最|极限|为限|最大剂量|剂量最大|最高剂量|剂量最高|剂量不超过|剂量不得超过|不得超过|不超过|剂量不宜超过|剂量不应超过|剂量不能超过|最大量|最大最|最高不能超过|最大|最髙量|最高量)"
 time_limit_patr = re.compile(yici_string+"[^,，。;；]*"+time_limit_str+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 time_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+time_limit_str+"[^,，。;；]*"+yici_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 time_limit_patr3 = re.compile(yici_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string+"(?:为限|为极限)")
