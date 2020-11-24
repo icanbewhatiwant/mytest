@@ -5,7 +5,7 @@ import re
 fanwei_string = "[-|—|〜|～|~]"
 unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
 percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
-yici_string = "(?:每次|一次|初量|开始时|开始|初次量|初始量|最大滴定剂量)"
+yici_string = "(?:每次|一次|初量|开始时|开始|初次量|初始量|最大滴定剂量|按体重)"
 yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|按体重)"
 cishu_string =  "(?:隔日|一日|—日|每日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十])次"
 
@@ -48,7 +48,8 @@ chi_time_patr = re.compile(chi_dose_timestr)
 num_patr = re.compile("\d*\.?\d+")
 chi_num_patr = re.compile("[一二三四五六七八九十]+")
 dose_num_patr = re.compile("\d*\.?\d*%?"+fanwei_string+"?\d*\.?\d+")
-dose_unit_patr = re.compile("mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%")
+dose_unit_patr = re.compile(percent_unit_string)
+single_dose_patr = re.compile(dose_str5)
 chi2num = {"一":"1","二":"2","三":"3","四":"4","五":"5","六":"6","七":"7","八":"8","九":"9","十":"10"}
 
 pingci = re.compile("隔日|一日|—日|每日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周)")
@@ -163,12 +164,22 @@ def get_stime_sday(single_dose_str,dose_sentence):
     #单日剂量
     sday_match = dose_sday.search(dose_sentence)
     if sday_match:
-        sday_low_high = num_patr.findall(sday_match.group())
-        dose_result["sday_dose_low"] = sday_low_high[0]
-        if len(sday_low_high) > 1:
-            dose_result["sday_dose_high"] = sday_low_high[1]
-        else:
+        # sday_low_high = num_patr.findall(sday_match.group())
+        sday_string =sday_match.group()
+        sday_low_high = single_dose_patr.findall(sday_string)
+        sday_low_high_len = 0
+        if sday_low_high:
+            sday_low_high_len = len(sday_low_high)
+
+        #只有一个值而且有不超过关键字在单日剂量中时
+        if "不超过" in sday_string and sday_low_high_len ==1:
             dose_result["sday_dose_high"] = sday_low_high[0]
+        else:
+            dose_result["sday_dose_low"] = sday_low_high[0]
+            if len(sday_low_high) > 1:
+                dose_result["sday_dose_high"] = sday_low_high[1]
+            else:
+                dose_result["sday_dose_high"] = sday_low_high[0]
     return dose_result
 
 
