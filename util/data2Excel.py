@@ -248,7 +248,7 @@ if __name__=="__main__":
         writer.close()
 
 
-    filepath = "C:/产品文档/转换器测试数据/1-200_20201123_ziduan.json"
+    filepath = "C:/产品文档/转换器测试数据/1-200_20201124_ziduan.json"
     data_process(filepath)
 
 
