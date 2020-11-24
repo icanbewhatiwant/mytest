@@ -63,6 +63,7 @@ pingci_week = re.compile("(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八�
 #获取给药频次
 def get_pingci(dose_result,stime_string):
     # 获取给药频次及其分解
+    pingci_str =""
     pingci_match = pingci.search(stime_string)
     if pingci_match:
         pingci_string = pingci_match.group()#每天/每周
@@ -164,11 +165,11 @@ def get_stime_sday(single_dose_str,dose_sentence):
     #单日剂量
     sday_match = dose_sday.search(dose_sentence)
     if sday_match:
-        # sday_low_high = num_patr.findall(sday_match.group())
         sday_string =sday_match.group()
-        sday_low_high = single_dose_patr.findall(sday_string)
-        sday_low_high_len = 0
-        if sday_low_high:
+        sday_low_high_match = single_dose_patr.search(sday_string)
+        if sday_low_high_match:
+            sday_low_high = num_patr.findall(sday_low_high_match.group())
+            sday_low_high_len = 0
             sday_low_high_len = len(sday_low_high)
 
         #只有一个值而且有不超过关键字在单日剂量中时
