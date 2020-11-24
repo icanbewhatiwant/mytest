@@ -2,7 +2,7 @@ from docx import Document
 import json
 import re
 
-def data2Excel(drug_dict,drug_list,pra_len):
+def data2Excel(drug_dict,drug_list,pra_len,file_name):
     pra_lens = pra_len-1
     dk = 0 #记录什么时候添加数据到list
     for i,par in enumerate(paragraphs): #获得段落对象列表
@@ -130,7 +130,7 @@ def data2Excel(drug_dict,drug_list,pra_len):
         # else:
         #     break
     if drug_list:
-        with open("C:/产品文档/转换器测试数据/已整理1-200_20201116.json", "w", encoding='utf-8') as fp:
+        with open("C:/产品文档/转换器测试数据/json/"+file_name+".json", "w", encoding='utf-8') as fp:
             for drug in drug_list:
                 fp.write(json.dumps(drug, indent=4,ensure_ascii=False))
                 fp.write('\n')
@@ -166,7 +166,7 @@ def getLabellist():
 if __name__ == "__main__":
     # Document 类，不仅可以新建word文档，也可以打开一个本地文档
     # doc = Document('C:/产品文档/转换器测试数据/2015年版_1401-1539.docx')
-    doc = Document('C:/产品文档/转换器测试数据/已整理-1-200.docx')
+    doc = Document('C:/产品文档/转换器测试数据/已整理数据源/201-400.docx')
     # doc = Document('C:/产品文档/转换器测试数据/制表符.docx')#目前可以识别到选不中的（2）格式
 
 
@@ -189,7 +189,8 @@ if __name__ == "__main__":
     drug_list = []
 
     # getLabellist()
-    data2Excel(drug_dict,drug_list,pra_len)
+    file_name = "200_400"
+    data2Excel(drug_dict,drug_list,pra_len,file_name)
 
 
 

@@ -230,7 +230,9 @@ rongye_num_patr = re.compile("\d*\.?\d*?"+fanwei_string+"?\d*\.?\d+"+unit_string
 
 #获得单次剂量极值、单日剂量极值
 #极量关键字
-limit_list = ["极量","极最","限量","限最","极限","为限","最大剂量","剂量最大","剂量不超过","剂量不得超过","剂量不宜超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过","一次不得超过","一次不超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
+limit_list = ["极量","极最","限量","限最","极限","为限","最大剂量","剂量最大","最高剂量","剂量最高","剂量不超过","剂量不得超过","剂量不宜超过","剂量不应超过",
+              "剂量不能超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过",
+              "一次不得超过","一次不超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
 
 #判断句子是否包含极量关键字
 def is_limit(str):
@@ -590,7 +592,7 @@ if __name__=="__main__":
         pass
 
 
-    def data_process(filepath):
+    def data_process(filepath,file_name):
         tmp = []
         json_str = ""
         for line in open(filepath, 'r', encoding='UTF-8'):
@@ -630,13 +632,14 @@ if __name__=="__main__":
 
 
 
-            with open("C:/产品文档/转换器测试数据/1-200_20201124_ziduan.json", "w", encoding='utf-8') as fp:
+            with open("C:/产品文档/转换器测试数据/excel_result/"+file_name+"_ziduan.json", "w", encoding='utf-8') as fp:
                 for drug in tmp:
                     fp.write(json.dumps(drug, indent=4, ensure_ascii=False))
                     fp.write('\n')
 
-    filepath = "C:/产品文档/转换器测试数据/1-200_20201124_cutsentence.json"
-    data_process(filepath)
+    file_name = "200_400"
+    filepath = "C:/产品文档/转换器测试数据/cutsentence/"+file_name+".json"
+    data_process(filepath,file_name)
 
 
 
