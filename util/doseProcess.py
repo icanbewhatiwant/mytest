@@ -3,9 +3,10 @@ import re
 #需要跟yaodian_getdruguse文件一致
 #一次
 fanwei_string = "[-|—|〜|～|~]"
-unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g)"
-percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
-yici_string = "(?:每次|一次|单次|初量|开始时|开始|初次量|初始量|最大滴定剂量|按体重)"
+unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|片)"
+percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|片|%)"
+
+yici_string = "(?:每次|一次|单次|首次|初量|开始时|开始|初次量|初始量|最大滴定剂量|按体重)"
 yiri_string = "(?:一日|—日|单日|每日|日|每天|每晚|晚上|24小时.*|按体重)"
 # yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|24小时内.*|按体重)"
 cishu_string =  "(?:隔日|一日|—日|每日|单日|日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十])次"
