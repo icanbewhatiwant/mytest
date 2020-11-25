@@ -1,21 +1,14 @@
 import re
 
+d2d_idx = 1
+lowd_idx = 2
+highd_idx = 3
+person_idx = 0
+# 数字年龄+人物描述
 
-dose_str1 = "(一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g).+?(每日|一日|—日|每晚)\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(次|mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g)?"
-string3 = " （1）镇痛①口服成人常用量：一次50〜100mg,一日200〜400mg。"
-
-# yiriyiri = re.compile(dose_str1)
-# yiriyiri_match = yiriyiri.search(string3)
-# if yiriyiri_match:
-#     print(yiriyiri_match.group())
-
-
-dose_str3 = "(每次|一次|初量|开始时|开始|初次量|初始量)[^,.;，。；]*\d*\.?\d*[-|〜|～|~]?\d*\.?\d+(mg\/kg|μg\/kg|IU\/kg|IU|mg|ml|g).+?(每日|一日|—日|每晚|(?:\d|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*[-|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十])次"
-string4 = " （1）镇痛①口服成人常用量：一次50〜100mg,一日200〜400mg。"
-
-string = " 口服。每次5～15mg(1～3粒)，三日1次，严重病人可遵医嘱增至每次30mg（6粒），每日三次。"
-string1 = "（1）口服成人①抗焦虑，一日2.5〜10mg,分2〜4次。"
-yirijici = re.compile(dose_str3)
-yirijici_match = yirijici.search(string)
-if yirijici_match:
-    print(yirijici_match.group())
+idx_dict = {"d2d_idx": d2d_idx, "lowd_idx": lowd_idx, "highd_idx": highd_idx, "person_idx": person_idx}
+# 对字典按value排序
+idx_dict_sort = sorted(idx_dict.items(), key=lambda x: x[1])
+sort_string = idx_dict_sort[0][0]
+print(idx_dict_sort)
+print(type(sort_string))

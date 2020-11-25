@@ -1,8 +1,14 @@
 import re
 import json
+#200-400变量
 from util.parameter_store import function_24
 from util.parameter_store import zd_24
 from util.parameter_store import dose_forbid_24
+
+#400-600变量
+from util.parameter_store import function_46
+from util.parameter_store import zd_46
+from util.parameter_store import dose_forbid_46
 
 
 
@@ -22,7 +28,7 @@ admin_route_str = "(口服.灌肠|口服或舌下含服|口服或皮下注射|�
 #                "|静脉全麻|神经阻滞麻醉|吸入麻醉|缓释片|神经阻滞或浸润麻醉|表面局麻|腰麻|神经阻滞)"
 
 #200-400
-function_str = function_24
+function_str = function_46
 
 #按大括号切分句子  效果：[……(1)……,……(2)……，……]
 def get_bracket_str(str):
@@ -74,8 +80,8 @@ def get_circle_str(str):
 # dose_forbid=["维持量","极量","限量","最大量","总量","维持","继以","患者的耐受情况","耐受的用量"]
 
 #200-400
-zd_str = zd_24
-dose_forbid= dose_forbid_24
+zd_str = zd_46
+dose_forbid= dose_forbid_46
 zd_patr = re.compile(zd_str)
 exclude_patr = re.compile("[^，。,;；]+[，。,;；]?")#获取功能、年龄后的第一个句子
 
@@ -95,8 +101,7 @@ def get_zd_cut(str):
                 zd_begin = str[:idx]
                 zd_next = str[idx:] if i == len(indexes) - 1 else str[idx:indexes[i + 1]]
 
-
-                # 含部分关键字的不切分
+                # 含部分关键字的不切分  exclude_patr匹配到功能、年龄、指定字段所在的一句话
                 zd_next_first_match = exclude_patr.search(zd_next)
                 zd_next_first = zd_next_first_match.group()
                 for forbi in dose_forbid:
@@ -183,10 +188,11 @@ def get_function_cut(str):
         function_result.append(str)
     return function_result
 
-
+age_dot = "\d*\.?\d+" #有2.5岁的
 age_str = "(肝、肾功能损害者|高龄患者|老年和体弱或肝功能不全患者|老年人?[或及、和]?体弱患?者|老年人?[或及、和]?虚弱的?患?者|老年人|年老[或及、和]?体弱患?者|特殊人群：严重肝损患者|老年、重病和肝功能受损患者" \
-           "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童青?少年|儿童| 婴儿" \
-           "|<?\d*岁|≤d+岁|小于\d+岁|\d*"+fanwei_string+"?\d*岁小儿|\d*岁以上患?儿?|\d*"+fanwei_string+"\d+岁|\d*岁以下|\d*岁或以上者|>\d+岁|≥\d+岁|大于\d+岁|小儿|的?患?者|患儿)"
+           "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童青?少年|儿童|婴儿|婴幼儿" \
+           "|<"+age_dot+"岁|≤"+age_dot+"岁|小于"+age_dot+"岁|"+age_dot+"岁|"+age_dot+"岁以上|"+age_dot+fanwei_string+age_dot+"岁|"\
+          +age_dot+"岁以下|>"+age_dot+"岁|≥"+age_dot+"岁|大于"+age_dot+"岁|小儿|的?患?者|患儿)"
 
 age_patr = re.compile("[，。,;；][^，。,;；]*(维持量[,，。：:]?)?"+age_str)
 
