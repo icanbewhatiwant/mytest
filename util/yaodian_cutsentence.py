@@ -104,14 +104,14 @@ def get_zd_cut(str):
                 # 含部分关键字的不切分  exclude_patr匹配到功能、年龄、指定字段所在的一句话
                 zd_next_first_match = exclude_patr.search(zd_next)
                 zd_next_first = zd_next_first_match.group()
-                for forbi in dose_forbid:
-                    if forbi in zd_next_first:
-                        forbi_flag = True
-                        break
-                if not forbi_flag:
+                # for forbi in dose_forbid:
+                #     if forbi in zd_next_first:
+                #         forbi_flag = True
+                #         break
+                # if not forbi_flag:
 
-                    if dose_patr.search(zd_begin) and dose_patr.search(zd_next):
-                        idxes_list.append(idx)
+                if dose_patr.search(zd_begin) and dose_patr.search(zd_next):
+                    idxes_list.append(idx)
         # 用于断句的index_list,存放满足条件的年龄的index，切分即可
         if idxes_list:
             for j, idxx in enumerate(idxes_list):
@@ -190,7 +190,7 @@ def get_function_cut(str):
 
 age_dot = "\d*\.?\d+" #有2.5岁的
 age_str = "(肝、肾功能损害者|高龄患者|老年和体弱或肝功能不全患者|老年人?[或及、和]?体弱患?者|老年人?[或及、和]?虚弱的?患?者|老年人|年老[或及、和]?体弱患?者|特殊人群：严重肝损患者|老年、重病和肝功能受损患者" \
-           "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童青?少年|儿童|婴儿|婴幼儿" \
+           "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童青?少年|儿童|婴儿|婴幼儿|早产儿" \
            "|<"+age_dot+"岁|≤"+age_dot+"岁|小于"+age_dot+"岁|"+age_dot+"岁|"+age_dot+"岁以上|"+age_dot+fanwei_string+age_dot+"岁|"\
           +age_dot+"岁以下|>"+age_dot+"岁|≥"+age_dot+"岁|大于"+age_dot+"岁|小儿|的?患?者|患儿)"
 
@@ -353,7 +353,7 @@ def get_sentence_cut(str):
     return function_age_result
 
 if __name__=="__main__":
-    test_begin= "（1）治疗放、化疗所致呕吐 用药 剂量和途径应视化疗及放疗所致恶心、呕吐的严重程度 而定。①成人：对于高度催吐性化疗药引起的呕吐，化 疗前15分钟与化疗后4小时、8小时各静脉注射8 mg, 停止化疗以后每8〜12小时口服8 mg,连用5天；对催 吐程度不太强的化疗药引起的呕吐，化疗前15分钟静 脉注射8 mg,以后每8〜12小时口服8 mg,连用5天；对 于放射治疗引起的呕吐，首剂须于放疗前1〜2小时口 服8 mg,以后每8小时口服8 mg,疗程视放疗的疗程而 定；对于高剂量顺钳可于化疗前静脉加注20 mg地塞米 松磷酸钠，可加强本品对高度催吐化疗引致呕吐的疗 效。"
+    test_begin = "静脉滴注若患者不能口服或胃肠内给药才考虑静脉用药,24小时持续静脉滴注。首剂总量：肝移植为一日0.01〜0.05mg/kg,心脏移植患者为一日0.01〜0.02mg/kg,根据血药浓度调整剂量。首次剂量于移植后24小时内给予。应持续使用以维持移植物的存活，但剂量常可减少，主要依据临床上对排斥的估计和患者的耐受性来调整。但应尽早（一般2〜3日内）转为口服给药。从静脉转口服时.首次口服剂量应在停止静脉用药后8〜12小时给予。对于儿童患者，通常需用成人推荐剂量的1.5~2倍才能达到与成人相同的血药浓度。对于肝肾移植的儿童服用剂量为按体重计算一日0.3mg/kg,如不能口服给药，则应给予持续24小时静脉滴注。有证据表明，丙型肝炎患儿平均所需他克莫司剂量,为无丙型肝炎患儿的三分之一。"
     result =  get_sentence_cut(test_begin)
     print(result)
 
