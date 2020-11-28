@@ -52,7 +52,7 @@ chi_num_patr = re.compile("[一二三四五六七八九十]+")
 dose_num_patr = re.compile("\d*\.?\d*%?"+fanwei_string+"?\d*\.?\d+")
 dose_unit_patr = re.compile(percent_unit_string)
 single_dose_patr = re.compile(dose_str5)
-chi2num = {"一":"1","二":"2","三":"3","四":"4","五":"5","六":"6","七":"7","八":"8","九":"9","十":"10"}
+chi2num = {"半":"0.5","一":"1","二":"2","三":"3","四":"4","五":"5","六":"6","七":"7","八":"8","九":"9","十":"10"}
 
 pingci = re.compile("隔日|一日|—日|每日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周)")
 cishu = re.compile("(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十])次")
