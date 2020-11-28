@@ -210,23 +210,33 @@ yiri_string = "(?:一日|—日|首日|单日|每日|日|日服|每天|每晚|�
 
 cishu_string =  "(?:隔日|一日|—日|每日|单日|日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十])次"
 
+#加入片袋粒这些单位的话 范围前的数字  0.3mg|6袋|1/4包  范围后的数字 0.3mg|6袋|1/4包|半包|二袋  范围数字一般都是数字 不会用中文所以前面没有中文
+before_num_string = "(?:\d*\.?\d*|\d*\/\d*)"
+after_num_string = "(?:\d*\.?\d+|\d*\/\d*|[半两一二三四五六七八九十])"
+
 # 一次……mg，一日……mg 单次推荐剂量 单日推荐剂量
-dose_str1 = yici_string+"[^,.;，。；]*\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string+".+?"+yiri_string+"\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string
+# dose_str1 = yici_string+"[^,.;，。；]*\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string+".+?"+yiri_string+"\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string
+dose_str1 = yici_string+"[^,.;，。；]*"+before_num_string+fanwei_string+"?"+after_num_string+unit_string+".+?"+yiri_string+before_num_string+fanwei_string+"?"+after_num_string+unit_string
 
 # 一次……mg,一日……次  单次推荐剂量 推荐给药频次
-dose_str7 = yici_string+"[^,.;，。；]*\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string+".+?"+cishu_string
+# dose_str7 = yici_string+"[^,.;，。；]*\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string+".+?"+cishu_string
+dose_str7 = yici_string+"[^,.;，。；]*"+before_num_string+fanwei_string+"?"+after_num_string+unit_string+".+?"+cishu_string
 
 # 一次……mg 单次推荐剂量
-dose_str2 = yici_string+"[^,.;，。；]*?\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string
+# dose_str2 = yici_string+"[^,.;，。；]*?\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string
+dose_str2 = yici_string+"[^,.;，。；]*?"+before_num_string+fanwei_string+"?"+after_num_string+unit_string
 
 #一日……mg，分N次  单日推荐剂量，推荐给药频次
-dose_str3 = yiri_string+"[^,.;，。；]*\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string+".*?"+cishu_string
+# dose_str3 = yiri_string+"[^,.;，。；]*\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string+".*?"+cishu_string
+dose_str3 = yiri_string+"[^,.;，。；]*"+before_num_string+fanwei_string+"?"+after_num_string+unit_string+".*?"+cishu_string
 
 # 一日……mg 单日推荐剂量
-dose_str4 = yiri_string+"[^,.;，。；]*?\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string
+# dose_str4 = yiri_string+"[^,.;，。；]*?\d*\.?\d*"+fanwei_string+"?\d*\.?\d+"+unit_string
+dose_str4 = yiri_string+"[^,.;，。；]*?"+before_num_string+fanwei_string+"?"+after_num_string+unit_string
 
 #0. 4〜0.8mg
-dose_str5 = "\d*\.?\d*%?"+fanwei_string+"?\d*\.?\d+"+percent_unit_string
+# dose_str5 = "\d*\.?\d*%?"+fanwei_string+"?\d*\.?\d+"+percent_unit_string
+dose_str5 = before_num_string+"%?"+fanwei_string+"?"+after_num_string+percent_unit_string
 
 # 每1kg体重0.15〜0.2mg。
 dose_str6 = "每\d*kg体重\d*\.?\d*"+fanwei_string+"?\d*\.?\d+[μg|mg|ml|g|IU]"
