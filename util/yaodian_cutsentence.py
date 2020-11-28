@@ -1,5 +1,6 @@
 import re
 import json
+import os
 #200-400变量
 from util.parameter_store import function_24
 from util.parameter_store import zd_24
@@ -353,9 +354,9 @@ def get_sentence_cut(str):
     return function_age_result
 
 if __name__=="__main__":
-    test_begin = "一般一次250mg，一日2次，可控制眼压。闭角型青光眼急性发作，一次125〜250mg，每8小时1次，首次500mg。"
-    result =  get_sentence_cut(test_begin)
-    print(result)
+    # test_begin = "一般一次250mg，一日2次，可控制眼压。闭角型青光眼急性发作，一次125〜250mg，每8小时1次，首次500mg。"
+    # result =  get_sentence_cut(test_begin)
+    # print(result)
 
 
     # 将多层list展平
@@ -404,11 +405,18 @@ if __name__=="__main__":
                     fp.write(json.dumps(drug, indent=4, ensure_ascii=False))
                     fp.write('\n')
 
-    file_name = "200_400"
-    filepath = "C:/产品文档/转换器测试数据/json/"+file_name+".json"
-    # data_pro_2list(filepath,file_name)
+    #文件处理方法
+    def process_use2sentence():
+        # file_name_list = ["1-200","201-400","401-600","601-800","801-1000","1001-1200","1201-1400","1401-1539"]
+        file_name_list = ["1-200", "201-400"]
+
+        for file_name in file_name_list:
+            doc_path = "C:/产品文档/转换器测试数据/json/"+file_name+".json"
+            if os.path.exists(doc_path):
+                data_pro_2list(doc_path,file_name)
+                print("file {} druguse2sentence finished!".format(file_name + ".json"))
 
 
-
+    process_use2sentence()
 
 

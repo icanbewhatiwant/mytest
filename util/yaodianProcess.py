@@ -1,19 +1,20 @@
 from docx import Document
 import json
 import re
+import os
 
 def data2Excel(drug_dict,drug_list,pra_len,file_name):
     pra_lens = pra_len-1
     dk = 0 #记录什么时候添加数据到list
     for i,par in enumerate(paragraphs): #获得段落对象列表
         par_str = par.text
-        print("i",i)
+        # print("i",i)
         # if i <=50:
         if par_str =="" :
             continue
-        print("dk",dk)
+        # print("dk",dk)
         if drug_dict and dk == 3:
-            print(drug_dict)
+            # print(drug_dict)
             drug_list.append(drug_dict)
             drug_dict = {}
             dk = 0
@@ -132,11 +133,8 @@ def data2Excel(drug_dict,drug_list,pra_len,file_name):
     if drug_list:
         with open("C:/产品文档/转换器测试数据/json/"+file_name+".json", "w", encoding='utf-8') as fp:
             for drug in drug_list:
-                fp.write(json.dumps(drug, indent=4,ensure_ascii=False))
+                fp.write(json.dumps(drug, indent=4,ensure_ascii=False))#unicode串转中文传入
                 fp.write('\n')
-
-        # with open("C:/产品文档/转换器测试数据/已整理1-200.json","w",encoding='utf-8') as fp:
-        #     fp.write(json.dumps(drug_list, indent=4,ensure_ascii=False))#unicode串转中文传入
 
 #遍历文件得到label名称，去重作为列名
 # 得到：['【药理】', '【不良反应】', '【禁忌证】', '【注意事项】', '【用法与用量】', '【儿科用法与用量】', '【制剂与规格】', '【适应证】', '【儿科注意事项】', '【药物相互作用】', '【给药说明】']
@@ -164,19 +162,7 @@ def getLabellist():
 
 
 if __name__ == "__main__":
-    # Document 类，不仅可以新建word文档，也可以打开一个本地文档
-    # doc = Document('C:/产品文档/转换器测试数据/2015年版_1401-1539.docx')
-    doc = Document('C:/产品文档/转换器测试数据/已整理数据源/201-400.docx')
-    # doc = Document('C:/产品文档/转换器测试数据/制表符.docx')#目前可以识别到选不中的（2）格式
 
-
-    "获取文档所有段落信息："
-    # 获取文档所有段落对象
-    paragraphs = doc.paragraphs
-    pra_len = len(paragraphs)
-    print("pra_len",pra_len)
-
-    # 源数据是pdf转word，数据不规范
     # 标签，前面括号格式有中英文全半角的各种格式组合
     label_drug = re.compile("[＠|@]")
     #标签对应内容提取
@@ -185,12 +171,24 @@ if __name__ == "__main__":
     #一段中的内容换行后包含换行符，需要判断是同一段内容
     paras_patr = re.compile("^([（(]\d[）)])?(\\t)?")
 
-    drug_dict = {}
-    drug_list = []
+    filepath = "C:/产品文档/转换器测试数据/已整理数据源/"
+    # file_name_list = ["1-200","201-400","401-600","601-800","801-1000","1001-1200","1201-1400","1401-1539"]
+    file_name_list = ["1-200","201-400"]
+    for file_name in file_name_list:
+        doc_path = filepath+file_name+".docx"
+        if os.path.exists(doc_path):
+            doc = Document(doc_path)
+            # 获取文档所有段落对象
+            paragraphs = doc.paragraphs
+            pra_len = len(paragraphs)
+            drug_dict = {}
+            drug_list = []
 
-    # getLabellist()
-    file_name = "200_400"
-    data2Excel(drug_dict,drug_list,pra_len,file_name)
+            data2Excel(drug_dict, drug_list, pra_len, file_name)
+            print("file {} word2json finished!".format(file_name+".docx"))
+
+
+
 
 
 

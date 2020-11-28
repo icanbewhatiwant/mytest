@@ -6,6 +6,7 @@ from util.doseProcess import get_stime
 from util.doseProcess import get_sday
 from util.doseProcess import get_stimeday_limit
 from util.doseProcess import get_rongye_dose
+import os
 
 import re
 import json
@@ -195,8 +196,14 @@ def get_weight(str):
 
 
 # fanwei_string = "[-|—|〜|～|~]" 修改第一个方法前的fanwei_string
-unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|片)"
-percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|片|%)"
+#1-1539的所有剂量单位组合
+unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal)\/?(?:[（(]kg.min[）)]|[（(]kg.d[）)]|[（(]kg.h[）)]|kg|mL|ml|h|d|L|min|m2|cm2)?"
+#100-200的unit_string
+# unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|片)"
+# percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
+#中文单位组合
+chi_unit_string = "(?:\d*\/\d*|\d*|[半一二三四五六七八九十])?[-|—|〜|～|~]?(?:\d*\/\d*|\d*|[半一二三四五六七八九十])[片袋粒枚支揿喷包滴瓶枚套]"
+percent_unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|%)\/?(?:[（(]kg.min[）)]|[（(]kg.d[）)]|[（(]kg.h[）)]|kg|mL|ml|h|d|L|min|m2|cm2)?"
 yici_string = "(?:每次|一次|单次|首次|初量|开始时|开始|初次量|初始量|最大滴定剂量|按体重)"
 # yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|24小时内.*|按体重)"
 yiri_string = "(?:一日|—日|首日|单日|每日|日|日服|每天|每晚|晚上|24小时.*|按体重)"
@@ -258,9 +265,77 @@ def is_limit(str):
             break
     return flag
 
+#获取剂量所在的句子
+def get_dose_sentence(single_dose_str):
+    # 排除与"极量"同意的句子、最大剂量、最大量,最大最,最髙量,最高量、等关键字
+    # 匹配用量所在一句话
+    dose_sentence = ""
+    dose_1sentence_patr = re.compile("[,，。;；]?[^,，。;；]*" + single_dose_str + "[^,，。;；]*[,，。;；]?")
+    dose_1sentence = dose_1sentence_patr.search(str).group()
+    # 第一句话就包含极值关键字，则后面句子也为极值句子，不用继续判断
+    if is_limit(dose_1sentence):
+        return dose_sentence
+
+    # 匹配用量所在最多连续两句话
+    dose_sentence_patr = re.compile("[,，。;；]?[^,，。;；]*" + single_dose_str + "[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?")
+    dose_sentence = dose_sentence_patr.search(str).group()
+    # 前面一句不包含极值关键字，判断后面一句是否包含极值关键字,包含则只取第一个句子提取推荐剂量，否则两句都可以
+    if is_limit(dose_sentence):
+        dose_sentence = dose_1sentence
+
+    # 如果匹配到第二句话为纯中文，dose_sentence 匹配连续三句话(从第二句开始不包含极量关键字时才会作为一整句话来进行字段提取),如下例子
+    # "一次100〜200mg,必要时重复，24小时内总量可达400mg"
+    zhongwen_match = zhongwen.search(dose_sentence)
+    if zhongwen_match:
+        dose_3sentence_patr = re.compile(
+            "[,，。;；]?[^,，。;；]*" + single_dose_str + "[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?")
+        dose_3sentence = dose_3sentence_patr.search(str).group()
+        # 前面一句不包含极值关键字，判断后面一句是否包含极值关键字,包含则只取第一个句子提取推荐剂量，否则两句都可以
+        if not is_limit(dose_3sentence):
+            dose_sentence = dose_3sentence
+
+    return dose_sentence
+
+#处理溶液所在句子
+def process_rongye(rongye_search,dose_result,single_dose_str):
+    rongye_string = rongye_search.group()
+    # x%溶液，结尾,溶液后面没有剂量单位的，多匹配后面一句
+    rongye_end_patr = re.compile("溶液[,，。;；]")
+    rongye_end_match = rongye_end_patr.search(rongye_string)
+    if rongye_end_match:
+        rongye_2sen_patr = re.compile(rongye_string + "[^,，。;；]*[,，。;；]?")
+        rongye_2sen_match = rongye_2sen_patr.search(str)
+        if rongye_2sen_match:
+            rongye_2sentence = rongye_2sen_match.group()
+            rongye_string = rongye_2sentence
+    # 一次 一日 的各种组合，同上面的if else
+    # 溶液的单位已处理每分钟，不用赋值single_dose_str
+    dose_result = get_rongye_dose(str, dose_result)
+    if not dose_result:
+        # ……溶液\dml  ……ml……溶液 100mg(5%〜7.5%溶液)
+        # 匹配除了%以外的其他的用量单位
+        rongye_single_search = rongye_num_patr.search(rongye_string)
+        if rongye_single_search:
+            # 0.4-0.4mg
+            rongye_dose_string = rongye_single_search.group()
+            rongye_num_list = num_patr.findall(rongye_dose_string)
+            dose_result["sdose_low"] = rongye_num_list[0]
+            if len(rongye_num_list) > 1:
+                dose_result["sdose_high"] = rongye_num_list[1]
+            else:
+                dose_result["sdose_high"] = rongye_num_list[0]
+            single_dose_str = rongye_dose_string
+    # 3、直接使用溶液的百分号数据
+    if not dose_result:  # 不包含一些关键字的时候，默认选第一个为单次……按单次的方法处理
+        dose_result = get_stime(single_dose_str, dose_result, rongye_string)
+        # single_dose_str = dose_1sentence
+    return dose_result,single_dose_str
+
+
 #获取单次推荐剂量、推荐给药频次、单日推荐剂量、剂量单位
 #匹配纯中文的一句话
 zhongwen = re.compile("[,，。;；][\u4e00-\u9fa5]*[,，。;；]")
+sentence_patr = re.compile("[^，。,;；]+[，。,;；]?")
 def get_single_dose(str):
     dose_result = {}
     single_dose_patr = re.compile(dose_str5)#0. 4〜0.8mg
@@ -270,111 +345,64 @@ def get_single_dose(str):
     if single_dose_search:
         single_dose_iter = single_dose_patr.finditer(str)
         single_dose_str_list = [f.group() for f in single_dose_iter]
-        single_dose_str = single_dose_str_list[0]
+        #ml/min的单位匹配到的时候，需要做一下排除
+        for num_unit in single_dose_str_list:
+            sentence_patr = re.compile("[，。,;；]?[^，。,;；]*肌酐清除率[^，。,;；]*"+num_unit+"[^，。,;；]*[，。,;；]?")
+            sentence_exclude_match = sentence_patr.search(str)
+            if not sentence_exclude_match:
+                single_dose_str = num_unit
+                break
+        if single_dose_str !="":
+            dose_sentence = get_dose_sentence(single_dose_str)
 
-        # 排除与"极量"同意的句子、最大剂量、最大量,最大最,最髙量,最高量、等关键字
-        #匹配用量所在一句话
-        dose_1sentence_patr = re.compile("[,，。;；]?[^,，。;；]*"+single_dose_str+"[^,，。;；]*[,，。;；]?")
-        dose_1sentence = dose_1sentence_patr.search(str).group()
-        #第一句话就包含极值关键字，则后面句子也为极值句子，不用继续判断
-        if is_limit(dose_1sentence):
-            return dose_result
+            #用量的各种匹配模式
+            stime_sday_search = dose_stime_sday.search(dose_sentence)
+            stime_search = dose_stime.search(dose_sentence)
+            sday_stime_search = dose_sday_stime.search(dose_sentence)
+            sday_search = dose_sday.search(dose_sentence)
+            sweight_search = dose_sweight.search(dose_sentence)
+            stime_jici_search = dose_stime_jici.search(dose_sentence)
 
-        #匹配用量所在最多连续两句话
-        dose_sentence_patr = re.compile("[,，。;；]?[^,，。;；]*"+single_dose_str+"[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?")
-        dose_sentence = dose_sentence_patr.search(str).group()
-        # 前面一句不包含极值关键字，判断后面一句是否包含极值关键字,包含则只取第一个句子提取推荐剂量，否则两句都可以
-        if is_limit(dose_sentence):
-            dose_sentence = dose_1sentence
-
-        #如果匹配到第二句话为纯中文，dose_sentence 匹配连续三句话(从第二句开始不包含极量关键字时才会作为一整句话来进行字段提取),如下例子
-        # "一次100〜200mg,必要时重复，24小时内总量可达400mg"
-        zhongwen_match = zhongwen.search(dose_sentence)
-        if zhongwen_match:
-            dose_3sentence_patr = re.compile("[,，。;；]?[^,，。;；]*"+single_dose_str+"[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?")
-            dose_3sentence = dose_3sentence_patr.search(str).group()
-            #前面一句不包含极值关键字，判断后面一句是否包含极值关键字,包含则只取第一个句子提取推荐剂量，否则两句都可以
-            if not is_limit(dose_3sentence):
-                dose_sentence = dose_3sentence
-
-        #用量的各种匹配模式
-        stime_sday_search = dose_stime_sday.search(dose_sentence)
-        stime_search = dose_stime.search(dose_sentence)
-        sday_stime_search = dose_sday_stime.search(dose_sentence)
-        sday_search = dose_sday.search(dose_sentence)
-        sweight_search = dose_sweight.search(dose_sentence)
-        stime_jici_search = dose_stime_jici.search(dose_sentence)
-
-        #溶液数据单独处理，匹配是否是溶液句子(上面是按第一次出现的用量进行匹配，对溶液来说并不适用，在默认处理前进行溶液处理)
-        rongye_search = rongye_sentence_patr.search(str)
-        # 溶液所在的句子
-        if rongye_search:
-            rongye_string = rongye_search.group()
-            #x%溶液，结尾,溶液后面没有剂量单位的，多匹配后面一句
-            rongye_end_patr = re.compile("溶液[,，。;；]")
-            rongye_end_match = rongye_end_patr.search(rongye_string)
-            if rongye_end_match:
-                rongye_2sen_patr = re.compile(rongye_string+"[^,，。;；]*[,，。;；]?")
-                rongye_2sen_match =rongye_2sen_patr.search(str)
-                if rongye_2sen_match:
-                    rongye_2sentence = rongye_2sen_match.group()
-                    rongye_string = rongye_2sentence
-            # 一次 一日 的各种组合，同上面的if else
-            #溶液的单位已处理每分钟，不用赋值single_dose_str
-            dose_result = get_rongye_dose(str, dose_result)
-            if not dose_result:
-                # ……溶液\dml  ……ml……溶液 100mg(5%〜7.5%溶液)
-                # 匹配除了%以外的其他的用量单位
-                rongye_single_search = rongye_num_patr.search(rongye_string)
-                if rongye_single_search:
-                    # 0.4-0.4mg
-                    rongye_dose_string = rongye_single_search.group()
-                    rongye_num_list = num_patr.findall(rongye_dose_string)
-                    dose_result["sdose_low"] = rongye_num_list[0]
-                    if len(rongye_num_list) > 1:
-                        dose_result["sdose_high"] = rongye_num_list[1]
-                    else:
-                        dose_result["sdose_high"] = rongye_num_list[0]
-                    single_dose_str = rongye_dose_string
-            # 3、直接使用溶液的百分号数据
-            if not dose_result: # 不包含一些关键字的时候，默认选第一个为单次……按单次的方法处理
-                dose_result = get_stime(single_dose_str, dose_result, rongye_string)
-                single_dose_str = dose_1sentence
-        else:
-
-            # 获取给药频次数据，分解 推荐给药频次低值、高值、描述
-            #单次推荐剂量和单日推荐剂量
-            if stime_sday_search: # 一次……mg，一日……mg
-                dose_result = get_stime_sday(single_dose_str, dose_sentence)
-            elif stime_jici_search:# 一次……mg,一日……次
-                dose_result = get_stime_jici(single_dose_str, dose_sentence)
-            elif sday_stime_search:#一日……mg，分N次
-                dose_result = get_sday_stime(single_dose_str, dose_sentence)
-            elif stime_search:# 一次……mg 单次推荐剂量  需要排除一些关键字(所在句子有：最大剂量,最大量,最大最,最髙量,最高量，不得超过，不超过)
-                #添加获取总量，即单日推荐低值和高值  总量也能获取
-                dose_result = get_stime(single_dose_str,dose_result,dose_sentence)
-            elif sday_search:# 一日……mg 单日推荐剂量
-                dose_result = get_sday(single_dose_str,dose_result,dose_sentence)
-            elif sweight_search:# 每1kg体重0.15〜0.2mg。
-                dose_result = get_weight_time(single_dose_str, dose_result)
-                single_dose_str+="/kg"
+            #溶液数据单独处理，匹配是否是溶液句子(上面是按第一次出现的用量进行匹配，对溶液来说并不适用，在默认处理前进行溶液处理)
+            rongye_search = rongye_sentence_patr.search(str)
+            # 溶液所在的句子
+            if rongye_search:
+                dose_result, single_dose_str = process_rongye(rongye_search, dose_result, single_dose_str)
             else:
-                #不包含一些关键字的时候，默认选第一个为单次……按单次的方法处理
-                dose_result = get_stime(single_dose_str,dose_result,dose_sentence)
-            #获取剂量单位,溶液的剂量单位已经处理过了，溶液以外的没有，判断
-        if dose_result.get("single_dose_unit","")=="":
-            per_minute = False
-            single_dose_unit = dose_unit_patr.search(single_dose_str)
-            if single_dose_unit:
-                dose_result["single_dose_unit"] = single_dose_unit.group()
-                #判断是否要在单位后面添加"/min"
-                per_minute_patr = re.compile("[，。,;；][^，。,;；]*"+single_dose_str)
-                per_minute_match = per_minute_patr.search(str)
-                if per_minute_match:
-                    if "每分钟" in per_minute_match.group():
-                        per_minute = True
-                    if per_minute:
-                        dose_result["single_dose_unit"] += "/min"
+
+                # 获取给药频次数据，分解 推荐给药频次低值、高值、描述
+                #单次推荐剂量和单日推荐剂量
+                if stime_sday_search: # 一次……mg，一日……mg
+                    dose_result = get_stime_sday(single_dose_str, dose_sentence)
+                elif stime_jici_search:# 一次……mg,一日……次
+                    dose_result = get_stime_jici(single_dose_str, dose_sentence)
+                elif sday_stime_search:#一日……mg，分N次
+                    dose_result = get_sday_stime(single_dose_str, dose_sentence)
+                elif stime_search:# 一次……mg 单次推荐剂量  需要排除一些关键字(所在句子有：最大剂量,最大量,最大最,最髙量,最高量，不得超过，不超过)
+                    #添加获取总量，即单日推荐低值和高值  总量也能获取
+                    dose_result = get_stime(single_dose_str,dose_result,dose_sentence)
+                elif sday_search:# 一日……mg 单日推荐剂量
+                    dose_result = get_sday(single_dose_str,dose_result,dose_sentence)
+                elif sweight_search:# 每1kg体重0.15〜0.2mg。
+                    dose_result = get_weight_time(single_dose_str, dose_result)
+                    single_dose_str+="/kg"
+                else:
+                    #不包含一些关键字的时候，默认选第一个为单次……按单次的方法处理
+                    dose_result = get_stime(single_dose_str,dose_result,dose_sentence)
+                #获取剂量单位,溶液的剂量单位已经处理过了，溶液以外的没有，判断
+            if dose_result.get("single_dose_unit","")=="":
+                per_minute = False
+                single_dose_unit = dose_unit_patr.search(single_dose_str)
+                if single_dose_unit:
+                    dose_result["single_dose_unit"] = single_dose_unit.group()
+                    #判断是否要在单位后面添加"/min"
+                    per_minute_patr = re.compile("[，。,;；][^，。,;；]*"+single_dose_str)
+                    per_minute_match = per_minute_patr.search(str)
+                    if per_minute_match:
+                        if "每分钟" in per_minute_match.group():
+                            per_minute = True
+                        if per_minute:
+                            dose_result["single_dose_unit"] += "/min"
     return dose_result
 
 # fanwei_string = "[-|—|〜|～|~]"
@@ -652,14 +680,18 @@ if __name__=="__main__":
                     fp.write(json.dumps(drug, indent=4, ensure_ascii=False))
                     fp.write('\n')
 
-    file_name = "200_400"
-    filepath = "C:/产品文档/转换器测试数据/cutsentence/"+file_name+".json"
-    data_process(filepath,file_name)
+    # 获取字段方法
+    def get_druguse_ziduan():
+        # file_name_list = ["1-200","201-400","401-600","601-800","801-1000","1001-1200","1201-1400","1401-1539"]
+        file_name_list = ["1-200"]
+        for file_name in file_name_list:
+            doc_path =  "C:/产品文档/转换器测试数据/cutsentence/"+file_name+".json"
+            if os.path.exists(doc_path):
+                data_process(doc_path, file_name)
+                print("file {} sent2ziduan finished!".format(file_name + ".json"))
 
 
-
-
-
+    get_druguse_ziduan()
 
 
 
