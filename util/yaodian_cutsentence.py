@@ -236,7 +236,7 @@ def get_function_cut(str):
     return function_result
 
 age_dot = "\d*\.?\d+" #有2.5岁的
-age_unit_string = "(?:岁|个?月|天|日)"
+age_unit_string = "(?:岁|个?月person2age_string|天person2age_string|日person2age_string)"
 person2age_string = "(?:成人|新生儿|婴幼?儿|幼儿|儿童|青少年|小儿|少儿|老年人|老人)"
 age_str = "(肝、肾功能损害者|高龄患者|老年和体弱或肝功能不全患者|老年人?[或及、和]?体弱患?者|老年人?[或及、和]?虚弱的?患?者|老年人|年老[或及、和]?体弱患?者|特殊人群：严重肝损患者|老年、重病和肝功能受损患者" \
            "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童青?少年|儿童|婴儿|婴幼儿|早产儿" \
@@ -409,10 +409,10 @@ def get_sentence_cut(str,drug_name):
     return function_age_result
 
 if __name__=="__main__":
-    # function_str = function_1214
-    # zd_str = zd_1214
-    # dose_forbid = dose_forbid_1214
-    # test_begin = "阴道给药，一次1粒，每日1次；重症每日2粒。6〜8次为一疗程。"
+    # function_str = function_810
+    # zd_str = zd_810
+    # dose_forbid = dose_forbid_810
+    # test_begin = "(1)口服治疗慢性丙型肝炎成人，每日600mg。儿童，一日按体重10mg/kg，分4次服。疗程7〜14日。6岁以下儿童口服剂量未定。（2）静脉滴注①成人，一日500-1000mg，疗程3〜7日。②儿童，一日10〜15mg/kg，分2次给药，每次静脉滴注20分钟以上。疗程3〜7日。治疗拉沙热、流行性岀血热等严重病例时，成人首剂静脉滴注2g，继以每8小时0.5〜1g，共10日。（3）气雾吸入此用法必须严格按照给药说明中所述气雾发生器和给药方法进行。①儿童给药浓度为20mg/ml，一日吸药12〜18小时，疗程3〜7日。对于呼吸道合胞病毒性肺炎和其他病毒感染，也可持续吸药3〜6日；或一日3次，一次4小时，疗程3日。②成人，一日吸入1g。（4）滴鼻一次1〜2滴，每1〜2小时1次。"
     # result =  get_sentence_cut(test_begin,"@吡喹酮")
     # print(result)
     # print(get_number_str("（1）成人常用量①口服1、十二指肠溃疡和良性胃溃疡急性期治疗:标准剂量为一次150mg,一日2次，早、晚饭时服；或300mg睡前一次服。疗程4〜8周，如需要可治疗12周。大部分患者在4周内治愈，少部分在8周内治愈，有报道每晚一次服300mg,比一日服用2次、一次150mg的疗效好。十二指肠溃疡患者，一次300mg、一日2次的治疗方案，用药4周的治愈率高于一次150mg、一日2次或夜间服300mg的方案，且剂量增加并不提高不良反应的发生率。长期治疗：通常采用夜间顿服，一日150mg。对急性十二指肠溃疡愈合后患者，应进行一年以上的维持治疗，以避免溃疡复发。2、非甾体类抗炎药引起的胃黏膜损伤急性期治疗：一次150mg,一日2次或夜间顿服300mg,疗程8〜12周。预防：在非甾体类抗炎药治疗的同时服用，一次150mg,一日2次或夜间顿服300mg。3、胃溃疡一次150mg,—日2次，绝大部分患者于4周内治愈，未能完全治愈的患者通常在接下来的4周治愈。4、胃食管反流病急性反流性食管炎：一次150mg,一日2次或夜间服300mg,治疗8〜12周。中度至重度食管炎：剂量可增加至一次150mg,一日4次，治疗12周。反流性食管炎的长期治疗：口服一次150mg,一日2次。5、酒佐林格-埃利森综合征宜用大量，一日600〜1200mg。6、间歇性发作性消化不良标准剂量为一次150mg,一日2次，治疗6周。7、预防重症患者的应激性溃疡出血或消化性溃疡引起的反复出血一旦患者可恢复进食，可用口服一次150mg、一日2次，以代替注射给药。8、预防Mendelcon综合征于麻醉前2小时服用150mg,最好麻醉前一日晚上也服150mg。也可用注射剂。产科分娩患者可口服一次150mg,每6小时1次。如需要全身麻醉，应另外给予非颗粒的抗酸剂（如枸椽酸钠）。"))
@@ -464,7 +464,7 @@ if __name__=="__main__":
                 for drug in tmp:
                     fp.write(json.dumps(drug, indent=4, ensure_ascii=False))
                     fp.write('\n')
-    #
+
     # #1-200
     # function_str = function_12
     # zd_str = zd_12
@@ -500,16 +500,16 @@ if __name__=="__main__":
     # if os.path.exists(doc_path):
     #     data_pro_2list(doc_path, "601-800")
     #     print("file {} druguse2sentence finished!".format("601-800" + ".json"))
-    #
-    # #810-1000
-    # function_str = function_810
-    # zd_str = zd_810
-    # dose_forbid = dose_forbid_810
-    # doc_path = "C:/产品文档/转换器测试数据/json/" + "801-1000" + ".json"
-    # if os.path.exists(doc_path):
-    #     data_pro_2list(doc_path, "801-1000")
-    #     print("file {} druguse2sentence finished!".format("801-1000" + ".json"))
-    #
+
+    #810-1000
+    function_str = function_810
+    zd_str = zd_810
+    dose_forbid = dose_forbid_810
+    doc_path = "C:/产品文档/转换器测试数据/json/" + "801-1000" + ".json"
+    if os.path.exists(doc_path):
+        data_pro_2list(doc_path, "801-1000")
+        print("file {} druguse2sentence finished!".format("801-1000" + ".json"))
+
     # #1001-1200
     # function_str = function_1012
     # zd_str = zd_1012
@@ -519,14 +519,14 @@ if __name__=="__main__":
     #     data_pro_2list(doc_path, "1001-1200")
     #     print("file {} druguse2sentence finished!".format("1001-1200" + ".json"))
     #
-    #1201-1400
-    function_str = function_1214
-    zd_str = zd_1214
-    dose_forbid = dose_forbid_1214
-    doc_path = "C:/产品文档/转换器测试数据/json/" + "1201-1400" + ".json"
-    if os.path.exists(doc_path):
-        data_pro_2list(doc_path, "1201-1400")
-        print("file {} druguse2sentence finished!".format("1201-1400" + ".json"))
+    # #1201-1400
+    # function_str = function_1214
+    # zd_str = zd_1214
+    # dose_forbid = dose_forbid_1214
+    # doc_path = "C:/产品文档/转换器测试数据/json/" + "1201-1400" + ".json"
+    # if os.path.exists(doc_path):
+    #     data_pro_2list(doc_path, "1201-1400")
+    #     print("file {} druguse2sentence finished!".format("1201-1400" + ".json"))
     #
     # #1401-1539
     # function_str = function_1415
