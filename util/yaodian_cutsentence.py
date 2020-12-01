@@ -5,12 +5,30 @@ import os
 from util.parameter_store import function_24
 from util.parameter_store import zd_24
 from util.parameter_store import dose_forbid_24
-
 #400-600变量
 from util.parameter_store import function_46
 from util.parameter_store import zd_46
 from util.parameter_store import dose_forbid_46
-
+#600-800变量
+from util.parameter_store import function_68
+from util.parameter_store import zd_68
+from util.parameter_store import dose_forbid_68
+#800-1000
+from util.parameter_store import function_810
+from util.parameter_store import zd_810
+from util.parameter_store import dose_forbid_810
+#1000-1200
+from util.parameter_store import function_1012
+from util.parameter_store import zd_1012
+from util.parameter_store import dose_forbid_1012
+#1200-1400
+from util.parameter_store import function_1214
+from util.parameter_store import zd_1214
+from util.parameter_store import dose_forbid_1214
+#1400-1539
+from util.parameter_store import function_1415
+from util.parameter_store import zd_1415
+from util.parameter_store import dose_forbid_1415
 
 
 
@@ -26,23 +44,21 @@ admin_route_str = "(涂在溃疡表面|贴用|口腔鼓漱|根管冲洗|冲洗�
                   "|关节腔内.皮下注射|口服.灌肠|口服或舌下含服|口服或皮下注射|舌下含服.舌下喷雾.黏膜给药|口服.静脉注射|口服静脉滴注|静脉滴注.肌内注射|口服.肌内注射.静脉滴注" \
                   "|口服.肌内注射.静脉注射|肌内.静脉注射.静脉滴注|餐?后?口服成?人?|涂敷患?处?|喷于患处|外用|肌内注?射?或缓?慢?静脉缓?慢?注射|静脉注?射?.肌内注射|肌内注射或缓?慢?静脉缓?慢?推注" \
                   "|静脉滴注或缓慢静脉推注|皮下或肌内注射|肌内或皮下注射|皮下.肌内注射.缓慢静脉注射|肌内注射.静脉注射|肌内注射.静脉滴注|心内注射或静脉注射|皮下.静脉注射|静脉注射.静脉滴注" \
-                  "|静脉注射或滴注|静脉滴注.静脉注射|皮下注射.肌内注射|皮下注射.静脉注射|静脉缓?慢?注射|动脉插管注?射?||动脉.缓慢注射|动脉.注射|静脉滴注|静滴|球后注射|结膜下注射|关节腔内.肌内注射|深?部?肌内注射" \
+                  "|静脉注射或滴注|静脉滴注.静脉注射|皮下注射.肌内注射|皮下注射.静脉注射|静脉缓?慢?注射|动脉插管注?射?|动脉.缓慢注射|动脉.注射|静脉滴注|静滴|球后注射|结膜下注射|关节腔内.肌内注射|深?部?肌内注射" \
                   "|肌注|皮下注射|静脉推注|静脉单?次?输注|静脉.?给药|冲服|嚼服|浸润局麻|浸润麻醉|外用|经眼给药|滴眼|滴鼻|阴道给药|肛门内?给药|舌下含服|含服|阴道用药|瘤体注射|喷雾吸入|雾化吸入" \
                   "|气雾剂?吸入|粉雾吸入|干粉吸入|吸入|阴道冲洗|漱口|关节腔内?注射|注射给药|处方|保留灌肠|灌肠|直肠灌注|直肠给药|贴患处|贴片|外贴|注入脐静脉|静脉注入|涂抹或填塞|涂抹|靶控输注系统给药" \
                   "|使用栓剂|肛门注入|注入|局部注射|放入阴道|阴道.给药|开水冲服|咀嚼服用|鞘内注射或关节腔、软组织等损伤部位内注射|鞘内注射|脑室内注射|冲洗|灌洗|滴耳|肛门灌入|喷药|含化|口含)"
 
-# function_str = "(镇静.催眠|镇静.镇痛|镇静.?催眠.急性乙醇戒断|镇静催眠、急性酒精戒断|抗焦虑.镇静催眠|镇痛麻醉|手术后镇痛|分娩镇痛|镇静|催眠|镇痛|抗恐惧|抗癫痫.抗惊厥|小儿惊厥|癫痫持续状态和严重复发性癫痫|癫痫持续状态|一般性失眠|抗?癫痫|抗?失眠|抗?惊厥|抗?焦虑|乙醇戒断|基础麻醉或静脉全麻" \
-#                "|术前准备|麻醉前用药|麻醉前给药|表面麻醉.神经阻滞麻醉及硬膜外麻醉|神经阻滞或硬膜外麻醉|剖宫产手术硬膜外麻醉|硬膜外麻醉用?|术后应用|诱导麻醉|维持麻醉|表面麻醉|入睡困难|睡眠维持障碍|基础麻醉|抗躁狂或抗精神病|偏头痛的?预防性?治?疗?|偏头痛和慢性每?日?头痛的治疗|偏头痛的发作期治疗|用于|中重度妊娠高血压征、先兆子痫和子痫" \
-#                "|早产与治疗妊娠高血压|帕金森病、多发性硬化症及痉挛状态|帕金森病|不宁腿综合征|抽动秽语综合征|肝豆状核变性|用于急性严?重?疼痛|中枢性呼吸及循环功能不全|中枢抑制催醒|术?后?催醒|急性脑血栓和脑栓塞|治疗深静脉血栓|治疗急性血栓栓塞|预防手术后深静脉血栓|深静脉血栓或肺栓塞" \
-#                "|缺血性脑卒中或短暂性脑缺血发作（TIA）|左房室瓣病或心房颤动伴栓塞|蛛网膜下隙出血|蛛网膜下隙阻滞|急性脑血管病恢复期|脑动脉硬化，脑梗死恢复期|中枢性和外周性眩晕|椎动脉供血不足|特发性耳鸣|间歇性跛行|缺血性脑血管病急性期及其他缺血性血管疾病" \
-#                "|脑梗死急性期|脑外伤及脑手术后的意识障碍|良性记忆障碍|阿尔茨海默病和?.{0,3}血管性痴呆|阿尔茨海默病|重症肌无力、肌营养不良症、多发性周围神经病|确?诊?重症肌无力的?确?证?|治疗重症肌无力|重症肌无力" \
-#                "|获得性振动性眼球震颤|神经性膀胱功能障碍|假性近视|术后腹胀气或尿潴|对抗非去极化型肌松药的肌松作用|麻醉诱导|全麻.?诱导|全身麻醉|全麻维持量?|全麻诱导|平衡麻醉|全凭静脉麻醉|局部麻醉或椎管内麻醉辅助用药" \
-#                "|眼科用|耳鼻喉科用|髄管阻滞|硬膜外阻滞?|区域阻滞|神经传导阻滞|外周神经阻滞麻醉|外周神经阻滞|交感神经节阻滞|神经干（丛）阻滞|胃镜检査|尿道扩张术或膀胱镜检査|臂丛神经阻滞麻?醉?|紙管阻滞|硬脊膜外阻滞|局部浸润麻?醉?" \
-#                "|硬膜外腔阻滞麻?醉?|电休克|快?速?气管插管|维持肌肉松弛|半去极化肌松药的拮抗|青光眼|呕吐|精神分裂症|肾功能不全|肝功能不全|遗尿症|抗高胆红素血症|缓释制剂|治疗心律失常|拮抗东芨着碱中毒" \
-#                "|静脉全麻|神经阻滞麻醉|吸入麻醉|缓释片|神经阻滞或浸润麻醉|表面局麻|腰麻|神经阻滞)"
+function_12 = "(镇静.催眠|镇静.镇痛|镇静.?催眠.急性乙醇戒断|镇静催眠、急性酒精戒断|抗焦虑.镇静催眠|镇痛麻醉|手术后镇痛|分娩镇痛|镇静|催眠|镇痛|抗恐惧|抗癫痫.抗惊厥|小儿惊厥|癫痫持续状态和严重复发性癫痫|癫痫持续状态|一般性失眠|抗?癫痫|抗?失眠|抗?惊厥|抗?焦虑|乙醇戒断|基础麻醉或静脉全麻" \
+               "|术前准备|麻醉前用药|麻醉前给药|表面麻醉.神经阻滞麻醉及硬膜外麻醉|神经阻滞或硬膜外麻醉|剖宫产手术硬膜外麻醉|硬膜外麻醉用?|术后应用|诱导麻醉|维持麻醉|表面麻醉|入睡困难|睡眠维持障碍|基础麻醉|抗躁狂或抗精神病|偏头痛的?预防性?治?疗?|偏头痛和慢性每?日?头痛的治疗|偏头痛的发作期治疗|用于|中重度妊娠高血压征、先兆子痫和子痫" \
+               "|早产与治疗妊娠高血压|帕金森病、多发性硬化症及痉挛状态|帕金森病|不宁腿综合征|抽动秽语综合征|肝豆状核变性|用于急性严?重?疼痛|中枢性呼吸及循环功能不全|中枢抑制催醒|术?后?催醒|急性脑血栓和脑栓塞|治疗深静脉血栓|治疗急性血栓栓塞|预防手术后深静脉血栓|深静脉血栓或肺栓塞" \
+               "|缺血性脑卒中或短暂性脑缺血发作（TIA）|左房室瓣病或心房颤动伴栓塞|蛛网膜下隙出血|蛛网膜下隙阻滞|急性脑血管病恢复期|脑动脉硬化，脑梗死恢复期|中枢性和外周性眩晕|椎动脉供血不足|特发性耳鸣|间歇性跛行|缺血性脑血管病急性期及其他缺血性血管疾病" \
+               "|脑梗死急性期|脑外伤及脑手术后的意识障碍|良性记忆障碍|阿尔茨海默病和?.{0,3}血管性痴呆|阿尔茨海默病|重症肌无力、肌营养不良症、多发性周围神经病|确?诊?重症肌无力的?确?证?|治疗重症肌无力|重症肌无力" \
+               "|获得性振动性眼球震颤|神经性膀胱功能障碍|假性近视|术后腹胀气或尿潴|对抗非去极化型肌松药的肌松作用|麻醉诱导|全麻.?诱导|全身麻醉|全麻维持量?|全麻诱导|平衡麻醉|全凭静脉麻醉|局部麻醉或椎管内麻醉辅助用药" \
+               "|眼科用|耳鼻喉科用|髄管阻滞|硬膜外阻滞?|区域阻滞|神经传导阻滞|外周神经阻滞麻醉|外周神经阻滞|交感神经节阻滞|神经干（丛）阻滞|胃镜检査|尿道扩张术或膀胱镜检査|臂丛神经阻滞麻?醉?|紙管阻滞|硬脊膜外阻滞|局部浸润麻?醉?" \
+               "|硬膜外腔阻滞麻?醉?|电休克|快?速?气管插管|维持肌肉松弛|半去极化肌松药的拮抗|青光眼|呕吐|精神分裂症|肾功能不全|肝功能不全|遗尿症|抗高胆红素血症|缓释制剂|治疗心律失常|拮抗东芨着碱中毒" \
+               "|静脉全麻|神经阻滞麻醉|吸入麻醉|缓释片|神经阻滞或浸润麻醉|表面局麻|腰麻|神经阻滞)"
 
-#200-400
-function_str = function_46
 
 #按大括号切分句子  效果：[……(1)……,……(2)……，……]
 def get_bracket_str(str):
@@ -103,19 +119,28 @@ def get_number_str(str):
     return result
 
 #100-200页内分号切分个例
-# zd_str = "([；;]或|牙科|肋间神经|宫颈旁浸润|椎旁脊神经阻滞" \
-#                   "|阴部神经|药物诱发的锥体外系反应|药物诿发的锥体外系反应|注入蛛网膜下隙|注入硬膜外间隙|硬膜外PCA|重度疼痛|如不能控制|用作胶原酶合成抑制剂时|一过性失眠" \
-#                   "|用量视患者的耐受情况|辅助椎管内麻醉|尿道扩张术|用于神经阻滞麻醉)+"
-# dose_forbid=["维持量","极量","限量","最大量","总量","维持","继以","患者的耐受情况","耐受的用量"]
+zd_12 = "([；;]或|牙科|肋间神经|宫颈旁浸润|椎旁脊神经阻滞" \
+                  "|阴部神经|药物诱发的锥体外系反应|药物诿发的锥体外系反应|注入蛛网膜下隙|注入硬膜外间隙|硬膜外PCA|重度疼痛|如不能控制|用作胶原酶合成抑制剂时|一过性失眠" \
+                  "|用量视患者的耐受情况|辅助椎管内麻醉|尿道扩张术|用于神经阻滞麻醉)+"
+dose_forbid_12=["维持量","极量","限量","最大量","总量","维持","继以","患者的耐受情况","耐受的用量"]
 
-#200-400
-zd_str = zd_46
-dose_forbid= dose_forbid_46
-zd_patr = re.compile(zd_str)
 exclude_patr = re.compile("[^，。,;；]+[，。,;；]?")#获取功能、年龄后的第一个句子
+#加入片袋粒这些单位的话 范围前的数字  0.3mg|6袋|1/4包  范围后的数字 0.3mg|6袋|1/4包|半包|二袋  范围数字一般都是数字 不会用中文所以前面没有中文
+before_num_string = "(?:\d+\/\d+|\d*\.?\d*万?)"
+after_num_string = "(?:\d+\/\d+|\d*\.?\d+|[半两一二三四五六七八九十])"
+# #0. 4〜0.8mg
+fanwei_string = "[-|—|〜|～|~]"
+unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
+percent_unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|%|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
+
+dose_str5 = before_num_string+"%?"+fanwei_string+"?"+after_num_string+percent_unit_string
+
+
+dose_patr = re.compile(dose_str5)
 
 #按作用切分句子
 def get_zd_cut(str):
+    zd_patr = re.compile(zd_str)
     zd_result = []
     # 只要当前分段前的任意一个分段有用药剂量，当前分段也有用药剂量，当前分段可切分
     zd_match = zd_patr.search(str)
@@ -131,8 +156,8 @@ def get_zd_cut(str):
                 zd_next = str[idx:] if i == len(indexes) - 1 else str[idx:indexes[i + 1]]
 
                 # 含部分关键字的不切分  exclude_patr匹配到功能、年龄、指定字段所在的一句话
-                zd_next_first_match = exclude_patr.search(zd_next)
-                zd_next_first = zd_next_first_match.group()
+                # zd_next_first_match = exclude_patr.search(zd_next)
+                # zd_next_first = zd_next_first_match.group()
                 # for forbi in dose_forbid:
                 #     if forbi in zd_next_first:
                 #         forbi_flag = True
@@ -158,24 +183,13 @@ def get_zd_cut(str):
 
 take_patr = re.compile(admin_route_str+"+")
 
-#加入片袋粒这些单位的话 范围前的数字  0.3mg|6袋|1/4包  范围后的数字 0.3mg|6袋|1/4包|半包|二袋  范围数字一般都是数字 不会用中文所以前面没有中文
-before_num_string = "(?:\d+\/\d+|\d*\.?\d*万?)"
-after_num_string = "(?:\d+\/\d+|\d*\.?\d+|[半两一二三四五六七八九十])"
-# #0. 4〜0.8mg
-fanwei_string = "[-|—|〜|～|~]"
-unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
-percent_unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|%|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
-
-dose_str5 = before_num_string+"%?"+fanwei_string+"?"+after_num_string+percent_unit_string
-
-fuction_patr = re.compile("[，。,;；][^，。,;；]*"+function_str+"[^，。,;；]*[，。,;；]")
-dose_patr = re.compile(dose_str5)
 rongye_end_patr = re.compile("("+before_num_string+"%?"+fanwei_string+"?"+after_num_string+"%?溶液[,，])$")
 ml_begin_patr = re.compile("^("+before_num_string+fanwei_string+"?"+after_num_string+unit_string+")")
 
 
 #按作用切分句子
 def get_function_cut(str):
+    fuction_patr = re.compile("[，。,;；][^，。,;；]*" + function_str + "[^，。,;；]*[，。,;；]")
     function_result = []
     # 只要当前分段前的任意一个分段有用药剂量，当前分段也有用药剂量，当前分段可切分
     fuction_match = fuction_patr.search(str)
@@ -287,7 +301,7 @@ def get_concat_str(search_string):
 
 #按年龄和功能切分①后句子，并拼接
 def get_age_func_cut(str_fun,ori_str):
-    ori_str = ori_str.replace("&nsp", "").replace("\t", "").replace(" ", "")
+    # ori_str = ori_str.replace("&nsp", "").replace("\t", "").replace(" ", "")
     take_patr_b = re.compile("([（(]\d[）)])+")
     take_patr_cir = re.compile("([①②③④⑤⑥⑦⑧⑨⑩])+")
     b_match = take_patr_b.search(ori_str)
@@ -395,8 +409,11 @@ def get_sentence_cut(str,drug_name):
     return function_age_result
 
 if __name__=="__main__":
-    # test_begin = "（1）成人常用量①口服1、十二指肠溃疡和良性胃溃疡急性期治疗:标准剂量为一次150mg,一日2次，早、晚饭时服；或300mg睡前一次服。疗程4〜8周，如需要可治疗12周。大部分患者在4周内治愈，少部分在8周内治愈，有报道每晚一次服300mg,比一日服用2次、一次150mg的疗效好。十二指肠溃疡患者，一次300mg、一日2次的治疗方案，用药4周的治愈率高于一次150mg、一日2次或夜间服300mg的方案，且剂量增加并不提高不良反应的发生率。长期治疗：通常采用夜间顿服，一日150mg。对急性十二指肠溃疡愈合后患者，应进行一年以上的维持治疗，以避免溃疡复发。2、非甾体类抗炎药引起的胃黏膜损伤急性期治疗：一次150mg,一日2次或夜间顿服300mg,疗程8〜12周。预防：在非甾体类抗炎药治疗的同时服用，一次150mg,一日2次或夜间顿服300mg。3、胃溃疡一次150mg,—日2次，绝大部分患者于4周内治愈，未能完全治愈的患者通常在接下来的4周治愈。4、胃食管反流病急性反流性食管炎：一次150mg,一日2次或夜间服300mg,治疗8〜12周。中度至重度食管炎：剂量可增加至一次150mg,一日4次，治疗12周。反流性食管炎的长期治疗：口服一次150mg,一日2次。5、酒佐林格-埃利森综合征宜用大量，一日600〜1200mg。6、间歇性发作性消化不良标准剂量为一次150mg,一日2次，治疗6周。7、预防重症患者的应激性溃疡出血或消化性溃疡引起的反复出血一旦患者可恢复进食，可用口服一次150mg、一日2次，以代替注射给药。8、预防Mendelcon综合征于麻醉前2小时服用150mg,最好麻醉前一日晚上也服150mg。也可用注射剂。产科分娩患者可口服一次150mg,每6小时1次。如需要全身麻醉，应另外给予非颗粒的抗酸剂（如枸椽酸钠）。②肌内注射治疗溃疡病出血，一次25〜50mg,每4〜8小时1次。③静脉注射消化性溃疡出血:一次25〜50mg,每4〜8小时1次。将本药注射剂50mg用0.9%氯化钠注射液或5%葡萄糖稀释至20ml,做缓慢静脉注射（超过2分钟）。术前用药：手术前1.5小时静脉注射100mg。④静脉滴注消化性溃疡出血：以每小时25mg的速率间歇静脉滴注2小时，一日2次或每6〜8小时1次。术前用药：静脉滴注100〜300mg，加入5%葡萄糖注射液100ml,30分钟内滴完。⑤泡水服用每次150mg,一日2次，每次1片投入一杯约200ml的清水中溶解完全后即饮；或300mg睡觉前一次吞服；疗程一般4〜8周。治疗佐林格-埃利森综合征时宜用大剂量，600〜1200mg/d。（2）	肾功能不全时剂量严重肾功能损害患者（肌酐清除率小于50ml/min）,口服剂量为一次75mg,一日2次；注射时的推荐剂量为25mg。（3）	肝功能不全时剂量用量应减少。（4）	老年人用量老年人的肝肾功能降低，为保证用药安全，剂量应进行调整。（5）	透析时剂量长期非卧床腹透或长期血透的患者，于透析后应立即口服150mg。"
-    # result =  get_sentence_cut(test_begin,"@雷尼替丁")
+    # function_str = function_810
+    # zd_str = zd_810
+    # dose_forbid = dose_forbid_810
+    # test_begin = "(1)口服治疗慢性丙型肝炎成人，每日600mg。儿童，一日按体重10mg/kg，分4次服。疗程7〜14日。6岁以下儿童口服剂量未定。&nsp（2）静脉滴注①成人，一日500-1000mg，疗程3〜7日。②儿童，一日10〜15mg/kg，分2次给药，每次静脉滴注20分钟以上。疗程3〜7日。治疗拉沙热、流行性岀血热等严重病例时，成人首剂静脉滴注2g，继以每8小时0.5〜1g，共10日。&nsp（3）气雾吸入此用法必须严格按照给药说明中所述气雾发生器和给药方法进行。①儿童给药浓度为20mg/ml，一日吸药12〜18小时，疗程3〜7日。对于呼吸道合胞病毒性肺炎和其他病毒感染，也可持续吸药3〜6日；或一日3次，一次4小时，疗程3日。②成人，一日吸入1g。&nsp（4）滴鼻一次1〜2滴，每1〜2小时1次。"
+    # result =  get_sentence_cut(test_begin,"@吡喹酮")
     # print(result)
     # print(get_number_str("（1）成人常用量①口服1、十二指肠溃疡和良性胃溃疡急性期治疗:标准剂量为一次150mg,一日2次，早、晚饭时服；或300mg睡前一次服。疗程4〜8周，如需要可治疗12周。大部分患者在4周内治愈，少部分在8周内治愈，有报道每晚一次服300mg,比一日服用2次、一次150mg的疗效好。十二指肠溃疡患者，一次300mg、一日2次的治疗方案，用药4周的治愈率高于一次150mg、一日2次或夜间服300mg的方案，且剂量增加并不提高不良反应的发生率。长期治疗：通常采用夜间顿服，一日150mg。对急性十二指肠溃疡愈合后患者，应进行一年以上的维持治疗，以避免溃疡复发。2、非甾体类抗炎药引起的胃黏膜损伤急性期治疗：一次150mg,一日2次或夜间顿服300mg,疗程8〜12周。预防：在非甾体类抗炎药治疗的同时服用，一次150mg,一日2次或夜间顿服300mg。3、胃溃疡一次150mg,—日2次，绝大部分患者于4周内治愈，未能完全治愈的患者通常在接下来的4周治愈。4、胃食管反流病急性反流性食管炎：一次150mg,一日2次或夜间服300mg,治疗8〜12周。中度至重度食管炎：剂量可增加至一次150mg,一日4次，治疗12周。反流性食管炎的长期治疗：口服一次150mg,一日2次。5、酒佐林格-埃利森综合征宜用大量，一日600〜1200mg。6、间歇性发作性消化不良标准剂量为一次150mg,一日2次，治疗6周。7、预防重症患者的应激性溃疡出血或消化性溃疡引起的反复出血一旦患者可恢复进食，可用口服一次150mg、一日2次，以代替注射给药。8、预防Mendelcon综合征于麻醉前2小时服用150mg,最好麻醉前一日晚上也服150mg。也可用注射剂。产科分娩患者可口服一次150mg,每6小时1次。如需要全身麻醉，应另外给予非颗粒的抗酸剂（如枸椽酸钠）。"))
 
@@ -447,19 +464,75 @@ if __name__=="__main__":
                 for drug in tmp:
                     fp.write(json.dumps(drug, indent=4, ensure_ascii=False))
                     fp.write('\n')
-
-    #文件处理方法
-    def process_use2sentence():
-        # file_name_list = ["1-200","201-400","401-600","601-800","801-1000","1001-1200","1201-1400","1401-1539"]
-        file_name_list = ["201-400"]
-
-        for file_name in file_name_list:
-            doc_path = "C:/产品文档/转换器测试数据/json/"+file_name+".json"
-            if os.path.exists(doc_path):
-                data_pro_2list(doc_path,file_name)
-                print("file {} druguse2sentence finished!".format(file_name + ".json"))
-
-
-    process_use2sentence()
-
-
+    #
+    # #1-200
+    # function_str = function_12
+    # zd_str = zd_12
+    # dose_forbid = dose_forbid_12
+    # doc_path = "C:/产品文档/转换器测试数据/json/" + "1-200" + ".json"
+    # if os.path.exists(doc_path):
+    #     data_pro_2list(doc_path, "1-200")
+    #     print("file {} druguse2sentence finished!".format("1-200" + ".json"))
+    #
+    # #201-400
+    # function_str = function_24
+    # zd_str = zd_24
+    # dose_forbid = dose_forbid_24
+    # doc_path = "C:/产品文档/转换器测试数据/json/" + "201-400" + ".json"
+    # if os.path.exists(doc_path):
+    #     data_pro_2list(doc_path, "201-400")
+    #     print("file {} druguse2sentence finished!".format("201-400" + ".json"))
+    #
+    # #401-600
+    # function_str = function_46
+    # zd_str = zd_46
+    # dose_forbid = dose_forbid_46
+    # doc_path = "C:/产品文档/转换器测试数据/json/" + "401-600" + ".json"
+    # if os.path.exists(doc_path):
+    #     data_pro_2list(doc_path, "401-600")
+    #     print("file {} druguse2sentence finished!".format("401-600" + ".json"))
+    #
+    # #601-800
+    # function_str = function_68
+    # zd_str = zd_68
+    # dose_forbid = dose_forbid_68
+    # doc_path = "C:/产品文档/转换器测试数据/json/" + "601-800" + ".json"
+    # if os.path.exists(doc_path):
+    #     data_pro_2list(doc_path, "601-800")
+    #     print("file {} druguse2sentence finished!".format("601-800" + ".json"))
+    #
+    # #810-1000
+    # function_str = function_810
+    # zd_str = zd_810
+    # dose_forbid = dose_forbid_810
+    # doc_path = "C:/产品文档/转换器测试数据/json/" + "801-1000" + ".json"
+    # if os.path.exists(doc_path):
+    #     data_pro_2list(doc_path, "801-1000")
+    #     print("file {} druguse2sentence finished!".format("801-1000" + ".json"))
+    #
+    # #1001-1200
+    # function_str = function_1012
+    # zd_str = zd_1012
+    # dose_forbid = dose_forbid_1012
+    # doc_path = "C:/产品文档/转换器测试数据/json/" + "1001-1200" + ".json"
+    # if os.path.exists(doc_path):
+    #     data_pro_2list(doc_path, "1001-1200")
+    #     print("file {} druguse2sentence finished!".format("1001-1200" + ".json"))
+    #
+    #1201-1400
+    function_str = function_1214
+    zd_str = zd_1214
+    dose_forbid = dose_forbid_1214
+    doc_path = "C:/产品文档/转换器测试数据/json/" + "1201-1400" + ".json"
+    if os.path.exists(doc_path):
+        data_pro_2list(doc_path, "1201-1400")
+        print("file {} druguse2sentence finished!".format("1201-1400" + ".json"))
+    #
+    # #1401-1539
+    # function_str = function_1415
+    # zd_str = zd_1415
+    # dose_forbid = dose_forbid_1415
+    # doc_path = "C:/产品文档/转换器测试数据/json/" + "1401-1539" + ".json"
+    # if os.path.exists(doc_path):
+    #     data_pro_2list(doc_path, "1401-1539")
+    #     print("file {} druguse2sentence finished!".format("1401-1539" + ".json"))

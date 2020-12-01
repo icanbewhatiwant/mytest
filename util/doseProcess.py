@@ -70,7 +70,7 @@ time_patr = re.compile(dose_timestr)
 chi_time_patr = re.compile(chi_dose_timestr)
 # num_patr = re.compile("\d*\.?\d+")
 num_patr = re.compile("(?:\d+\/\d+|\d*\.?\d+)")
-chi_num_patr = re.compile("[半两一二三四五六七八九十/]+")
+chi_num_patr = re.compile("[半两一二三四五六七八九十/每]+")
 # dose_num_patr = re.compile("\d*\.?\d*%?万?"+fanwei_string+"?\d*\.?\d+")
 dose_num_patr = re.compile("(?:\d+\/\d+|\d*\.?\d*%?万?)"+fanwei_string+"?(?:\d+\/\d+|\d*\.?\d+)")
 dose_unit_patr = re.compile(percent_unit_string)
@@ -91,9 +91,13 @@ def get_pingci(dose_result,stime_string):
     # 获取给药频次及其分解
     pingci_str =""
     pingci_str2 = ""
-    pingci_match = pingci.search(stime_string)
-    if pingci_match:
-        pingci_string = pingci_match.group()#每天/每周
+    pingci_des_str = ""
+    time_match = time_patr.search(stime_string)
+    if time_match:
+        pingci_string = time_match.group()#每天/每周……次
+        pingci_match = pingci.search(pingci_string)
+        if pingci_match:
+            pingci_des_str = pingci_match.group()
         hour_match = pingci_hour.search(pingci_string)
         week_match = pingci_week.search(pingci_string)
         month_year_match = pingci_month_year.search(pingci_string)
@@ -190,11 +194,17 @@ def get_pingci(dose_result,stime_string):
                 dose_result["dose_time_high"] = str(cishu_list[0]) + pingci_str2
 
         if desc_list:
-            dose_result["dose_time_low_des"] = pingci_string + str(desc_list[0]) + "次"
-            if len(desc_list) > 1:
-                dose_result["dose_time_high_des"] = pingci_string + str(desc_list[1]) + "次"
+            if pingci_des_str!= "":
+                dose_result["dose_time_low_des"] = pingci_des_str + str(desc_list[0]) + "次"
+                if len(desc_list) > 1:
+                    dose_result["dose_time_high_des"] = pingci_des_str + str(desc_list[1]) + "次"
+                else:
+                    dose_result["dose_time_high_des"] = pingci_des_str + str(desc_list[0]) + "次"
             else:
-                dose_result["dose_time_high_des"] = pingci_string + str(desc_list[0]) + "次"
+                dose_result["dose_time_low_des"] = pingci_string
+                dose_result["dose_time_high_des"] = pingci_string
+
+
 
     return dose_result
 
@@ -395,11 +405,19 @@ def get_sday(single_dose_str,dose_result,dose_sentence):
         dose_result["dose_time_low_des"] = pingci_day_string+"1次"
         dose_result["dose_time_high_des"] = pingci_day_string+"1次"
         day_list = num_patr.findall(pingci_day_string)
-        dose_result["dose_time_low"] = "1/"+day_list[0]
-        if len(day_list) > 1:
-            dose_result["dose_time_high"] = "1/"+day_list[1]
-        else:
-            dose_result["dose_time_high"] = "1/"+day_list[0]
+        if not day_list:#中文的日、天匹配
+            if chi_num_patr.search(pingci_day_string):
+                day_list = chi_num_patr.findall(pingci_day_string)
+                if day_list:
+                    day_list = [chi2num.get(i, "") for i in day_list]
+
+        if day_list:
+            dose_result["dose_time_low"] = "1/" + day_list[0]
+            if len(day_list) > 1:
+                dose_result["dose_time_high"] = "1/" + day_list[1]
+            else:
+                dose_result["dose_time_high"] = "1/" + day_list[0]
+
     elif pingci_repeat_day.search(dose_sentence):
         dose_result["dose_time_low_des"] = "需要时"
         dose_result["dose_time_high_des"] = "需要时"
@@ -572,9 +590,6 @@ def  get_rongye_dose(str,dose_result,single_dose_str,dose_1sentence_before_strin
             if per_minute:
                 dose_result["single_dose_unit"]+= "/min"
     return dose_result
-
-before_num_string = "(?:\d+\/\d+|\d*\.?\d*万?)"
-after_num_string = "(?:\d+\/\d+|\d*\.?\d+|[半两一二三四五六七八九十])"
 
 limit_num_patr = re.compile(after_num_string)
 #需要跟yaodian_getdruguse文件一致

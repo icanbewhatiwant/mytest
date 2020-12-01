@@ -173,7 +173,7 @@ if __name__ == "__main__":
 
     filepath = "C:/产品文档/转换器测试数据/已整理数据源/"
     # file_name_list = ["1-200","201-400","401-600","601-800","801-1000","1001-1200","1201-1400","1401-1539"]
-    file_name_list = ["1-200","201-400"]
+    file_name_list = ["1401-1539"]
     for file_name in file_name_list:
         doc_path = filepath+file_name+".docx"
         if os.path.exists(doc_path):

@@ -124,7 +124,7 @@ if __name__=="__main__":
             for drug_info in tmp:
                 s_result_list = []
                 e_s_result_list =[]
-                drugName = drug_info.get("drugName", "").replace("@", "")
+                drugName = drug_info.get("drugName", "").replace("@", "").replace(" ", "")
                 if drugName !="":
 
                     drug_names.append(drugName)
@@ -247,7 +247,7 @@ if __name__=="__main__":
         writer.save()
         writer.close()
 
-    file_name = "200_400"
+    file_name = "201-400"
     filepath = "C:/产品文档/转换器测试数据/excel_result/"+file_name+"_ziduan.json"
     data_process(filepath,file_name)
 
