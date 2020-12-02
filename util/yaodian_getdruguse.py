@@ -201,19 +201,21 @@ def get_weight(str):
 
 # fanwei_string = "[-|—|〜|～|~]" 修改第一个方法前的fanwei_string
 #1-1539的所有剂量单位组合
-unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
+unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|丸|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
 #100-200的unit_string
 # unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|片)"
 # percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
 #中文单位组合
 # chi_unit_string = "(?:\d*\/\d*|\d*|[半一二三四五六七八九十])?[-|—|〜|～|~]?(?:\d*\/\d*|\d*|[半一二三四五六七八九十])[片袋粒枚支揿喷包滴瓶枚套]"
-percent_unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|%|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
+percent_unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|%|丸|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
 yici_string = "(?:每次|一次|单次|单剂|首次|初量|开始时|开始|初次量|初始量|最大滴定剂量|按体重)"
 # yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|24小时内.*|按体重)"
 yiri_string = "(?:一日|—日|一天|首日|单日|每日|日|日服|每天|每晚|晚上|24小时.*|按体重)"
 
-cishu_string =  "(?:隔日|一日|—日|一天|每日|单日|日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d*|[一二三四五六七八九十])(?:小时|日|周|月|年))[^,.;，。；]*(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十/])次"
-# cishu_string_after =  "(?:每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周))/次"
+# cishu_string =  "(?:隔日|一日|—日|一天|每日|单日|日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d*|[一二三四五六七八九十])(?:小时|日|周|月|年))[^,.;，。；]*(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十/])次"
+cishu_string_before =  "(?:隔日|一日|—日|一天|单日|日|分成|晚上|每小时|每[天日周月年晚]|每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周|月|年))+[^,.;，。；]*(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十/])次"
+cishu_string_after =  "|分(?:\d*\.?\d*[-|—|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十/])次"
+cishu_string = cishu_string_before+cishu_string_after
 
 #加入片袋粒这些单位的话 范围前的数字  0.3mg|6袋|1/4包  范围后的数字 0.3mg|6袋|1/4包|半包|二袋  范围数字一般都是数字 不会用中文所以前面没有中文
 before_num_string = "(?:\d+\/\d+|\d*\.?\d*万?)"
@@ -306,36 +308,43 @@ def get_dose_sentence(single_dose_str,str):
     # 排除与"极量"同意的句子、最大剂量、最大量,最大最,最髙量,最高量、等关键字
     dose_1sentence_before_string = "" #用量及其前一句话
     # 匹配用量所在一句话
+    dose_1sentence = ""
     dose_sentence = ""
     dose_1sentence_patr = re.compile("[,，。;；]?[^,，。;；]*" + single_dose_str + "[^,，。;；]*[,，。;；]?")
-    dose_1sentence = dose_1sentence_patr.search(str).group()
+    dose_1sentence_match = dose_1sentence_patr.search(str)
+    if dose_1sentence_match:
+        dose_1sentence = dose_1sentence_match.group()
     # 第一句话就包含极值关键字，则后面句子也为极值句子，不用继续判断
-    if is_limit(dose_1sentence):
-        return dose_sentence,dose_1sentence_before_string
+    if dose_1sentence!="":
+        dose_1sentence = dose_1sentence.replace("(","\(").replace(")","\)")
+        if is_limit(dose_1sentence):
+            return dose_sentence,dose_1sentence_before_string
 
-    # 匹配用量所在最多连续两句话
-    dose_sentence_patr = re.compile("[,，。;；]?[^,，。;；]*" + single_dose_str + "[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?")
-    dose_sentence = dose_sentence_patr.search(str).group()
-    # 前面一句不包含极值关键字，判断后面一句是否包含极值关键字,包含则只取第一个句子提取推荐剂量，否则两句都可以
-    if is_limit(dose_sentence):
-        dose_sentence = dose_1sentence
-
-    # 如果匹配到第二句话为纯中文，dose_sentence 匹配连续三句话(从第二句开始不包含极量关键字时才会作为一整句话来进行字段提取),如下例子
-    # "一次100〜200mg,必要时重复，24小时内总量可达400mg"
-    zhongwen_match = zhongwen.search(dose_sentence)
-    if zhongwen_match:
-        dose_3sentence_patr = re.compile(
-            "[,，。;；]?[^,，。;；]*" + single_dose_str + "[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?")
-        dose_3sentence = dose_3sentence_patr.search(str).group()
+        # 匹配用量所在最多连续两句话
+        dose_sentence_patr = re.compile("[,，。;；]?[^,，。;；]*" + single_dose_str + "[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?")
+        dose_sentence_match = dose_sentence_patr.search(str)
+        if dose_sentence_match:
+            dose_sentence = dose_sentence_match.group()
         # 前面一句不包含极值关键字，判断后面一句是否包含极值关键字,包含则只取第一个句子提取推荐剂量，否则两句都可以
-        if not is_limit(dose_3sentence):
-            dose_sentence = dose_3sentence
+        if is_limit(dose_sentence):
+            dose_sentence = dose_1sentence
 
-    #匹配剂量所在句子以及前一句
-    dose1sentence_before_patr  = re.compile("[,，。;；]?[^,，。;；]*"+dose_1sentence)
-    dose_1sentence_before_match = dose1sentence_before_patr.search(str)
-    if dose_1sentence_before_match:
-        dose_1sentence_before_string = dose_1sentence_before_match.group()
+        # 如果匹配到第二句话为纯中文，dose_sentence 匹配连续三句话(从第二句开始不包含极量关键字时才会作为一整句话来进行字段提取),如下例子
+        # "一次100〜200mg,必要时重复，24小时内总量可达400mg"
+        zhongwen_match = zhongwen.search(dose_sentence)
+        if zhongwen_match:
+            dose_3sentence_patr = re.compile(
+                "[,，。;；]?[^,，。;；]*" + single_dose_str + "[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?")
+            dose_3sentence = dose_3sentence_patr.search(str).group()
+            # 前面一句不包含极值关键字，判断后面一句是否包含极值关键字,包含则只取第一个句子提取推荐剂量，否则两句都可以
+            if not is_limit(dose_3sentence):
+                dose_sentence = dose_3sentence
+
+        #匹配剂量所在句子以及前一句
+        dose1sentence_before_patr  = re.compile("[,，。;；]?[^,，。;；]*"+dose_1sentence)
+        dose_1sentence_before_match = dose1sentence_before_patr.search(str)
+        if dose_1sentence_before_match:
+            dose_1sentence_before_string = dose_1sentence_before_match.group()
     return dose_sentence,dose_1sentence_before_string
 
 #处理溶液所在句子
@@ -478,12 +487,12 @@ limit_1time = re.compile(yici_string+"[^,.;，。；]*\d*\.?\d+"+percent_unit_st
 limit_1day = re.compile(yiri_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 
 # 单次、单日剂量极值关键字（除了极量）
-day_limit_str = "(?:限量|限最|极限|最大剂量|剂量最大|最高剂量|剂量最高|最大滴定剂量|最大量|最大最|剂量不超过|最大|剂量不得超过|剂量不宜超过|剂量不应超过|剂量不能超过|最高不能超过|不超过|最大用量|最大给药量|最大推荐剂量|剂量<)"
+day_limit_str = "(?:限量|限最|极限|最大剂量|剂量最大|最高剂量|剂量最高|最大滴定剂量|最大量|最大最|剂量不超过|最大|剂量不得超过|剂量不宜超过|剂量不应超过|剂量不能超过|最高不能超过|不能超过|不超过|最大用量|最大给药量|最大推荐剂量|剂量<)"
 day_limit_patr = re.compile(yiri_string+"[^,，。;；]*"+day_limit_str+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 day_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+day_limit_str+"[^,，。;；]*"+yiri_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 #……为限
 day_limit_patr3 = re.compile(yiri_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string+"(?:为限|为极限)")
-time_limit_str = "(?:限量|限最|极限|为限|最大剂量|剂量最大|最高剂量|剂量最高|剂量不超过|剂量不得超过|不得超过|不超过|剂量不宜超过|剂量不应超过|剂量不能超过|最大量|最大最|最高不能超过|最大|最髙量|最高量|最大用量|最大给药量|最大推荐剂量|剂量<)"
+time_limit_str = "(?:限量|限最|极限|为限|最大剂量|剂量最大|最高剂量|剂量最高|剂量不超过|剂量不得超过|不得超过|剂量不宜超过|剂量不应超过|剂量不能超过|最大量|最大最|最高不能超过|不能超过|不超过|最大|最髙量|最高量|最大用量|最大给药量|最大推荐剂量|剂量<)"
 time_limit_patr = re.compile(yici_string+"[^,，。;；]*"+time_limit_str+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 time_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+time_limit_str+"[^,，。;；]*"+yici_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
 time_limit_patr3 = re.compile(yici_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string+"(?:为限|为极限)")
@@ -632,12 +641,13 @@ def get_recomend_days(str):
 if __name__=="__main__":
     # yao_string = "（3）静脉注射癫痫持续状态,按体重0.05mg/kg,一次不超过4mg,如10〜15分钟后发作仍继续或再发。可重复注射0.05mg/kg,如再经10〜15分钟仍无效。需采用其他措施，12小时内用量一般不超过8mg。"
     # print(yao_string)
-    # print(get_single_dose(yao_string))
+    # print(get_single_dose("（1）头癣和手癣、足癣，每日3次。"))
     # print(get_age("6〜12个月"))
     # print(get_single_dose("②镇静，一次5〜10mg,一日15〜40mg；"))
     # print("成人①臂丛神经阻滞,0.375%溶液，20ml。")
-    # print(get_single_dose("（1）成人常用量④静脉滴注消化性溃疡出血：以每小时25mg的速率间歇静脉滴注2小时，一日2次或每6〜8小时1次。"))
+    # print(get_single_dose("(1)精神分裂症②肌内注射：一次100mg,一日2次。"))
     # print(get_recomend_days("每8小时10mg/kg或500mg/m²"))
+    # print(get_limit("（2）肌内或静脉注射成人②镇静、催眠或急性乙醇戒断，开始10mg,以后按需每隔3〜4小时加5〜10mg。24小时总量以40〜50mg为限。",{}))
 
 
     #调用方法
@@ -747,8 +757,8 @@ if __name__=="__main__":
 
     # 获取字段方法
     def get_druguse_ziduan():
-        # file_name_list = ["1-200","201-400","401-600","601-800","801-1000","1001-1200","1201-1400","1401-1539"]
-        file_name_list = ["201-400"]
+        file_name_list = ["1-200","201-400","401-600","601-800","801-1000","1001-1200","1201-1400","1401-1539"]
+        # file_name_list = ["1401-1539"]
         for file_name in file_name_list:
             doc_path =  "C:/产品文档/转换器测试数据/cutsentence/"+file_name+".json"
             if os.path.exists(doc_path):

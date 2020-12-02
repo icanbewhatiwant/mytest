@@ -83,36 +83,37 @@ def check_json_format(raw_msg):
 
 if __name__=="__main__":
     # json文件数据入库
-    data_df = pd.DataFrame()
-
-    drug_names = []
-    dose_info = []
-    erke_dose_info = []
-    sentences = []
-    # 切分字段
-    age_low = []
-    age_high = []
-    age_unit = []
-    weight_low = []
-    weight_high = []
-    admin_route = []
-    sdose_low = []
-    sdose_high = []
-    dose_time_low = []
-    dose_time_high = []
-    dose_time_low_des = []
-    dose_time_high_des = []
-    sday_dose_low = []
-    sday_dose_high = []
-    single_dose_unit = []
-    limit_1time = []
-    limit_1day = []
-    recommand_days_low = []
-    recommand_days_high = []
-    cut_senteces = []
 
     #读取切分结果，excel保存
     def data_process(filepath,file_name):
+        data_df = pd.DataFrame()
+
+        drug_names = []
+        dose_info = []
+        erke_dose_info = []
+        sentences = []
+        # 切分字段
+        age_low = []
+        age_high = []
+        age_unit = []
+        weight_low = []
+        weight_high = []
+        admin_route = []
+        sdose_low = []
+        sdose_high = []
+        dose_time_low = []
+        dose_time_high = []
+        dose_time_low_des = []
+        dose_time_high_des = []
+        sday_dose_low = []
+        sday_dose_high = []
+        single_dose_unit = []
+        limit_1time = []
+        limit_1day = []
+        recommand_days_low = []
+        recommand_days_high = []
+        cut_senteces = []
+
         tmp = []
         json_str = ""
         for line in open(filepath, 'r', encoding='UTF-8'):
@@ -156,8 +157,10 @@ if __name__=="__main__":
                         erke_dose_info.extend([""]*s_result_len)
                     if e_s_result_len >0:
                         erke_dose_info.append(drug_info.get("儿科用法与用量", "").replace("&nsp", "").replace("\t", "").replace(" ", ""))
-                        erke_dose_info.extend([""]*(e_s_result_len-1))
-
+                        if e_s_result_len>1:
+                            erke_dose_info.extend([""]*(e_s_result_len-1))
+                    if len(dose_info) != len(erke_dose_info):
+                        print(drugName)
 
                     #审查结果：断句切分
                     if s_result_list:
@@ -247,8 +250,14 @@ if __name__=="__main__":
         writer.save()
         writer.close()
 
-    file_name = "201-400"
-    filepath = "C:/产品文档/转换器测试数据/excel_result/"+file_name+"_ziduan.json"
-    data_process(filepath,file_name)
+    file_name_list = ["1-200","201-400","401-600","601-800","801-1000","1001-1200","1201-1400","1401-1539"]
+    # file_name_list = ["1401-1539"]
+    # file_name = "801-1000,1001-1200"
+    # file_name = "1-200"
+    for file_name in file_name_list:
+        filepath = "C:/产品文档/转换器测试数据/excel_result/"+file_name+"_ziduan.json"
+        data_process(filepath,file_name)
+        print("file {} ziduan2excel finished!".format(file_name + ".json"))
+
 
 

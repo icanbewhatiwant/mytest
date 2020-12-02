@@ -3,14 +3,17 @@ import re
 #需要跟yaodian_getdruguse文件一致
 #一次
 fanwei_string = "[-|—|〜|～|~]"
-unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
-percent_unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|%|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
+unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|丸|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
+percent_unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|%|丸|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
 
 yici_string = "(?:每次|一次|单次|单剂|首次|初量|开始时|开始|初次量|初始量|最大滴定剂量|按体重)"
 yiri_string = "(?:一日|—日|一天|首日|单日|每日|日|日服|每天|每晚|晚上|24小时.*|按体重)"
 
 # cishu_string =  "(?:隔日|一日|—日|每日|单日|日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周))(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d*|[一二三四五六七八九十/])次"
-cishu_string =  "(?:隔日|一日|—日|一天|每日|单日|日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d*|[一二三四五六七八九十])(?:小时|日|周|月|年))[^,.;，。；]*(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十/])次"
+cishu_string_before =  "(?:隔日|一日|—日|一天|单日|日|分成|晚上|每小时|每[天日周月年晚]|每?(?:\d*"+fanwei_string+"?\d+|[一二三四五六七八九十])(?:小时|日|周|月|年))+[^,.;，。；]*(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十/])次"
+cishu_string_after =  "|分(?:\d*\.?\d*[-|—|〜|～|~]?\d*\.?\d+|[一二三四五六七八九十/])次"
+cishu_string = cishu_string_before+cishu_string_after
+
 #加入片袋粒这些单位的话 范围前的数字  0.3mg|6袋|1/4包  范围后的数字 0.3mg|6袋|1/4包|半包|二袋  范围数字一般都是数字 不会用中文所以前面没有中文
 before_num_string = "(?:\d+\/\d+|\d*\.?\d*万?)"
 after_num_string = "(?:\d+\/\d+|\d*\.?\d+|[半两一二三四五六七八九十])"
@@ -179,7 +182,7 @@ def get_pingci(dose_result,stime_string):
                     if chi_week_match:
                         chi_week_num = chi_week_match.group()
                         week_num = chi2num.get(chi_week_num, "")
-                if week_num != "0":
+                if week_num != "0" and week_num !="":
                     pingci_str = "/" + str(int(week_num) * 7)
                     pingci_str2 = pingci_str
             elif month_year_match:
@@ -608,17 +611,21 @@ def get_stimeday_limit(limit_sentence,yaodian_result):
     unit_string = ""
     if time_search:
         unit_string = time_search.group()
-        limit_1timestr = limit_num_patr.search(time_search.group())
-        if limit_1timestr:
-            limit_result["limit_1time"] = limit_1timestr.group()
+        limit_str_time_match = single_dose_patr.search(unit_string)
+        if limit_str_time_match:
+            limit_1timestr = limit_num_patr.search(limit_str_time_match.group())
+            if limit_1timestr:
+                limit_result["limit_1time"] = limit_1timestr.group()
 
     day_search = limit_1day.search(limit_sentence)
     if day_search:
         if unit_string == "":
             unit_string = day_search.group()
-        limit_1daystr = limit_num_patr.search(day_search.group())
-        if limit_1daystr:
-            limit_result["limit_1day"] = limit_1daystr.group()
+            limit_str_match = single_dose_patr.search(unit_string)
+            if limit_str_match:
+                limit_1daystr = limit_num_patr.search(limit_str_match.group())
+                if limit_1daystr:
+                    limit_result["limit_1day"] = limit_1daystr.group()
 
     # 如果单次剂量为空，此时剂量单位应该也为空，补充为剂量极值的单位
     per_minute = False
