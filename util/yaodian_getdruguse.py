@@ -11,10 +11,10 @@ import os
 
 import re
 import json
-# 需要提取字段
+# 提取需要的字段
 # 年龄、体重、给药途径、单次推荐剂量、单日推荐剂量、单次剂量极值、单日剂量极值，推荐给药频次、推荐给药描述、用药推荐天数
 
-
+#给药方式
 admin_route_str = "(涂在溃疡表面|贴用|口腔鼓漱|根管冲洗|冲洗根管|置穿髓孔或根髓断面上|覆盖洞底|封入根管|涂布窝洞|贴在病损处|区域注射|贴敷于病变局部|贴敷于患牙处|贴敷于牙面|贴敷于患区表面" \
                   "|雾化\(超声或蒸汽\)吸入|鼓室内注射|局部涂用|血管瘤内注射及黏膜下注射|黏膜下注射|涂患处|鼻腔内滴入|滴鼻或喷入鼻腔|涂于膜组织表面|涂于下眼睑内|注入前房|前房内注射" \
                   "|伤口冲洗或湿敷|涂药于患处|洗漱|涂于患处|涂于患部|涂于创面|局部外用|放于阴道|注入阴道|推入阴道|放入宫腔|置入宫腔底部|腹壁皮下埋植|局部用药|涂抹外阴" \
@@ -47,8 +47,8 @@ def get_admin_route(str):
 
 fanwei_string = "[-|—|〜|～|~]"
 #年龄数字+人描述词（有年龄对应的）
-age_unit_string = "(?:岁|个?月|天|日)"
-person2age_string = "(?:成人|新生儿|婴儿|幼儿|儿童|青少年|小儿|少儿|老年人|老人)"
+person2age_string = "(?:成人|新生儿|婴幼?儿|幼儿|儿童|青少年|小儿|少儿|老年人|老人|患儿|早产儿)"
+age_unit_string = "(?:岁|个?月"+person2age_string+"|天"+person2age_string+"|日"+person2age_string+")"
 age_dot = "\d*\.?\d+" #有2.5岁的
 age_d2d_patr = re.compile("(?:"+age_dot+fanwei_string+age_dot+age_unit_string+")[^,.;，。；]*?"+person2age_string+"?")
 age_lowd_patr = re.compile("(?:"+age_dot+age_unit_string+"以上|>"+age_dot+age_unit_string+"|≥"+age_dot+age_unit_string+"|"+age_dot+age_unit_string+"或以上|大于"+age_dot+age_unit_string+")[^,.;，。；]*?"+person2age_string+"?")
@@ -95,7 +95,7 @@ def get_age(str):
         sort_string = idx_dict_sort[0][0]
 
     #数字年龄+人物描述
-    if sort_string == "age_d2d_match":# 4~20岁
+    if sort_string == "age_d2d_match":# 4~20岁 不需考虑后面的人物描述年龄
         age_string = age_d2d_match.group()
         age_low_high = age_num_patr.findall(age_string)
         age_result["age_low"] =age_low_high[0]
@@ -111,7 +111,7 @@ def get_age(str):
         age_low = age_num_patr.search(age_string).group()
         age_result["age_low"] = age_low
         age_unit_string = age_string
-
+        #考虑后面的人物描述年龄，补充年龄字段
         per_match = person_patr.search(age_string)
         if per_match:
             per_age_dict = person2age.get(per_match.group(),{})
@@ -202,14 +202,9 @@ def get_weight(str):
 # fanwei_string = "[-|—|〜|～|~]" 修改第一个方法前的fanwei_string
 #1-1539的所有剂量单位组合
 unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|丸|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
-#100-200的unit_string
-# unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|片)"
-# percent_unit_string = "(?:mg\/kg|μg\/kg|IU\/kg|ml\/kg|IU|μg|mg|ml|g|%)"
 #中文单位组合
-# chi_unit_string = "(?:\d*\/\d*|\d*|[半一二三四五六七八九十])?[-|—|〜|～|~]?(?:\d*\/\d*|\d*|[半一二三四五六七八九十])[片袋粒枚支揿喷包滴瓶枚套]"
 percent_unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|%|丸|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
 yici_string = "(?:每次|一次|单次|单剂|首次|初量|开始时|开始|初次量|初始量|最大滴定剂量|按体重)"
-# yiri_string = "(?:一日|—日|每日|每天|每晚|晚上|24小时|24小时内.*|按体重)"
 yiri_string = "(?:一日|—日|一天|首日|单日|每日|日|日服|每天|每晚|晚上|24小时.*|按体重)"
 
 # cishu_string =  "(?:隔日|一日|—日|一天|每日|单日|日|每天|分成|分|晚上|每晚|每?(?:\d*"+fanwei_string+"?\d*|[一二三四五六七八九十])(?:小时|日|周|月|年))[^,.;，。；]*(?:\d*\.?\d*"+fanwei_string+"?\d*\.?\d+|[一二三四五六七八九十/])次"
@@ -276,8 +271,7 @@ dose_sday_after = re.compile(dose_str4_after)
 #一日几次，一次8mg
 dose_jici_stime = re.compile(dose_str_8)
 
-num_patr = re.compile("\d*\.?\d+")
-# num_patr = re.compile("(?:\d+\/\d+|\d*\.?\d+)")  只有溶液用到了 而溶液好像没有包，袋这样的单位
+num_patr = re.compile("\d*\.?\d+")#只有溶液用到了 而溶液好像没有包，袋这样的单位
 dose_unit_patr = re.compile(percent_unit_string)
 
 #溶液所在句子
@@ -289,10 +283,6 @@ rongye_num_patr = re.compile("\d*\.?\d*?"+fanwei_string+"?\d*\.?\d+"+unit_string
 limit_list = ["极量","极最","限量","限最","极限","为限","最大剂量","剂量最大","最高剂量","剂量最高","剂量不超过","剂量不得超过","剂量不宜超过","剂量不应超过","剂量应当不超过",
               "剂量不能超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大单次","最大滴定剂量","最高不能超过",
               "一次不得超过","一次不超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过","最大用量","最大给药量","最大推荐剂量"]
-#第二句，第三句不能包含的一些关键字
-limit_2list = ["极量","极最","限量","限最","极限","为限","最大剂量","剂量最大","最高剂量","剂量最高","剂量不超过","剂量不得超过","剂量不宜超过","剂量不应超过","剂量应当不超过",
-              "剂量不能超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大单次","最大滴定剂量","最高不能超过",
-              "一次不得超过","一次不超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过","最大用量","最大给药量","最大推荐剂量","减量","增加","以后","此后","然后"]
 
 #判断句子是否包含极量关键字
 def is_limit(str):
@@ -485,23 +475,27 @@ def get_single_dose(str):
 #获取单次、单日极量极值
 limit_1time = re.compile(yici_string+"[^,.;，。；]*\d*\.?\d+"+percent_unit_string)
 limit_1day = re.compile(yiri_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
-
+limit_number = "(?:\d+\/\d+|\d*\.?\d+|[半两一二三四五六七八九十])"
 # 单次、单日剂量极值关键字（除了极量）
 day_limit_str = "(?:限量|限最|极限|最大剂量|剂量最大|最高剂量|剂量最高|最大滴定剂量|最大量|最大最|剂量不超过|最大|剂量不得超过|剂量不宜超过|剂量不应超过|剂量不能超过|最高不能超过|不能超过|不超过|最大用量|最大给药量|最大推荐剂量|剂量<)"
-day_limit_patr = re.compile(yiri_string+"[^,，。;；]*"+day_limit_str+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
-day_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+day_limit_str+"[^,，。;；]*"+yiri_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
+day_limit_patr = re.compile(yiri_string+"[^,，。;；]*"+day_limit_str+"[^,，。;；]*"+limit_number+percent_unit_string)
+day_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+day_limit_str+"[^,，。;；]*"+yiri_string+"[^,，。;；]*"+limit_number+percent_unit_string)
 #……为限
-day_limit_patr3 = re.compile(yiri_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string+"(?:为限|为极限)")
+day_limit_patr3 = re.compile(yiri_string+"[^,，。;；]*"+limit_number+percent_unit_string+"(?:为限|为极限)")
 time_limit_str = "(?:限量|限最|极限|为限|最大剂量|剂量最大|最高剂量|剂量最高|剂量不超过|剂量不得超过|不得超过|剂量不宜超过|剂量不应超过|剂量不能超过|最大量|最大最|最高不能超过|不能超过|不超过|最大|最髙量|最高量|最大用量|最大给药量|最大推荐剂量|剂量<)"
-time_limit_patr = re.compile(yici_string+"[^,，。;；]*"+time_limit_str+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
-time_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+time_limit_str+"[^,，。;；]*"+yici_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string)
-time_limit_patr3 = re.compile(yici_string+"[^,，。;；]*\d*\.?\d+"+percent_unit_string+"(?:为限|为极限)")
+time_limit_patr = re.compile(yici_string+"[^,，。;；]*"+time_limit_str+"[^,，。;；]*"+limit_number+percent_unit_string)
+time_limit_patr2 = re.compile("[,，。;；][^,，。;；]*"+time_limit_str+"[^,，。;；]*"+yici_string+"[^,，。;；]*"+limit_number+percent_unit_string)
+time_limit_patr3 = re.compile(yici_string+"[^,，。;；]*"+limit_number+percent_unit_string+"(?:为限|为极限)")
 # 在单次剂量过滤的关键字中，包含以上这些单次、单日极值，保证不会把极值存在单次剂量和单日剂量中，也保证过滤的极值会在单次剂量中获得
 # limit_list = ["极量","极最","限量","极限","为限","最大剂量","剂量最大","剂量不超过","剂量不得超过","剂量不宜超过","剂量最大","最大量","最大最","最髙量","最高量","最大日剂量","日剂量不超过","最大每日","最大每次","最大滴定剂量","最高不能超过","一日剂量不得超过","—日剂量不宜超过","24小时不超过"]
 #获得单次、单日极量极值，1、极量……2、其他关键字
+chi2num = {"半":"0.5","两":"2","每":"1","一":"1","/":"1","二":"2","三":"3","四":"4","五":"5","六":"6","七":"7","八":"8","九":"9","十":"10"}
 def get_limit(str,yaodian_result):
     limit_result = {}
-    limit_num_patr = re.compile("\d*\.?\d+")
+    # limit_num_patr = re.compile("\d*\.?\d+")
+    limit_num_patr = re.compile("(?:\d+\/\d+|\d*\.?\d+|[半两一二三四五六七八九十])")
+    zhong_num_patr = re.compile("[半两一二三四五六七八九十]+")
+
     # (优先级最高)极量所在句，后面有句子时，往后再匹配最多一句
     limit_2sen = "[,，。;；]?[^,，。;；]*(?:极量|极最|最大日剂量|最大单次剂量|最大滴定剂量|最大剂量).?[^,，。;；]*[,，。;；]?[^,，。;；]*[,，。;；]?"
     limit_2patrr = re.compile(limit_2sen)
@@ -528,7 +522,11 @@ def get_limit(str,yaodian_result):
             time_limit_string =time_limit_str_list[-1]
             limit_1time_num_list = limit_num_patr.findall(time_limit_string)
             if limit_1time_num_list:
-                limit_result["limit_1time"] = limit_1time_num_list[-1]
+                limit_num_string = limit_1time_num_list[-1]
+                zhong_num_match = zhong_num_patr.search(limit_num_string)
+                if zhong_num_match:
+                    limit_num_string = chi2num.get(zhong_num_match.group(),"")
+                limit_result["limit_1time"] = limit_num_string
             unit_string = time_limit_string
 
          #单日极量极值
@@ -544,7 +542,11 @@ def get_limit(str,yaodian_result):
             day_limit_string = day_limit_str_list[-1]
             limit_day_num_list = limit_num_patr.findall(day_limit_string)
             if limit_day_num_list:
-                limit_result["limit_1day"] = limit_day_num_list[-1]
+                limit_day_num_string = limit_day_num_list[-1]
+                zhong_num_match = zhong_num_patr.search(limit_day_num_string)
+                if zhong_num_match:
+                    limit_day_num_string = chi2num.get(zhong_num_match.group(), "")
+                limit_result["limit_1day"] = limit_day_num_string
             if  unit_string =="":
                 unit_string = day_limit_string
 
@@ -647,7 +649,7 @@ if __name__=="__main__":
     # print("成人①臂丛神经阻滞,0.375%溶液，20ml。")
     # print(get_single_dose("(1)精神分裂症②肌内注射：一次100mg,一日2次。"))
     # print(get_recomend_days("每8小时10mg/kg或500mg/m²"))
-    # print(get_limit("（2）肌内或静脉注射成人②镇静、催眠或急性乙醇戒断，开始10mg,以后按需每隔3〜4小时加5〜10mg。24小时总量以40〜50mg为限。",{}))
+    print(get_limit("（2）肌内或静脉注射成人②镇静、催眠或急性乙醇戒断，开始10mg,成人用药一日最大限量一般为9g。",{}))
 
 
     #调用方法
@@ -766,7 +768,7 @@ if __name__=="__main__":
                 print("file {} sent2ziduan finished!".format(file_name + ".json"))
 
 
-    get_druguse_ziduan()
+    # get_druguse_ziduan()
 
 
 

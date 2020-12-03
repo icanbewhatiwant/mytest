@@ -30,8 +30,9 @@ from util.parameter_store import function_1415
 from util.parameter_store import zd_1415
 from util.parameter_store import dose_forbid_1415
 
+#对读取的word文件数据，按功能、年龄、指定字符串进行切分
 
-
+#给药方式
 admin_route_str = "(涂在溃疡表面|贴用|口腔鼓漱|根管冲洗|冲洗根管|置穿髓孔或根髓断面上|覆盖洞底|封入根管|涂布窝洞|贴在病损处|区域注射|贴敷于病变局部|贴敷于患牙处|贴敷于牙面|贴敷于患区表面" \
                   "|雾化\(超声或蒸汽\)吸入|鼓室内注射|局部涂用|血管瘤内注射及黏膜下注射|黏膜下注射|涂患处|鼻腔内滴入|滴鼻或喷入鼻腔|涂于膜组织表面|涂于下眼睑内|注入前房|前房内注射" \
                   "|伤口冲洗或湿敷|涂药于患处|洗漱|涂于患处|涂于患部|涂于创面|局部外用|放于阴道|注入阴道|推入阴道|放入宫腔|置入宫腔底部|腹壁皮下埋植|局部用药|涂抹外阴" \
@@ -48,7 +49,7 @@ admin_route_str = "(涂在溃疡表面|贴用|口腔鼓漱|根管冲洗|冲洗�
                   "|肌注|皮下注射|静脉推注|静脉单?次?输注|静脉.?给药|冲服|嚼服|浸润局麻|浸润麻醉|外用|经眼给药|滴眼|滴鼻|阴道给药|肛门内?给药|舌下含服|含服|阴道用药|瘤体注射|喷雾吸入|雾化吸入" \
                   "|气雾剂?吸入|粉雾吸入|干粉吸入|吸入|阴道冲洗|漱口|关节腔内?注射|注射给药|处方|保留灌肠|灌肠|直肠灌注|直肠给药|贴患处|贴片|外贴|注入脐静脉|静脉注入|涂抹或填塞|涂抹|靶控输注系统给药" \
                   "|使用栓剂|肛门注入|注入|局部注射|放入阴道|阴道.给药|开水冲服|咀嚼服用|鞘内注射或关节腔、软组织等损伤部位内注射|鞘内注射|脑室内注射|冲洗|灌洗|滴耳|肛门灌入|喷药|含化|口含)"
-
+#1-200功能字符串
 function_12 = "(镇静.催眠|镇静.镇痛|镇静.?催眠.急性乙醇戒断|镇静催眠、急性酒精戒断|抗焦虑.镇静催眠|镇痛麻醉|手术后镇痛|分娩镇痛|镇静|催眠|镇痛|抗恐惧|抗癫痫.抗惊厥|小儿惊厥|癫痫持续状态和严重复发性癫痫|癫痫持续状态|一般性失眠|抗?癫痫|抗?失眠|抗?惊厥|抗?焦虑|乙醇戒断|基础麻醉或静脉全麻" \
                "|术前准备|麻醉前用药|麻醉前给药|表面麻醉.神经阻滞麻醉及硬膜外麻醉|神经阻滞或硬膜外麻醉|剖宫产手术硬膜外麻醉|硬膜外麻醉用?|术后应用|诱导麻醉|维持麻醉|表面麻醉|入睡困难|睡眠维持障碍|基础麻醉|抗躁狂或抗精神病|偏头痛的?预防性?治?疗?|偏头痛和慢性每?日?头痛的治疗|偏头痛的发作期治疗|用于|中重度妊娠高血压征、先兆子痫和子痫" \
                "|早产与治疗妊娠高血压|帕金森病、多发性硬化症及痉挛状态|帕金森病|不宁腿综合征|抽动秽语综合征|肝豆状核变性|用于急性严?重?疼痛|中枢性呼吸及循环功能不全|中枢抑制催醒|术?后?催醒|急性脑血栓和脑栓塞|治疗深静脉血栓|治疗急性血栓栓塞|预防手术后深静脉血栓|深静脉血栓或肺栓塞" \
@@ -76,9 +77,6 @@ def get_bracket_str(str):
     if not take_patr_b.search(take_str):
         result = ["".join(i) for i in zip([take_str]*(len(result)-1),result[1::1])]
     return result
-# bracket_str = "（1） 口服成人抗焦虑，一次0.5〜 1 mg,一日2〜3次。镇静催眠。睡前服2〜4 mg。年老体弱 者应减量。12岁以下小儿安全性与剂量尚未确定。&nsp（2）\t肌内注射抗焦虑、镇静催眠,一次按体重 0. 05 mg/kg,总量不超过4 mg。&nsp（3）\t静脉注射 用于癌症化疗止吐，在化疗前30分 钟注射2〜4 mg,与奋乃静合用效果更佳,必要时重复使 用给药；癫痫持续状态,按体重0. 05 mg/kg,一次不超过 4 mg,如10〜15分钟后发作仍继续或再发。可重复注射 0. 05 mg/kg,如再经10〜15分钟仍无效。需采用其他措 施，12小时内用量一般不超过8 mg。"
-# result = get_bracket_str(bracket_str)
-# print("get_bracket_str",result)
 
 
 # 按圆序号切分句子  效果：['（1）这一段的原内容 ①……', '（1）这一段的原内容②……']
@@ -97,11 +95,8 @@ def get_circle_str(str):
     if not take_patr_b.search(take_str):
         result = ["".join(i) for i in zip([take_str] * (len(result) - 1), result[1::1])]
     return result
-# result1 = get_circle_str("（2）肌内或静脉注射成人①催眠，一次100〜200 mg；镇静，一次30〜50 mg,一日2〜3次；②抗惊厥（常 用于治疗癫痫持续状态），缓慢静脉注射300〜500 mg。 成人极量一次0. 25 g,—日0. 5g。")
-# cir_str = "ttt（1）未用过左旋多巴的患者，开始 时110mg,一日3次，以后视需要及耐受情况，每隔1〜2 日逐渐增加每日量。如已用过左旋多巴治疗的患者，改 用本品时，须先停用左旋多巴至少8小时。①过去每日 用左旋多巴少于1.5g的患者，开始时110 mg,一日3〜4 次;②过去每日用左旋多巴大于1. 5 g的患者，开始275 mg, 一日3〜4次；均视需要及耐受情况，每隔1〜2日逐渐增 加每日量。成人最大日剂量可达1375 mg。"
-# result1 = get_circle_str(cir_str)
-# print("circle_cut:",result1)
 
+#2-400中有一段文字不是（1）①后还有1、序号 其他文件没有 指定药品名称会进行对应切分
 def get_number_str(str):
     result = []
     result1 = re.split(r'(\d、)', str)
@@ -118,21 +113,21 @@ def get_number_str(str):
         result = ["".join(i) for i in zip([take_str] * (len(result) - 1), result[1::1])]
     return result
 
-#100-200页内分号切分个例
+#100-200指定切分字符串
 zd_12 = "([；;]或|牙科|肋间神经|宫颈旁浸润|椎旁脊神经阻滞" \
                   "|阴部神经|药物诱发的锥体外系反应|药物诿发的锥体外系反应|注入蛛网膜下隙|注入硬膜外间隙|硬膜外PCA|重度疼痛|如不能控制|用作胶原酶合成抑制剂时|一过性失眠" \
                   "|用量视患者的耐受情况|辅助椎管内麻醉|尿道扩张术|用于神经阻滞麻醉)+"
+#部分按功能、年龄切分句子时，有些不希望切分的情况，一般是在指定字符切分的前面，功能、年龄中遇到这些关键字时，不进行切分，这样指定字符串能正确切分
 dose_forbid_12=["维持量","极量","限量","最大量","总量","维持","继以","患者的耐受情况","耐受的用量"]
 
 exclude_patr = re.compile("[^，。,;；]+[，。,;；]?")#获取功能、年龄后的第一个句子
 #加入片袋粒这些单位的话 范围前的数字  0.3mg|6袋|1/4包  范围后的数字 0.3mg|6袋|1/4包|半包|二袋  范围数字一般都是数字 不会用中文所以前面没有中文
 before_num_string = "(?:\d+\/\d+|\d*\.?\d*万?)"
 after_num_string = "(?:\d+\/\d+|\d*\.?\d+|[半两一二三四五六七八九十])"
-# #0. 4〜0.8mg
 fanwei_string = "[-|—|〜|～|~]"
 unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|丸|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
 percent_unit_string = "(?:ug|μg|ug|mg元素铁|mg|Mg|ng|g氮|g（甘油三酯）|g脂质|g脂肪|g|BU|kU|万IU|IU|万U|U|MBq|MBq（\d*\.\d*mCi）|kBq|mCi|J|昭|ml|mmol|kcal|%|丸|片|袋|粒|枚|支|揿|喷|包|滴|瓶|枚|套)(?:\/[（(]kg.min[）)]|\/[（(]kg.d[）)]|\/[（(]kg.h[）)]|\/kg|\/mL|\/ml|\/h|\/d|\/L|\/min|\/m2|\/cm2)?"
-
+# #0. 4〜0.8mg
 dose_str5 = before_num_string+"%?"+fanwei_string+"?"+after_num_string+percent_unit_string
 
 
@@ -143,11 +138,11 @@ cishu_string_after =  "|分(?:\d*\.?\d*[-|—|〜|～|~]?\d*\.?\d+|[一二三四
 cishu_string = cishu_string_before+cishu_string_after
 dose_pinci_patr = re.compile(cishu_string)
 
-#按作用切分句子
+#按指定字段切分句子
 def get_zd_cut(str):
     zd_patr = re.compile(zd_str)
     zd_result = []
-    # 只要当前分段前的任意一个分段有用药剂量，当前分段也有用药剂量，当前分段可切分
+    # 只要当前分段前的任意一个分段有用药剂量或用药频率，当前分段也有用药剂量，当前分段可切分
     zd_match = zd_patr.search(str)
     if zd_match:
         # 每次判断当前作用前面整段句子，以及当前作用和下一个作用之间的句子，是否有用药剂量，都满足时，存储当前作用index用于断句，结果是满足断句的作用的index list
@@ -185,9 +180,9 @@ def get_zd_cut(str):
         zd_result.append(str)
     return zd_result
 
-
+#给药方式
 take_patr = re.compile(admin_route_str+"+")
-
+#溶液
 rongye_end_patr = re.compile("("+before_num_string+"%?"+fanwei_string+"?"+after_num_string+"%?溶液[,，])$")
 ml_begin_patr = re.compile("^("+before_num_string+fanwei_string+"?"+after_num_string+unit_string+")")
 
@@ -223,8 +218,8 @@ def get_function_cut(str):
                         forbi_flag = True
 
                 if not forbi_flag:
-
-                    if dose_patr.search(fuction_begin) and dose_patr.search(fuction_next):
+                    if (dose_patr.search(fuction_begin) or dose_pinci_patr.search(fuction_begin)) and (dose_patr.search(fuction_next) or dose_pinci_patr.search(fuction_next)):
+                    # if dose_patr.search(fuction_begin) and dose_patr.search(fuction_next):
                         idxes_list.append(idx + 1)
         # 用于断句的index_list,存放满足条件的年龄的index，切分即可
         if idxes_list:
@@ -240,18 +235,16 @@ def get_function_cut(str):
         function_result.append(str)
     return function_result
 
+
 age_dot = "\d*\.?\d+" #有2.5岁的
-age_unit_string = "(?:岁|个?月person2age_string|天person2age_string|日person2age_string)"
 person2age_string = "(?:成人|新生儿|婴幼?儿|幼儿|儿童|青少年|小儿|少儿|老年人|老人|患儿|早产儿)"
+age_unit_string = "(?:岁|个?月"+person2age_string+"|天"+person2age_string+"|日"+person2age_string+")"
 age_str = "(肝、肾功能损害者|高龄患者|老年和体弱或肝功能不全患者|老年人?[或及、和]?体弱患?者|老年人?[或及、和]?虚弱的?患?者|老年人|年老[或及、和]?体弱患?者|特殊人群：严重肝损患者|老年、重病和肝功能受损患者" \
            "|老年患者|重症患者|肝、肾疾病患者|老年、女性、非吸烟、有低血压倾向、严重肾功能损害或中度肝功能损害患者|新生儿|幼儿和儿童|幼儿|儿童青?少年|儿童|婴儿|婴幼儿|早产儿" \
            "|<"+age_dot+age_unit_string+"|≤"+age_dot+age_unit_string+"|小于"+age_dot+age_unit_string+"|"+age_dot+age_unit_string+"|"+age_dot+age_unit_string+"以上|"+age_dot+age_unit_string+"?"+fanwei_string+age_dot+age_unit_string+"|"\
-          +age_dot+age_unit_string+"以下|>"+age_dot+age_unit_string+"|≥"+age_dot+age_unit_string+"|大于"+age_dot+age_unit_string+"|小儿|的?患?者|患儿)"
+          +age_dot+age_unit_string+"以下|>"+age_dot+age_unit_string+"|≥"+age_dot+age_unit_string+"|大于"+age_dot+age_unit_string+"|出生\d*\.?\d*"+fanwei_string+"?"+age_dot+"天|小儿|的?患?者|患儿)"
 
 age_patr = re.compile("[，。,;；][^，。,;；]*(维持量[,，。：:]?)?"+age_str)
-
-# 不用管年龄、作用后面的用药关键字，被限制的可能性很小，因为年龄、作用本身就可以作为独立断句的标准了
-
 
 #按年龄切分句子
 def get_age_cut(str):
@@ -276,7 +269,8 @@ def get_age_cut(str):
                         forbi_flag = True
                         break
                 if not forbi_flag:
-                    if dose_patr.search(age_begin) and dose_patr.search(age_next):
+                    if (dose_patr.search(age_begin) or dose_pinci_patr.search(age_begin)) and (dose_patr.search(age_next) or dose_pinci_patr.search(age_next)):
+                    # if dose_patr.search(age_begin) and dose_patr.search(age_next):
                         idxes_list.append(idx+1)
         #用于断句的index_list,存放满足条件的年龄的index，切分即可
         if idxes_list:
@@ -317,7 +311,7 @@ def get_age_func_cut(str_fun,ori_str):
     # 获得句首拼接字符串
     # 只有……（1）……①  -->  ①……
     if b_match:
-        # 有（1）标号，有①标号，直接拼接(1)和①标号之间的内容，①标号后开始第二句断句开始判断是否有服药方式，没有则拼接第一个断句的服药方式，第一个断句没有也不用拼接
+        # 有（1）标号，有①标号，直接拼接(1)和①标号之间的内容，①标号后开始第二句断句判断是否有服药方式，没有则拼接第一个断句的服药方式，第一个断句没有也不用拼接
         if cir_match:
             str = ori_str[cir_match.end():] #①后内容（不包含①）
             concat_string = ori_str[:cir_match.end()]# ……(1)……①
@@ -349,7 +343,6 @@ def get_age_func_cut(str_fun,ori_str):
 
     #按年龄切分
     for fun_con in cat_fun_result:
-            # tmp_result.append(get_age_cut(fun_con))
             age_result = get_age_cut(fun_con)
             #按指定字符串切分
             for agestr in age_result:
@@ -400,7 +393,7 @@ def get_sentence_cut(str,drug_name):
                 circle_list.extend(cir_list)
             else:
                 circle_list.append(ci)
-    #200-400的雷尼替丁含有1、2、这种标号的切分
+    #200-400的雷尼替丁含有1、2、这种标号的切分,针对它的特定切分
     if drug_name == "@雷尼替丁":
         number_patr = re.compile("\d、")
         for i,cir in enumerate(circle_list):
