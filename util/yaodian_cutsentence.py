@@ -527,10 +527,10 @@ if __name__=="__main__":
     #     print("file {} druguse2sentence finished!".format("1201-1400" + ".json"))
     #
     #1401-1539
-    # function_str = function_12
-    # zd_str = zd_1415
-    # dose_forbid = dose_forbid_1415
-    # doc_path = "C:/产品文档/转换器测试数据/json/" + "1401-1539" + ".json"
-    # if os.path.exists(doc_path):
-    #     data_pro_2list(doc_path, "1401-1539")
-    #     print("file {} druguse2sentence finished!".format("1401-1539" + ".json"))
+    function_str = function_12
+    zd_str = zd_1415
+    dose_forbid = dose_forbid_1415
+    doc_path = "C:/产品文档/转换器测试数据/json/" + "1401-1539" + ".json"
+    if os.path.exists(doc_path):
+        data_pro_2list(doc_path, "1401-1539")
+        print("file {} druguse2sentence finished!".format("1401-1539" + ".json"))

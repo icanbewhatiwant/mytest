@@ -649,7 +649,7 @@ if __name__=="__main__":
     # print("成人①臂丛神经阻滞,0.375%溶液，20ml。")
     # print(get_single_dose("(1)精神分裂症②肌内注射：一次100mg,一日2次。"))
     # print(get_recomend_days("每8小时10mg/kg或500mg/m²"))
-    print(get_limit("（2）肌内或静脉注射成人②镇静、催眠或急性乙醇戒断，开始10mg,成人用药一日最大限量一般为9g。",{}))
+    # print(get_limit("（2）肌内或静脉注射成人②镇静、催眠或急性乙醇戒断，开始10mg,成人用药一日最大限量一般为9g。",{}))
 
 
     #调用方法
@@ -768,7 +768,7 @@ if __name__=="__main__":
                 print("file {} sent2ziduan finished!".format(file_name + ".json"))
 
 
-    # get_druguse_ziduan()
+    get_druguse_ziduan()
 
 
 
